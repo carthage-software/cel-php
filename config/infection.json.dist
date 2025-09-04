@@ -1,0 +1,23 @@
+{
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "timeout": 10,
+    "minMsi": 100,
+    "minCoveredMsi": 100,
+    "threads": "max",
+    "logs": {
+        "text": "php://stderr",
+        "github": true,
+        "stryker": {
+            "report": "/^\\d+\\.\\d+\\.x$/"
+        }
+    },
+    "tmpDir": "../var",
+    "mutators": {
+        "@default": true,
+        "@function_signature": false,
+    }
+}

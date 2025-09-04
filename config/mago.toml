@@ -1,0 +1,9 @@
+php-version = "8.4.0"
+
+[source]
+paths = ["src/", "tests/"]
+includes = ["vendor"]
+excludes = []
+
+[linter]
+integrations = ["phpunit"]

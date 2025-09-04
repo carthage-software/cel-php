@@ -1,0 +1,42 @@
+{
+  "name": "carthage-software/cel-php",
+  "description": "A PHP Common Expression Language Implementation",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Cel\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Cel\\Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "azjezz",
+      "email": "azjezz@carthage.software"
+    }
+  ],
+  "require": {
+    "php": "~8.4 || ~8.5",
+    "ext-bcmath": "*",
+    "ext-intl": "*",
+    "ext-mbstring": "*",
+    "ext-xml": "*"
+  },
+  "require-dev": {
+    "carthage-software/mago": "^1.0.0-beta.10",
+    "phpunit/phpunit": "^12.3",
+    "php-coveralls/php-coveralls": "^2.8",
+    "infection/infection": "^0.31.2"
+  },
+  "config": {
+    "allow-plugins": {
+      "symfony/flex": true,
+      "carthage-software/mago": true,
+      "infection/extension-installer": true
+    }
+  }
+}
