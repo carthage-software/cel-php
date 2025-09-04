@@ -7,3 +7,16 @@ excludes = []
 
 [linter]
 integrations = ["phpunit"]
+
+[linter.rules]
+ambiguous-function-call = { enabled = true }
+too-many-methods = { threshold = 20 }
+literal-named-argument = { enabled = false }
+no-boolean-flag-parameter = { enabled = false }
+return-type = { ignore-arrow-function = true, ignore-closure = true }
+excessive-parameter-list = { threshold = 10 }
+no-else-clause = { enabled = false }
+halstead = { effort-threshold = 20_000, difficulty-threshold = 20, volume-threshold = 1_500 }
+kan-defect = { threshold = 5.0 }
+cyclomatic-complexity = { threshold = 80 }
+strict-types = { enabled = true }

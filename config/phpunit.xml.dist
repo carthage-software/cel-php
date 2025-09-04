@@ -33,6 +33,7 @@
     <coverage>
         <report>
             <clover outputFile="../var/clover.xml" />
+            <html outputDirectory="../var/coverage-html"/>
         </report>
     </coverage>
 </phpunit>

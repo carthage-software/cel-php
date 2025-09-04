@@ -12,6 +12,7 @@ lint:
 
 fix:
     ./vendor/bin/mago --config config/mago.toml lint --fix --unsafe
+    ./vendor/bin/mago --config config/mago.toml fmt
 
 analyze:
     ./vendor/bin/mago --config config/mago.toml analyze
@@ -20,7 +21,7 @@ typos:
     typos -c config/typos.toml
 
 test:
-    ./vendor/bin/phpunit -c config/phpunit.xml.dist
+    XDEBUG_MODE=coverage ./vendor/bin/phpunit -c config/phpunit.xml.dist
 
 mutation:
     ./vendor/bin/infection --configuration=config/infection.json.dist
@@ -30,14 +31,14 @@ verify:
     ./vendor/bin/mago --config config/mago.toml fmt --check
     ./vendor/bin/mago --config config/mago.toml lint
     ./vendor/bin/mago --config config/mago.toml analyze
-    ./vendor/bin/phpunit -c config/phpunit.xml.dist
-    ./vendor/bin/infection --configuration=config/infection.json.dist
+    XDEBUG_MODE=coverage ./vendor/bin/phpunit -c config/phpunit.xml.dist
+    XDEBUG_MODE=coverage ./vendor/bin/infection --configuration=config/infection.json.dist
 
 continuous-integration:
     typos -c config/typos.toml
     ./vendor/bin/mago --config config/mago.toml fmt --check
     ./vendor/bin/mago --config config/mago.toml lint --reporting-format=github
     ./vendor/bin/mago --config config/mago.toml analyze --reporting-format=github
-    ./vendor/bin/phpunit -c config/phpunit.xml.dist
-    ./vendor/bin/infection --configuration=config/infection.json.dist
-    ./vendor/bin/php-coveralls -x var/clover.xml -o var/coveralls-upload.json -v
+    XDEBUG_MODE=coverage ./vendor/bin/phpunit -c config/phpunit.xml.dist
+    XDEBUG_MODE=coverage ./vendor/bin/infection --configuration=config/infection.json.dist
+    XDEBUG_MODE=coverage ./vendor/bin/php-coveralls -x var/clover.xml -o var/coveralls-upload.json -v

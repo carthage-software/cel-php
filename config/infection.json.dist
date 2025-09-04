@@ -19,5 +19,10 @@
     "mutators": {
         "@default": true,
         "@function_signature": false,
+        "GreaterThanOrEqualTo": {
+            "ignore": [
+                "Cel\\Input\\Input::sliceInRange"
+            ]
+        }
     }
 }
