@@ -24,7 +24,8 @@
     "ext-bcmath": "*",
     "ext-intl": "*",
     "ext-mbstring": "*",
-    "ext-xml": "*"
+    "ext-xml": "*",
+    "azjezz/psl": "dev-next"
   },
   "require-dev": {
     "carthage-software/mago": "^1.0.0-beta.10",

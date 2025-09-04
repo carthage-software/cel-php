@@ -6,4 +6,10 @@ includes = ["vendor"]
 excludes = []
 
 [linter]
-integrations = ["phpunit"]
+integrations = ["phpunit", "psl"]
+
+[linter.rules]
+literal-named-argument = { enabled = false }
+no-boolean-flag-parameter = { enabled = false }
+return-type = { ignore-arrow-function = true, ignore-closure = true }
+excessive-parameter-list = { threshold = 10 }
