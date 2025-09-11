@@ -12,7 +12,7 @@
         "text": "php://stderr",
         "github": true,
         "stryker": {
-            "report": "/^\\d+\\.\\d+\\.x$/"
+            "badge": "main"
         }
     },
     "tmpDir": "../var",

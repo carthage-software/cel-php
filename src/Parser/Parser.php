@@ -334,6 +334,7 @@ final class Parser implements ParserInterface
             if ($this->stream->lookahead(1)?->kind !== TokenKind::Identifier) {
                 break;
             }
+
             $dots[] = $this->stream->eat(TokenKind::Dot)->span;
             $ident = $this->stream->eat(TokenKind::Identifier);
             $following[] = new SelectorNode($ident->value, $ident->span);
@@ -432,6 +433,7 @@ final class Parser implements ParserInterface
         if ($this->stream->hasReachedEnd()) {
             return false;
         }
+
         $kind = $this->stream->peek()->kind;
         return (
             $kind === TokenKind::Equal

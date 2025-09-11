@@ -1,5 +1,13 @@
 # A Common Expression Language Implementation in PHP
 
+
+[![continuous integration](https://github.com/carthage-software/cel-php/actions/workflows/ci.yml/badge.svg)](https://github.com/carthage-software/cel-php/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/carthage-software/cel-php/badge.svg?branch=main)](https://coveralls.io/github/carthage-software/cel-php?branch=main)
+[![MSI](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fcarthage-software%2Fcel-php%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/carthage-software/cel-php/main#mutant)
+[![Total Downloads](https://poser.pugx.org/carthage-software/cel-php/d/total.svg)](https://packagist.org/packages/carthage-software/cel-php)
+[![Latest Stable Version](https://poser.pugx.org/carthage-software/cel-php/v/stable.svg)](https://packagist.org/packages/carthage-software/cel-php)
+[![License](https://poser.pugx.org/carthage-software/cel-php/license.svg)](https://packagist.org/packages/carthage-software/cel-php)
+
 **This project is currently under heavy development and is not yet ready for production use.**
 
 This repository contains a PHP implementation of the [Common Expression Language (CEL)](https://github.com/google/cel-spec).

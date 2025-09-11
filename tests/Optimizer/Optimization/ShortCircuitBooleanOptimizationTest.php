@@ -60,6 +60,10 @@ final class ShortCircuitBooleanOptimizationTest extends OptimizationTestCase
             new BinaryExpression($false, $and, $ident),
             $false,
         ];
+        yield 'expr && expr -> no change' => [
+            new BinaryExpression($ident, $and, $ident),
+            null,
+        ];
 
         // OR cases
         yield 'expr || true -> true' => [
@@ -77,6 +81,10 @@ final class ShortCircuitBooleanOptimizationTest extends OptimizationTestCase
         yield 'false || expr -> expr' => [
             new BinaryExpression($false, $or, $ident),
             $ident,
+        ];
+        yield 'expr || expr -> no change' => [
+            new BinaryExpression($ident, $or, $ident),
+            null,
         ];
 
         // Non-applicable cases

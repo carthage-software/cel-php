@@ -32,7 +32,7 @@ final class Input implements InputInterface
     /**
      * @var int<0, max> The current position of the cursor within the byte string.
      */
-    private int $cursor = 0;
+    private int $cursor;
 
     /**
      * @param string $bytes The input byte sequence.
