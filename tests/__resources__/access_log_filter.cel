@@ -1,0 +1,16 @@
+// Use CEL to filter access logs in Istio by response code or target cluster.
+// https://istio.io/latest/docs/tasks/observability/logs/telemetry-api/#get-started-with-telemetry-api
+//
+// apiVersion: telemetry.istio.io/v1alpha1
+// kind: Telemetry
+// metadata:
+//   name: default-exception-logging
+//   namespace: istio-system
+// spec:
+//   accessLogging:
+//     - providers:
+//         - name: otel
+//       filter:
+//         expression: "response.code >= 400 || xds.cluster_name == 'BlackHoleCluster' ||  xds.cluster_name == 'PassthroughCluster' "
+
+response.code >= 400 || (xds.cluster_name == 'BlackHoleCluster' || xds.cluster_name == 'PassthroughCluster')

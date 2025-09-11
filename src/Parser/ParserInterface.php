@@ -2,6 +2,7 @@
 
 namespace Cel\Parser;
 
+use Cel\Input\InputInterface;
 use Cel\Lexer\LexerInterface;
 use Cel\Syntax\Expression;
 
@@ -12,11 +13,29 @@ use Cel\Syntax\Expression;
 interface ParserInterface
 {
     /**
-     * Parses the token stream from the given lexer into an expression tree.
+     * Parses the string and produces a syntax tree.
      *
-     * @param LexerInterface $lexer The lexer providing the stream of tokens.
+     * @param string $string The string to parse.
      *
      * @return Expression The root node of the resulting expression tree.
      */
-    public function parse(LexerInterface $lexer): Expression;
+    public function parseString(string $string): Expression;
+
+    /**
+     * Parses the input and produces a syntax tree.
+     *
+     * @param InputInterface $input The input to parse.
+     *
+     * @return Expression The root node of the resulting expression tree.
+     */
+    public function parse(InputInterface $input): Expression;
+
+    /**
+     * Constructs a syntax tree from the provided lexer.
+     *
+     * @param LexerInterface $lexer The lexer providing the tokens.
+     *
+     * @return Expression The root node of the resulting expression tree.
+     */
+    public function construct(LexerInterface $lexer): Expression;
 }

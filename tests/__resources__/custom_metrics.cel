@@ -1,0 +1,21 @@
+// Use CEL to customize the metrics that Istio generates
+// https://istio.io/latest/docs/tasks/observability/metrics/customize-metrics/#use-expressions-for-values
+//
+// apiVersion: telemetry.istio.io/v1alpha1
+// kind: Telemetry
+// metadata:
+//   name: namespace-metrics
+// spec:
+//   metrics:
+//   - providers:
+//     - name: prometheus
+//     overrides:
+//     - match:
+//         metric: REQUEST_COUNT
+//       tagOverrides:
+//         destination_port:
+//           value: "string(destination.port)"   # <--- CEL
+//         request_host:
+//           value: "request.host"               # <--- CEL
+
+has(request.host) ? request.host : "unknown"

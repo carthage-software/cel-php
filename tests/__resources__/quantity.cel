@@ -1,0 +1,7 @@
+// Quantity library introduced in Kubernetes 1.28
+
+isQuantity(object.memory) &&
+quantity(object.memory)
+  .add(quantity("700M"))
+  .sub(1) // test without this subtraction
+  .isLessThan(quantity(object.limit))

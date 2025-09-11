@@ -8,6 +8,7 @@ use Cel\Input\Input;
 use Cel\Lexer\Internal\Utils;
 use Cel\Lexer\Lexer;
 use Cel\Span\Span;
+use Cel\Tests\ResourceProviderTrait;
 use Cel\Token\Token;
 use Cel\Token\TokenKind;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -25,6 +26,25 @@ use function count;
 #[UsesClass(Utils::class)]
 final class LexerTest extends TestCase
 {
+    use ResourceProviderTrait;
+
+    #[DataProvider('provideCelResources')]
+    public function testTokenizationIsLossless(string $source): void
+    {
+        $lexer = new Lexer(new Input($source));
+        $reconstructed = '';
+        while (true) {
+            $token = $lexer->advance();
+            if ($token === null) {
+                break;
+            }
+
+            $reconstructed .= $token->value;
+        }
+
+        static::assertSame($source, $reconstructed, 'Concatenated tokens do not match the original source string.');
+    }
+
     /**
      * @param list<list{TokenKind, string, int, int}> $expectedTokens
      */
@@ -47,7 +67,6 @@ final class LexerTest extends TestCase
         foreach ($expectedTokens as $i => $expected) {
             if (!isset($tokens[$i])) {
                 static::fail("Missing token at index {$i}");
-                return;
             }
 
             $actual = $tokens[$i];

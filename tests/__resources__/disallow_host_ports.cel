@@ -1,0 +1,10 @@
+// According the Pod Security Standards, HostPorts should be disallowed entirely.
+// https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+
+object.spec.template.spec.containers.all(container,
+  !has(container.ports) ||
+  container.ports.all(port,
+    !has(port.hostPort) ||
+    port.hostPort == 0
+  )
+)
