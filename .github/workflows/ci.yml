@@ -14,16 +14,10 @@ jobs:
       - name: "checkout"
         uses: "actions/checkout@v5"
 
-      - name: "installing rust"
-        uses: dtolnay/rust-toolchain@stable
+      - name: "installing tools"
+        uses: "taiki-e/install-action@v2"
         with:
-          toolchain: stable
-
-      - name: "installing just"
-        run: cargo install just
-
-      - name: "installing typos"
-        run: cargo install typos-cli
+          tool: just,typos-cli
 
       - name: "installing php"
         uses: "shivammathur/setup-php@v2"
