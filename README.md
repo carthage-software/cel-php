@@ -69,6 +69,19 @@ As mentioned earlier, this project is still under heavy development. Below is a 
     - [x] `e.map(x, t)` (for lists and maps)
     - [x] `e.map(x, p, t)`
     - [x] `e.filter(x, p)` (for lists and maps)
+  - Types
+    - [x] String
+    - [x] Bytes
+    - [x] Integer
+    - [x] Unsigned Integer
+    - [x] Double
+    - [x] Boolean
+    - [x] Null
+    - [x] List
+    - [x] Map
+    - [ ] Struct ( partial support )
+    - [ ] Duration
+    - [ ] Timestamp
 - Interpreter & Runtime
   - [x] Tree-Walking Interpreter (Implemented)
   - [ ] Stack-Based Interpreter
