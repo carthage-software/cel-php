@@ -24,6 +24,15 @@ final readonly class MedianFunction implements FunctionInterface
         return 'median';
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function isIdempotent(): bool
+    {
+        return true;
+    }
+
     #[Override]
     public function getOverloads(): iterable
     {

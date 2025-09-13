@@ -80,8 +80,8 @@ As mentioned earlier, this project is still under heavy development. Below is a 
     - [x] List
     - [x] Map
     - [ ] Struct ( partial support )
-    - [ ] Duration
-    - [ ] Timestamp
+    - [x] Duration
+    - [x] Timestamp
 - Interpreter & Runtime
   - [x] Tree-Walking Interpreter (Implemented)
   - [ ] Stack-Based Interpreter
@@ -92,6 +92,8 @@ As mentioned earlier, this project is still under heavy development. Below is a 
   - [ ] Caching Strategy
     - [ ] Investigate and implement caching for parsed expressions (AST).
     - [ ] Explore potential for caching evaluation results for idempotent functions.
+      - [x] Implement logic for determining idempotency of evaluated expressions.
+  - [ ] Benchmarking
 - API & Quality
   - [ ] API Improvements
     - [ ] General review and cleanup of the public-facing API.

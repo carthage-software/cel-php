@@ -74,6 +74,8 @@ use function bcsub;
  */
 final class TreeWalkingInterpreter implements InterpreterInterface
 {
+    private bool $idempotent = true;
+
     public function __construct(
         private FunctionRegistry $registry,
         private EnvironmentInterface $environment,
@@ -86,6 +88,24 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     public function getEnvironment(): EnvironmentInterface
     {
         return $this->environment;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function reset(): void
+    {
+        $this->idempotent = true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function wasIdempotent(): bool
+    {
+        return $this->idempotent;
     }
 
     /**
@@ -822,8 +842,8 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             $arguments[] = $this->run($arg);
         }
 
-        $callable = $this->registry->get($expression, $arguments);
-        if (null === $callable) {
+        $function = $this->registry->get($expression, $arguments);
+        if (null === $function) {
             // Maybe the function exists with a different signature?
             $available_signatures = $this->registry->getSignatures($expression);
             if (null === $available_signatures) {
@@ -836,6 +856,11 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             $argument_kinds = Vec\map($arguments, static fn(Value $arg): ValueKind => $arg->getKind());
 
             throw NoSuchOverloadException::forCall($expression, $available_signatures, $argument_kinds);
+        }
+
+        [$idempotent, $callable] = $function;
+        if (!$idempotent) {
+            $this->idempotent = false;
         }
 
         return $callable($expression, $arguments);

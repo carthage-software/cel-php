@@ -46,7 +46,7 @@ abstract class RuntimeTestCase extends TestCase
         }
 
         $runtime = new Runtime();
-        $actualResult = $runtime->run($ast, $environment);
+        $actualResult = $runtime->run($ast, $environment)->result;
         if (!$expectedResult instanceof Value) {
             static::fail('Expected exception of type '
             . $expectedResult::class

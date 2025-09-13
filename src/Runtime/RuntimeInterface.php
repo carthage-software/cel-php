@@ -25,9 +25,9 @@ interface RuntimeInterface
      * @param Expression           $expression  The expression to evaluate.
      * @param EnvironmentInterface $environment The environment in which to evaluate the expression.
      *
-     * @return Value The result of the evaluation.
+     * @return RuntimeReceipt The result of the evaluation, including the value and any relevant metadata.
      *
      * @throws Exception\RuntimeException on runtime errors.
      */
-    public function run(Expression $expression, EnvironmentInterface $environment): Value;
+    public function run(Expression $expression, EnvironmentInterface $environment): RuntimeReceipt;
 }

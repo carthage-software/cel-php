@@ -24,6 +24,15 @@ final readonly class MeanFunction implements FunctionInterface
         return 'mean';
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function isIdempotent(): bool
+    {
+        return true;
+    }
+
     #[Override]
     public function getOverloads(): iterable
     {

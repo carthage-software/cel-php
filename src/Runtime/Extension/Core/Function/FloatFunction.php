@@ -34,6 +34,15 @@ final readonly class FloatFunction implements FunctionInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function isIdempotent(): bool
+    {
+        return true;
+    }
+
+    /**
      * @return iterable<list<ValueKind>, (callable(CallExpression, list<Value>): Value)>
      */
     #[Override]

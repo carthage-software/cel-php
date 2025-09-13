@@ -12,7 +12,6 @@ use Cel\Runtime\Extension\Math\MathExtension;
 use Cel\Runtime\Extension\Strings\StringsExtension;
 use Cel\Runtime\Function\FunctionRegistry;
 use Cel\Runtime\Interpreter\InterpreterFactory;
-use Cel\Runtime\Value\Value;
 use Cel\Syntax\Expression;
 use Override;
 
@@ -41,8 +40,16 @@ final readonly class Runtime implements RuntimeInterface
      * @inheritDoc
      */
     #[Override]
-    public function run(Expression $expression, EnvironmentInterface $environment): Value
+    public function run(Expression $expression, EnvironmentInterface $environment): RuntimeReceipt
     {
-        return $this->factory->create($this->registry, $environment)->run($expression);
+        $interpreter = $this->factory->create($this->registry, $environment);
+        $interpreter->reset(); // Ensure the interpreter is in a clean state before running.
+
+        $result = $interpreter->run($expression);
+        $idempotent = $interpreter->wasIdempotent();
+
+        $interpreter->reset(); // Reset the interpreter state after running, in case of reuse.
+
+        return new RuntimeReceipt($result, $idempotent);
     }
 }

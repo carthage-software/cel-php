@@ -19,11 +19,12 @@ final class FunctionRegistry
     /**
      * A map for optimized lookups:
      *
-     * `[function_name][signature_hash] => ['callable' => callable, 'signature' => list<ValueKind>]`
+     * `[function_name][signature_hash] => ['callable' => callable, 'signature' => list<ValueKind>, 'is_idempotent' => bool]`
      *
      * @var array<string, array<string, array{
      *     callable: (callable(CallExpression, list<Value>): Value),
-     *     signature: list<ValueKind>
+     *     signature: list<ValueKind>,
+     *     is_idempotent: bool,
      * }>>
      */
     private array $overloads = [];
@@ -48,6 +49,7 @@ final class FunctionRegistry
     public function add(FunctionInterface $function): void
     {
         $name = $function->getName();
+        $isIdempotent = $function->isIdempotent();
 
         foreach ($function->getOverloads() as $signature => $callable) {
             $signatureHash = self::hashSignature($signature);
@@ -63,16 +65,24 @@ final class FunctionRegistry
             $this->overloads[$name][$signatureHash] = [
                 'callable' => $callable,
                 'signature' => $signature,
+                'is_idempotent' => $isIdempotent,
             ];
         }
     }
 
     /**
+     * Retrieves a function implementation based on the call expression and provided arguments.
+     *
+     * If no matching function is found, returns null.
+     * If a matching function is found, returns a tuple containing:
+     *  - A boolean indicating if the function is idempotent.
+     *  - A callable that takes the CallExpression and list of Values as arguments and returns a Value.
+     *
      * @param list<Value> $arguments
      *
-     * @return null|(callable(CallExpression, list<Value>): Value)
+     * @return null|list{bool, (callable(CallExpression, list<Value>): Value)}
      */
-    public function get(CallExpression $expression, array $arguments): null|callable
+    public function get(CallExpression $expression, array $arguments): null|array
     {
         $name = $expression->function->name;
         $candidates = $this->overloads[$name] ?? [];
@@ -83,8 +93,12 @@ final class FunctionRegistry
 
         $providedArgumentKinds = Vec\map($arguments, static fn(Value $v): ValueKind => $v->getKind());
         $signatureHash = self::hashSignature($providedArgumentKinds);
+        $function = $candidates[$signatureHash] ?? null;
+        if ($function === null) {
+            return null;
+        }
 
-        return $candidates[$signatureHash]['callable'] ?? null;
+        return [$function['is_idempotent'], $function['callable']];
     }
 
     /**

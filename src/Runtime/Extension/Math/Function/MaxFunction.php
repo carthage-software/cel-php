@@ -25,6 +25,15 @@ final readonly class MaxFunction implements FunctionInterface
         return 'max';
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function isIdempotent(): bool
+    {
+        return true;
+    }
+
     #[Override]
     public function getOverloads(): iterable
     {

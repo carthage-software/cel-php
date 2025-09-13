@@ -23,5 +23,7 @@ function run(string $expression, array $variables = []): Value
     $expression = $parser->parseString($expression);
     $runtime = new Runtime\Runtime();
 
-    return $runtime->run($expression, new Runtime\Environment\Environment(Dict\map($variables, Value::from(...))));
+    $environment = new Runtime\Environment\Environment(Dict\map($variables, Value::from(...)));
+
+    return $runtime->run($expression, $environment)->result;
 }

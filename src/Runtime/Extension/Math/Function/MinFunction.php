@@ -25,6 +25,15 @@ final readonly class MinFunction implements FunctionInterface
         return 'min';
     }
 
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function isIdempotent(): bool
+    {
+        return true;
+    }
+
     #[Override]
     public function getOverloads(): iterable
     {
