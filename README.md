@@ -66,9 +66,9 @@ As mentioned earlier, this project is still under heavy development. Below is a 
     - [x] `e.all(x, p)`
     - [x] `e.exists(x, p)`
     - [x] `e.exists_one(x, p)`
-    - [ ] `e.map(x, t)` (for lists and maps)
-    - [ ] `e.map(x, p, t)`
-    - [ ] `e.filter(x, p)` (for lists and maps)
+    - [x] `e.map(x, t)` (for lists and maps)
+    - [x] `e.map(x, p, t)`
+    - [x] `e.filter(x, p)` (for lists and maps)
   - [ ] Support Optional Access
     - [ ] Implement `foo.?bar` syntax, similar to cel-go ( this is *NOT* part of the CEL spec ).
     - [ ] Support Message Creation

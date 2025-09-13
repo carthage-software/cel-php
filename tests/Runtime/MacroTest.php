@@ -9,6 +9,8 @@ use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
 use Cel\Runtime\Runtime;
 use Cel\Runtime\Value\BooleanValue;
+use Cel\Runtime\Value\IntegerValue;
+use Cel\Runtime\Value\ListValue;
 use Cel\Runtime\Value\Value;
 use Cel\Span\Span;
 use Override;
@@ -104,26 +106,99 @@ final class MacroTest extends RuntimeTestCase
         yield 'Macro exists: one true' => ['[1, -1, 3].exists(x, x < 0)', [], new BooleanValue(true)];
         yield 'Macro exists: all false' => ['[1, 2, 3].exists(x, x < 0)', [], new BooleanValue(false)];
         yield 'Macro exists: empty list' => ['[].exists(x, x > 0)', [], new BooleanValue(false)];
-        yield 'Macro exists error: predicate returns non-boolean' => [
-            '[1, 2, 3].exists(x, x + 1)',
-            [],
-            new InvalidMacroCallException(
-                'The `exists` macro predicate must result in a boolean, got `int`',
-                new Span(19, 24),
-            ),
-        ];
+        yield 'Macro exists error: predicate returns non-boolean' =>
+            [
+                '[1, 2, 3].exists(x, x + 1)',
+                [],
+                new InvalidMacroCallException(
+                    'The `exists` macro predicate must result in a boolean, got `int`',
+                    new Span(19, 24),
+                ),
+            ];
 
         yield 'Macro exists_one: exactly one true' => ['[-1, 1, 2].exists_one(x, x < 0)', [], new BooleanValue(true)];
         yield 'Macro exists_one: zero trues' => ['[1, 2, 3].exists_one(x, x < 0)', [], new BooleanValue(false)];
         yield 'Macro exists_one: multiple trues' => ['[-1, -2, 1].exists_one(x, x < 0)', [], new BooleanValue(false)];
         yield 'Macro exists_one: empty list' => ['[].exists_one(x, x > 0)', [], new BooleanValue(false)];
-        yield 'Macro exists_one error: predicate returns non-boolean' => [
-            '[1, 2, 3].exists_one(x, x + 1)',
-            [],
-            new InvalidMacroCallException(
-                'The `exists_one` macro predicate must result in a boolean, got `int`',
-                new Span(22, 27),
-            ),
-        ];
+        yield 'Macro exists_one error: predicate returns non-boolean' =>
+            [
+                '[1, 2, 3].exists_one(x, x + 1)',
+                [],
+                new InvalidMacroCallException(
+                    'The `exists_one` macro predicate must result in a boolean, got `int`',
+                    new Span(22, 27),
+                ),
+            ];
+
+        yield 'Macro map (list): simple transform' =>
+            [
+                '[1, 2, 3].map(i, i * 2)',
+                [],
+                new ListValue([new IntegerValue(2), new IntegerValue(4), new IntegerValue(6)]),
+            ];
+        yield 'Macro map (list): with filter' =>
+            [
+                '[1, 2, 3, 4].map(i, i % 2 == 0, i * 10)',
+                [],
+                new ListValue([new IntegerValue(20), new IntegerValue(40)]),
+            ];
+        yield 'Macro map (map): simple transform on keys' =>
+            [
+                '{"a": 1, "b": 2}.map(k, k + k)',
+                [],
+                Value::from(['aa', 'bb']),
+            ];
+        yield 'Macro map (map): with filter on keys' =>
+            [
+                '{"apple": 1, "banana": 2, "avocado": 3}.map(k, k.startsWith("a"), k.size())',
+                [],
+                new ListValue([new IntegerValue(5), new IntegerValue(7)]),
+            ];
+        yield 'Macro map error: target is not list or map' =>
+            [
+                '"hello".map(c, c)',
+                [],
+                new InvalidMacroCallException(
+                    'The `map` macro requires a list or map target, got `string`',
+                    new Span(0, 7),
+                ),
+            ];
+        yield 'Macro map error: filter is not boolean' =>
+            [
+                '[1, 2, 3].map(i, i, i)',
+                [],
+                new InvalidMacroCallException(
+                    'The `map` macro filter must result in a boolean, got `int`',
+                    new Span(18, 19),
+                ),
+            ];
+
+        yield 'Macro filter (list): simple filter' =>
+            [
+                '[1, 2, 3, 4].filter(i, i % 2 == 0)',
+                [],
+                new ListValue([new IntegerValue(2), new IntegerValue(4)]),
+            ];
+        yield 'Macro filter (list): empty result' =>
+            [
+                '[1, 3, 5].filter(i, i % 2 == 0)',
+                [],
+                new ListValue([]),
+            ];
+        yield 'Macro filter (map): filter on keys' =>
+            [
+                '{"apple": 1, "banana": 2, "avocado": 3}.filter(k, k.size() > 5)',
+                [],
+                Value::from(['banana', 'avocado']),
+            ];
+        yield 'Macro filter error: predicate is not boolean' =>
+            [
+                '[1, 2, 3].filter(i, i * 10)',
+                [],
+                new InvalidMacroCallException(
+                    'The `filter` macro predicate must result in a boolean, got `int`',
+                    new Span(21, 27),
+                ),
+            ];
     }
 }

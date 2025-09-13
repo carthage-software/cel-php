@@ -851,6 +851,8 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             'all' => $this->allMacro($expression),
             'exists' => $this->existsMacro($expression),
             'exists_one' => $this->existsOneMacro($expression),
+            'filter' => $this->filterMacro($expression),
+            'map' => $this->mapMacro($expression),
             default => null,
         };
     }
@@ -947,7 +949,6 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         return new BooleanValue($all_true);
     }
 
-
     /**
      * @throws RuntimeException
      */
@@ -987,7 +988,10 @@ final class TreeWalkingInterpreter implements InterpreterInterface
                 $result = $this->run($callback);
                 if (!$result instanceof BooleanValue) {
                     throw new InvalidMacroCallException(
-                        Str\format('The `exists` macro predicate must result in a boolean, got `%s`', $result->getType()),
+                        Str\format(
+                            'The `exists` macro predicate must result in a boolean, got `%s`',
+                            $result->getType(),
+                        ),
                         $callback->getSpan(),
                     );
                 }
@@ -1043,7 +1047,10 @@ final class TreeWalkingInterpreter implements InterpreterInterface
                 $result = $this->run($callback);
                 if (!$result instanceof BooleanValue) {
                     throw new InvalidMacroCallException(
-                        Str\format('The `exists_one` macro predicate must result in a boolean, got `%s`', $result->getType()),
+                        Str\format(
+                            'The `exists_one` macro predicate must result in a boolean, got `%s`',
+                            $result->getType(),
+                        ),
                         $callback->getSpan(),
                     );
                 }
@@ -1057,5 +1064,144 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         return new BooleanValue($true_count === 1);
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    private function mapMacro(CallExpression $expression): null|Value
+    {
+        if (null === $expression->target) {
+            return null;
+        }
+
+        $argCount = $expression->arguments->count();
+        if ($argCount < 2 || $argCount > 3) {
+            return null;
+        }
+
+        /** @var Expression $name */
+        $name = $expression->arguments->elements[0];
+        if (!$name instanceof IdentifierExpression) {
+            throw new InvalidMacroCallException(
+                'The `map` macro requires the first argument to be an identifier.',
+                $name->getSpan(),
+            );
+        }
+
+        $target = $this->run($expression->target);
+        if (!$target instanceof ListValue && !$target instanceof MapValue) {
+            throw new InvalidMacroCallException(
+                Str\format('The `map` macro requires a list or map target, got `%s`', $target->getType()),
+                $expression->target->getSpan(),
+            );
+        }
+
+        $variableName = $name->identifier->name;
+        $environment = $this->environment->fork();
+        $results = [];
+
+        try {
+            $filterCallback = $argCount === 3 ? $expression->arguments->elements[1] : null;
+            $transformCallback = $argCount === 3
+                ? $expression->arguments->elements[2]
+                : $expression->arguments->elements[1];
+
+            /** @var list<Value> $items */
+            $items = $target instanceof ListValue
+                ? $target->value
+                : Vec\map(Vec\keys($target->value), Value::from(...));
+
+            foreach ($items as $item) {
+                $this->environment->addVariable($variableName, $item);
+
+                if ($filterCallback !== null) {
+                    $filterResult = $this->run($filterCallback);
+                    if (!$filterResult instanceof BooleanValue) {
+                        throw new InvalidMacroCallException(
+                            Str\format(
+                                'The `map` macro filter must result in a boolean, got `%s`',
+                                $filterResult->getType(),
+                            ),
+                            $filterCallback->getSpan(),
+                        );
+                    }
+                    if (!$filterResult->value) {
+                        continue;
+                    }
+                }
+
+                $results[] = $this->run($transformCallback);
+            }
+        } finally {
+            $this->environment = $environment;
+        }
+
+        return new ListValue($results);
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    private function filterMacro(CallExpression $expression): null|Value
+    {
+        if (null === $expression->target) {
+            return null;
+        }
+
+        $name = $expression->arguments->elements[0] ?? null;
+        $callback = $expression->arguments->elements[1] ?? null;
+        if (null === $name || null === $callback || $expression->arguments->count() > 2) {
+            return null;
+        }
+
+        if (!$name instanceof IdentifierExpression) {
+            throw new InvalidMacroCallException(
+                'The `filter` macro requires the first argument to be an identifier.',
+                $name->getSpan(),
+            );
+        }
+
+        $target = $this->run($expression->target);
+        if (!$target instanceof ListValue && !$target instanceof MapValue) {
+            throw new InvalidMacroCallException(
+                Str\format('The `filter` macro requires a list or map target, got `%s`', $target->getType()),
+                $expression->target->getSpan(),
+            );
+        }
+
+        $variableName = $name->identifier->name;
+        $environment = $this->environment->fork();
+        $results = [];
+
+        try {
+            /** @var list<Value> $items */
+            $items = $target instanceof ListValue
+                ? $target->value
+                : Vec\map(Vec\keys($target->value), Value::from(...));
+
+            foreach ($items as $item) {
+                $this->environment->addVariable($variableName, $item);
+
+                $filterResult = $this->run($callback);
+                if (!$filterResult instanceof BooleanValue) {
+                    throw new InvalidMacroCallException(
+                        Str\format(
+                            'The `filter` macro predicate must result in a boolean, got `%s`',
+                            $filterResult->getType(),
+                        ),
+                        $callback->getSpan(),
+                    );
+                }
+
+                if ($filterResult->value) {
+                    $results[] = $item;
+                }
+            }
+        } finally {
+            $this->environment = $environment;
+        }
+
+        return new ListValue($results);
     }
 }
