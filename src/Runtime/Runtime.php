@@ -19,14 +19,29 @@ use Override;
 final readonly class Runtime implements RuntimeInterface
 {
     public function __construct(
+        private Configuration $configuration = new Configuration(),
         private InterpreterFactory $factory = new InterpreterFactory(),
         private FunctionRegistry $registry = new FunctionRegistry(),
     ) {
-        $this->register(new CoreExtension());
-        $this->register(new StringsExtension());
-        $this->register(new ListsExtension());
-        $this->register(new MathExtension());
-        $this->register(new DateTimeExtension());
+        if ($this->configuration->enableCoreExtension) {
+            $this->register(new CoreExtension());
+        }
+
+        if ($this->configuration->enableDateTimeExtension) {
+            $this->register(new DateTimeExtension());
+        }
+
+        if ($this->configuration->enableMathExtension) {
+            $this->register(new MathExtension());
+        }
+
+        if ($this->configuration->enableStringExtension) {
+            $this->register(new StringsExtension());
+        }
+
+        if ($this->configuration->enableListExtension) {
+            $this->register(new ListsExtension());
+        }
     }
 
     /**
@@ -44,7 +59,7 @@ final readonly class Runtime implements RuntimeInterface
     #[Override]
     public function run(Expression $expression, EnvironmentInterface $environment): RuntimeReceipt
     {
-        $interpreter = $this->factory->create($this->registry, $environment);
+        $interpreter = $this->factory->create($this->configuration, $this->registry, $environment);
         $interpreter->reset(); // Ensure the interpreter is in a clean state before running.
 
         $result = $interpreter->run($expression);

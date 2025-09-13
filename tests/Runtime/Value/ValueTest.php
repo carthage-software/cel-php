@@ -54,11 +54,11 @@ final class ValueTest extends TestCase
                     #[Override]
                     public function toCelValue(): Value
                     {
-                        return new MessageValue(self::class, []);
+                        return new MessageValue($this, []);
                     }
 
                     #[Override]
-                    public static function fromCelValue(Value $value): static
+                    public static function fromCelFields(array $_fields): static
                     {
                         return new static();
                     }

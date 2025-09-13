@@ -17,9 +17,9 @@ use Override;
 final readonly class MessageExpression extends Expression
 {
     /**
-     * @param Span|null                                $dot          The span of the leading dot `.`, if present.
-     * @param SelectorNode                             $selector     The first selector in the message type path.
-     * @param PunctuatedSequence<SelectorNode>          $followingSelectors The subsequent selectors in the message type path.
+     * @param Span|null                                $dot The span of the leading dot `.`, if present.
+     * @param SelectorNode                             $selector The first selector in the message type path.
+     * @param PunctuatedSequence<SelectorNode>         $followingSelectors The subsequent selectors in the message type path.
      * @param Span                                     $openingBrace The span of the opening brace `{`.
      * @param PunctuatedSequence<FieldInitializerNode> $initializers The list of field initializers.
      * @param Span                                     $closingBrace The span of the closing brace `}`.

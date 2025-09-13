@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Tests\Runtime;
 
 use Cel\Parser\Parser;
+use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\Environment;
 use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
@@ -29,7 +30,7 @@ abstract class RuntimeTestCase extends TestCase
     /**
      * @param array<string, mixed> $variables
      */
-    protected function evaluate(string $code, array $variables = []): Value
+    protected function evaluate(string $code, array $variables = [], null|Configuration $configuration = null): Value
     {
         $parser = new Parser();
         $ast = $parser->parseString($code);
@@ -39,7 +40,7 @@ abstract class RuntimeTestCase extends TestCase
             $environment->addVariable($name, Value::from($value));
         }
 
-        $runtime = new Runtime();
+        $runtime = new Runtime($configuration ?? new Configuration());
         return $runtime->run($ast, $environment)->result;
     }
 
@@ -47,14 +48,18 @@ abstract class RuntimeTestCase extends TestCase
      * @param array<string, mixed> $variables
      */
     #[DataProvider('provideEvaluationCases')]
-    public function testRun(string $code, array $variables, Value|RuntimeException $expectedResult): void
-    {
+    public function testRun(
+        string $code,
+        array $variables,
+        Value|RuntimeException $expectedResult,
+        null|Configuration $configuration = null,
+    ): void {
         if ($expectedResult instanceof RuntimeException) {
             self::expectException($expectedResult::class);
             self::expectExceptionMessage($expectedResult->getMessage());
         }
 
-        $actualResult = $this->evaluate($code, $variables);
+        $actualResult = $this->evaluate($code, $variables, $configuration);
         if (!$expectedResult instanceof Value) {
             static::fail('Expected exception of type '
             . $expectedResult::class
@@ -75,7 +80,12 @@ abstract class RuntimeTestCase extends TestCase
     }
 
     /**
-     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|RuntimeException}>
+     * @return iterable<string, array{
+     *     0: string,
+     *     1: array<string, mixed>,
+     *     2: Value|RuntimeException,
+     *     3?: null|Configuration
+     * }>
      */
     abstract public static function provideEvaluationCases(): iterable;
 }

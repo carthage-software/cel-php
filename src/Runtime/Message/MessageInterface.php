@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Message;
 
+use Cel\Runtime\Exception\IncompatibleValueTypeException;
+use Cel\Runtime\Exception\InvalidMessageFieldsException;
 use Cel\Runtime\Value\Value;
 
 /**
@@ -27,14 +29,17 @@ interface MessageInterface
     public function toCelValue(): Value;
 
     /**
-     * Creates a new instance of the class from a CEL `Value`.
+     * Creates a new instance of the class from an associative array of field values.
      *
-     * This method is called by the runtime when `getNativeValue()` is invoked
-     * on a `MessageValue` that represents this class.
+     * This method is called by the runtime when constructing a message
+     * from a message literal in CEL syntax.
      *
-     * @param Value $value The CEL value to convert from.
+     * @param array<string, Value> $fields The associative array of field names to CEL values.
      *
      * @return static The new PHP object instance.
+     *
+     * @throws InvalidMessageFieldsException If any field value cannot be converted to the expected PHP type,
+     *                                       or if a required field is missing, or if there are unknown fields.
      */
-    public static function fromCelValue(Value $value): static;
+    public static function fromCelFields(array $fields): static;
 }

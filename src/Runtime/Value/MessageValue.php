@@ -14,11 +14,10 @@ use Override;
 final readonly class MessageValue extends Value
 {
     /**
-     * @param class-string<MessageInterface> $type
      * @param array<string, Value> $fields
      */
     public function __construct(
-        public string $type,
+        public MessageInterface $message,
         public array $fields,
     ) {}
 
@@ -35,7 +34,7 @@ final readonly class MessageValue extends Value
             throw UnsupportedOperationException::forEquality($this, $other);
         }
 
-        if ($this->type !== $other->type) {
+        if ($this->message::class !== $other->message::class) {
             return false;
         }
 
@@ -62,13 +61,10 @@ final readonly class MessageValue extends Value
         throw UnsupportedOperationException::forComparison($this, $other);
     }
 
-    /**
-     * @mago-expect analysis:possibly-static-access-on-interface
-     */
     #[Override]
-    public function getNativeValue(): object
+    public function getNativeValue(): MessageInterface
     {
-        return $this->type::fromCelValue($this);
+        return $this->message;
     }
 
     /**

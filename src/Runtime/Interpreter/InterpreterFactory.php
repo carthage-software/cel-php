@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Interpreter;
 
+use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\EnvironmentInterface;
 use Cel\Runtime\Function\FunctionRegistry;
 use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
@@ -14,10 +15,13 @@ final readonly class InterpreterFactory
         private InterpreterPreference $preference = InterpreterPreference::TreeWalking,
     ) {}
 
-    public function create(FunctionRegistry $registry, EnvironmentInterface $environment): InterpreterInterface
-    {
+    public function create(
+        Configuration $configuration,
+        FunctionRegistry $registry,
+        EnvironmentInterface $environment,
+    ): InterpreterInterface {
         return match ($this->preference) {
-            InterpreterPreference::TreeWalking => new TreeWalkingInterpreter($registry, $environment),
+            InterpreterPreference::TreeWalking => new TreeWalkingInterpreter($configuration, $registry, $environment),
         };
     }
 }

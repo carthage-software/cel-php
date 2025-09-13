@@ -79,7 +79,7 @@ As mentioned earlier, this project is still under heavy development. Below is a 
     - [x] Null
     - [x] List
     - [x] Map
-    - [ ] Struct ( partial support )
+    - [x] Message
     - [x] Duration
     - [x] Timestamp
 - Interpreter & Runtime

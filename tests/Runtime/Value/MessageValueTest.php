@@ -23,18 +23,19 @@ final class MessageValueTest extends TestCase
             #[Override]
             public function toCelValue(): Value
             {
-                return new MessageValue(static::class, ['name' => new StringValue('test')]);
+                return new MessageValue($this, ['name' => new StringValue('test')]);
             }
 
             #[Override]
-            public static function fromCelValue(Value $value): static
+            public static function fromCelFields(array $_fields): static
             {
                 return new static();
             }
         };
 
-        $value = new MessageValue($message::class, ['name' => new StringValue('test')]);
-        static::assertInstanceOf($message::class, $value->getNativeValue());
+        $value = new MessageValue($message, ['name' => new StringValue('test')]);
+        static::assertSame($message, $value->getNativeValue());
         static::assertSame('message', $value->getType());
+        static::assertTrue($value->isEqual($message->toCelValue()));
     }
 }

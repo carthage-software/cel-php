@@ -4,15 +4,24 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Runtime;
 
+use Cel\Runtime\Configuration;
+use Cel\Runtime\Exception\InvalidMessageFieldsException;
+use Cel\Runtime\Exception\MessageConstructionException;
 use Cel\Runtime\Exception\NoSuchOverloadException;
+use Cel\Runtime\Exception\NoSuchTypeException;
 use Cel\Runtime\Exception\OverflowException;
 use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\UnsupportedOperationException;
 use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
 use Cel\Runtime\Runtime;
 use Cel\Runtime\Value\BooleanValue;
+use Cel\Runtime\Value\MessageValue;
+use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\UnsignedIntegerValue;
 use Cel\Runtime\Value\Value;
 use Cel\Span\Span;
+use Cel\Tests\Fixture\CommentMessage;
+use Cel\Tests\Fixture\UserMessage;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Medium;
@@ -23,7 +32,12 @@ use PHPUnit\Framework\Attributes\Medium;
 final class RuntimeTest extends RuntimeTestCase
 {
     /**
-     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|RuntimeException}>
+     * @return iterable<string, array{
+     *     0: string,
+     *     1: array<string, mixed>,
+     *     2: Value|RuntimeException,
+     *     3?: null|Configuration
+     * }>
      */
     #[Override]
     public static function provideEvaluationCases(): iterable
@@ -84,6 +98,66 @@ final class RuntimeTest extends RuntimeTestCase
                     'request' => ['quantity' => new UnsignedIntegerValue(50)],
                 ],
                 new OverflowException('Unsigned integer overflow on subtraction', new Span(0, 39)),
+            ];
+
+        yield 'Message' =>
+            [
+                'cel.tests.fixture.UserMessage { name: "azjezz", email: "azjezz@carthage.software" }',
+                [],
+                new MessageValue(new UserMessage('azjezz', 'azjezz@carthage.software'), [
+                    'name' => new StringValue('azjezz'),
+                    'email' => new StringValue('azjezz@carthage.software'),
+                ]),
+                Configuration::forAllowedMessages([UserMessage::class]),
+            ];
+
+        yield 'Message Invalid Fields' =>
+            [
+                'cel.tests.fixture.UserMessage { name: 1, email: "azjezz@carthage.software" }',
+                [],
+                new MessageConstructionException('f', Span::zero()),
+                Configuration::forAllowedMessages([UserMessage::class]),
+            ];
+
+        yield 'Message Missing Fields' =>
+            [
+                'cel.tests.fixture.UserMessage { email: "azjezz@carthage.software" }',
+                [],
+                new MessageConstructionException('f', Span::zero()),
+                Configuration::forAllowedMessages([UserMessage::class]),
+            ];
+
+        yield 'Message Extra Fields' =>
+            [
+                'cel.tests.fixture.UserMessage { name: "azjezz", email: "azjezz@carthage.software", age: 30 }',
+                [],
+                new MessageConstructionException(
+                    'Failed to create message of type `cel.tests.fixture.UserMessage`: Invalid fields for `UserMessage`, expected `name` and `email` of type `string`',
+                    Span::zero(),
+                ),
+                Configuration::forAllowedMessages([UserMessage::class]),
+            ];
+
+        yield 'Disable Messages' =>
+            [
+                'cel.tests.fixture.UserMessage { name: "azjezz", email: "azjezz@carthage.software" }',
+                [],
+                new NoSuchTypeException(
+                    'Message type `cel.tests.fixture.UserMessage` does not exist or is not allowed per configuration.',
+                    Span::zero(),
+                ),
+                Configuration::forAllowedMessages([]),
+            ];
+
+        yield 'Disable Message Type' =>
+            [
+                'cel.tests.fixture.UserMessage { name: "azjezz", email: "azjezz@carthage.software" }',
+                [],
+                new NoSuchTypeException(
+                    'Message type `cel.tests.fixture.UserMessage` does not exist or is not allowed per configuration.',
+                    Span::zero(),
+                ),
+                Configuration::forAllowedMessages([CommentMessage::class]),
             ];
     }
 }

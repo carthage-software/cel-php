@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Interpreter\TreeWalking;
 
+use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\EnvironmentInterface;
 use Cel\Runtime\Exception\InvalidConditionTypeException;
 use Cel\Runtime\Exception\InvalidMacroCallException;
+use Cel\Runtime\Exception\InvalidMessageFieldsException;
+use Cel\Runtime\Exception\MessageConstructionException;
 use Cel\Runtime\Exception\NoSuchFunctionException;
 use Cel\Runtime\Exception\NoSuchKeyException;
 use Cel\Runtime\Exception\NoSuchOverloadException;
+use Cel\Runtime\Exception\NoSuchTypeException;
 use Cel\Runtime\Exception\NoSuchVariableException;
 use Cel\Runtime\Exception\OverflowException;
 use Cel\Runtime\Exception\RuntimeException;
@@ -31,6 +35,7 @@ use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;
 use Cel\Syntax\Aggregate\ListExpression;
 use Cel\Syntax\Aggregate\MapExpression;
+use Cel\Syntax\Aggregate\MessageExpression;
 use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Syntax\Binary\BinaryOperatorKind;
 use Cel\Syntax\ConditionalExpression;
@@ -55,7 +60,9 @@ use Override;
 use Psl\Iter;
 use Psl\Math;
 use Psl\Str;
+use Psl\Str\Byte;
 use Psl\Vec;
+use Throwable;
 
 use function bcadd;
 use function bccomp;
@@ -77,7 +84,8 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     private bool $idempotent = true;
 
     public function __construct(
-        private FunctionRegistry $registry,
+        private readonly Configuration $configuration,
+        private readonly FunctionRegistry $registry,
         private EnvironmentInterface $environment,
     ) {}
 
@@ -156,6 +164,10 @@ final class TreeWalkingInterpreter implements InterpreterInterface
 
         if ($expression instanceof CallExpression) {
             return $this->call($expression);
+        }
+
+        if ($expression instanceof MessageExpression) {
+            return $this->message($expression);
         }
 
         throw new UnsupportedOperationException(
@@ -705,7 +717,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
                     Str\format(
                         'Field `%s` does not exist on message of type `%s`',
                         $expression->field->name,
-                        $operand->type,
+                        $operand->message::class,
                     ),
                     $expression->getSpan(),
                 );
@@ -759,7 +771,11 @@ final class TreeWalkingInterpreter implements InterpreterInterface
 
             if (null === $field) {
                 throw new NoSuchKeyException(
-                    Str\format('Field `%s` does not exist on message of type `%s`', $index->value, $operand->type),
+                    Str\format(
+                        'Field `%s` does not exist on message of type `%s`',
+                        $index->value,
+                        $operand->message::class,
+                    ),
                     $expression->getSpan(),
                 );
             }
@@ -826,6 +842,56 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     /**
      * @throws RuntimeException
      */
+    private function message(MessageExpression $expression): Value
+    {
+        $classname = $expression->selector->name;
+        $typename = $expression->selector->name;
+        foreach ($expression->followingSelectors as $selector) {
+            $classname .= '\\' . $selector->name;
+            $typename .= '.' . $selector->name;
+        }
+
+        if ([] === $this->configuration->allowedMessageClasses) {
+            throw new NoSuchTypeException(
+                Str\format('Message type `%s` does not exist or is not allowed per configuration.', $typename),
+                $expression->getSpan(),
+            );
+        }
+
+        $foundClassname = null;
+        foreach ($this->configuration->allowedMessageClasses as $allowedClassname) {
+            if (Byte\compare_ci($classname, $allowedClassname) === 0) {
+                $foundClassname = $allowedClassname;
+                break;
+            }
+        }
+
+        if (null === $foundClassname) {
+            throw new NoSuchTypeException(
+                Str\format('Message type `%s` does not exist or is not allowed per configuration.', $typename),
+                $expression->getSpan(),
+            );
+        }
+
+        $fields = [];
+        foreach ($expression->initializers as $initializer) {
+            $fields[$initializer->field->name] = $this->run($initializer->value);
+        }
+
+        try {
+            // @mago-expect analysis:possibly-static-access-on-interface
+            return new MessageValue($foundClassname::fromCelFields($fields), $fields);
+        } catch (Throwable $e) {
+            throw new MessageConstructionException(
+                Str\format('Failed to create message of type `%s`: %s', $typename, $e->getMessage()),
+                $expression->getSpan(),
+            );
+        }
+    }
+
+    /**
+     * @throws RuntimeException
+     */
     private function call(CallExpression $expression): Value
     {
         $macro_result = $this->macro($expression);
@@ -871,6 +937,10 @@ final class TreeWalkingInterpreter implements InterpreterInterface
      */
     private function macro(CallExpression $expression): null|Value
     {
+        if (!$this->configuration->enableMacros) {
+            return null;
+        }
+
         return match ($expression->function->name) {
             'has' => $this->hasMacro($expression),
             'all' => $this->allMacro($expression),
