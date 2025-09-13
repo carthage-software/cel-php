@@ -94,18 +94,18 @@ final class DateTimeExtensionTest extends RuntimeTestCase
             ];
 
         yield 'DateTime duration(): hours only' =>
-        [
-            'duration("1h")',
-            [],
-            new DurationValue(Duration::hours(1)),
-        ];
+            [
+                'duration("1h")',
+                [],
+                new DurationValue(Duration::hours(1)),
+            ];
 
         yield 'DateTime duration(): minutes only' =>
-        [
-            'duration("30m")',
-            [],
-            new DurationValue(Duration::minutes(30)),
-        ];
+            [
+                'duration("30m")',
+                [],
+                new DurationValue(Duration::minutes(30)),
+            ];
 
         yield 'DateTime duration(): seconds only' =>
             [
