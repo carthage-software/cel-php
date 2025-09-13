@@ -1,6 +1,6 @@
 # Security
 
-If you discover a security vulnerability within Mago, please send an e-mail to our Security Team via [security@carthage.software](mailto://security@carthage.software).
+If you discover a security vulnerability within Cel-PHP, please send an e-mail to our Security Team via [security@carthage.software](mailto://security@carthage.software).
 
 Please withhold public disclosure until after we have addressed the vulnerability.
 
