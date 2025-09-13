@@ -66,6 +66,14 @@ final readonly class MapValue extends Value
     }
 
     /**
+     * Check if the map has the specified key.
+     */
+    public function has(string|int $key): bool
+    {
+        return isset($this->value[$key]);
+    }
+
+    /**
      * Get a map entry by key.
      *
      * @param array-key $key

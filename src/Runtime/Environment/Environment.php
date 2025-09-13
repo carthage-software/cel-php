@@ -39,4 +39,10 @@ final class Environment implements EnvironmentInterface
     {
         return $this->variables[$name] ?? null;
     }
+
+    #[Override]
+    public function fork(): EnvironmentInterface
+    {
+        return new self($this->variables);
+    }
 }

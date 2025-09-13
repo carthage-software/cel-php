@@ -6,6 +6,7 @@ namespace Cel\Runtime\Interpreter\TreeWalking;
 
 use Cel\Runtime\Environment\EnvironmentInterface;
 use Cel\Runtime\Exception\InvalidConditionTypeException;
+use Cel\Runtime\Exception\InvalidMacroCallException;
 use Cel\Runtime\Exception\NoSuchFunctionException;
 use Cel\Runtime\Exception\NoSuchKeyException;
 use Cel\Runtime\Exception\NoSuchOverloadException;
@@ -71,7 +72,7 @@ use function bcsub;
  * @mago-expect lint:kan-defect
  * @mago-expect lint:cyclomatic-complexity
  */
-final readonly class TreeWalkingInterpreter implements InterpreterInterface
+final class TreeWalkingInterpreter implements InterpreterInterface
 {
     public function __construct(
         private FunctionRegistry $registry,
@@ -807,6 +808,11 @@ final readonly class TreeWalkingInterpreter implements InterpreterInterface
      */
     private function call(CallExpression $expression): Value
     {
+        $macro_result = $this->macro($expression);
+        if (null !== $macro_result) {
+            return $macro_result;
+        }
+
         $arguments = [];
         if ($expression->target !== null) {
             $arguments[] = $this->run($expression->target);
@@ -833,5 +839,109 @@ final readonly class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         return $callable($expression, $arguments);
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    private function macro(CallExpression $expression): null|Value
+    {
+        return match ($expression->function->name) {
+            'has' => $this->hasMacro($expression),
+            'all' => $this->allMacro($expression),
+            default => null,
+        };
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    private function hasMacro(CallExpression $expression): null|Value
+    {
+        if (null !== $expression->target) {
+            return null;
+        }
+
+        $argument = $expression->arguments->elements[0] ?? null;
+        if (null === $argument || $expression->arguments->count() > 1) {
+            return null;
+        }
+
+        if (!$argument instanceof MemberAccessExpression) {
+            throw new InvalidMacroCallException(
+                'The `has` macro requires a single member access expression as an argument.',
+                $argument->getSpan(),
+            );
+        }
+
+        $operand = $this->run($argument->operand);
+        if (!$operand instanceof MessageValue && !$operand instanceof MapValue) {
+            throw new InvalidMacroCallException(
+                Str\format('The `has` macro requires a message or map operand, got `%s`', $operand->getType()),
+                $argument->operand->getSpan(),
+            );
+        }
+
+        if ($operand instanceof MessageValue) {
+            return new BooleanValue($operand->hasField($argument->field->name));
+        }
+
+        return new BooleanValue($operand->has($argument->field->name));
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    private function allMacro(CallExpression $expression): null|Value
+    {
+        if (null === $expression->target) {
+            return null;
+        }
+
+        $name = $expression->arguments->elements[0] ?? null;
+        $callback = $expression->arguments->elements[1] ?? null;
+        if (null === $name || null === $callback || $expression->arguments->count() > 2) {
+            return null;
+        }
+
+        if (!$name instanceof IdentifierExpression) {
+            throw new InvalidMacroCallException(
+                'The `all` macro requires the first argument to be an identifier.',
+                $name->getSpan(),
+            );
+        }
+
+        $target = $this->run($expression->target);
+        if (!$target instanceof ListValue) {
+            throw new InvalidMacroCallException(
+                Str\format('The `all` macro requires a list target, got `%s`', $target->getType()),
+                $expression->target->getSpan(),
+            );
+        }
+
+        $environment = $this->environment->fork();
+        try {
+            $all_true = true;
+            foreach ($target->value as $value) {
+                $this->environment->addVariable($name->identifier->name, $value);
+
+                $result = $this->run($callback);
+                if (!$result instanceof BooleanValue) {
+                    throw new InvalidMacroCallException(
+                        Str\format('The `all` macro predicate must result in a boolean, got `%s`', $result->getType()),
+                        $callback->getSpan(),
+                    );
+                }
+
+                if (!$result->value) {
+                    $all_true = false;
+                    break;
+                }
+            }
+        } finally {
+            $this->environment = $environment;
+        }
+
+        return new BooleanValue($all_true);
     }
 }

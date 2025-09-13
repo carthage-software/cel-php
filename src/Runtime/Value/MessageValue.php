@@ -72,6 +72,14 @@ final readonly class MessageValue extends Value
     }
 
     /**
+     * Checks if a field exists.
+     */
+    public function hasField(string $name): bool
+    {
+        return isset($this->fields[$name]);
+    }
+
+    /**
      * Retrieves a field by name.
      */
     public function getField(string $name): null|Value

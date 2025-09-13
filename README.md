@@ -62,8 +62,8 @@ As mentioned earlier, this project is still under heavy development. Below is a 
 
 - Language Features
   - [ ] Implement Macros
-    - [ ] `has(e.f)`
-    - [ ] `e.all(x, p)`
+    - [x] `has(e.f)`
+    - [x] `e.all(x, p)`
     - [ ] `e.exists(x, p)`
     - [ ] `e.exists_one(x, p)`
     - [ ] `e.map(x, t)` (for lists and maps)

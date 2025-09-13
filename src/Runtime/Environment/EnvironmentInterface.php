@@ -16,4 +16,6 @@ interface EnvironmentInterface
     public function addVariable(string $name, Value $value): void;
 
     public function getVariable(string $name): null|Value;
+
+    public function fork(): EnvironmentInterface;
 }

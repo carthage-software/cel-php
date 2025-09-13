@@ -1,0 +1,73 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cel\Tests\Runtime;
+
+use Cel\Parser\Parser;
+use Cel\Runtime\Environment\Environment;
+use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
+use Cel\Runtime\Runtime;
+use Cel\Runtime\Value\Value;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Medium;
+use PHPUnit\Framework\TestCase;
+use Psl\Str;
+
+use function var_export;
+
+/**
+ * @mago-expect lint:no-debug-symbols
+ */
+#[CoversClass(Runtime::class)]
+#[CoversClass(TreeWalkingInterpreter::class)]
+#[Medium]
+abstract class RuntimeTestCase extends TestCase
+{
+    /**
+     * @param array<string, mixed> $variables
+     */
+    #[DataProvider('provideEvaluationCases')]
+    public function testRun(string $code, array $variables, Value|RuntimeException $expectedResult): void
+    {
+        $parser = new Parser();
+        $ast = $parser->parseString($code);
+
+        $environment = new Environment();
+        foreach ($variables as $name => $value) { // @mago-expect analysis:mixed-assignment
+            $environment->addVariable($name, Value::from($value));
+        }
+
+        if ($expectedResult instanceof RuntimeException) {
+            self::expectException($expectedResult::class);
+            self::expectExceptionMessage($expectedResult->getMessage());
+        }
+
+        $runtime = new Runtime();
+        $actualResult = $runtime->run($ast, $environment);
+        if (!$expectedResult instanceof Value) {
+            static::fail('Expected exception of type '
+            . $expectedResult::class
+            . ' but got result: '
+            . $actualResult::class);
+        }
+
+        static::assertInstanceOf(Value::class, $actualResult);
+
+        static::assertTrue(
+            $expectedResult->isEqual($actualResult),
+            Str\format(
+                "Expected result to be equal.\nExpected: %s\nActual: %s",
+                var_export($expectedResult, true),
+                var_export($actualResult, true),
+            ),
+        );
+    }
+
+    /**
+     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|RuntimeException}>
+     */
+    abstract public static function provideEvaluationCases(): iterable;
+}
