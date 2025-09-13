@@ -64,8 +64,8 @@ As mentioned earlier, this project is still under heavy development. Below is a 
   - [ ] Implement Macros
     - [x] `has(e.f)`
     - [x] `e.all(x, p)`
-    - [ ] `e.exists(x, p)`
-    - [ ] `e.exists_one(x, p)`
+    - [x] `e.exists(x, p)`
+    - [x] `e.exists_one(x, p)`
     - [ ] `e.map(x, t)` (for lists and maps)
     - [ ] `e.map(x, p, t)`
     - [ ] `e.filter(x, p)` (for lists and maps)

@@ -849,6 +849,8 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         return match ($expression->function->name) {
             'has' => $this->hasMacro($expression),
             'all' => $this->allMacro($expression),
+            'exists' => $this->existsMacro($expression),
+            'exists_one' => $this->existsOneMacro($expression),
             default => null,
         };
     }
@@ -943,5 +945,117 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         return new BooleanValue($all_true);
+    }
+
+
+    /**
+     * @throws RuntimeException
+     */
+    private function existsMacro(CallExpression $expression): null|Value
+    {
+        if (null === $expression->target) {
+            return null;
+        }
+
+        $name = $expression->arguments->elements[0] ?? null;
+        $callback = $expression->arguments->elements[1] ?? null;
+        if (null === $name || null === $callback || $expression->arguments->count() > 2) {
+            return null;
+        }
+
+        if (!$name instanceof IdentifierExpression) {
+            throw new InvalidMacroCallException(
+                'The `exists` macro requires the first argument to be an identifier.',
+                $name->getSpan(),
+            );
+        }
+
+        $target = $this->run($expression->target);
+        if (!$target instanceof ListValue) {
+            throw new InvalidMacroCallException(
+                Str\format('The `exists` macro requires a list target, got `%s`', $target->getType()),
+                $expression->target->getSpan(),
+            );
+        }
+
+        $environment = $this->environment->fork();
+        try {
+            $found_one = false;
+            foreach ($target->value as $value) {
+                $this->environment->addVariable($name->identifier->name, $value);
+
+                $result = $this->run($callback);
+                if (!$result instanceof BooleanValue) {
+                    throw new InvalidMacroCallException(
+                        Str\format('The `exists` macro predicate must result in a boolean, got `%s`', $result->getType()),
+                        $callback->getSpan(),
+                    );
+                }
+
+                if ($result->value) {
+                    $found_one = true;
+                    break;
+                }
+            }
+        } finally {
+            $this->environment = $environment;
+        }
+
+        return new BooleanValue($found_one);
+    }
+
+    /**
+     * @throws RuntimeException
+     */
+    private function existsOneMacro(CallExpression $expression): null|Value
+    {
+        if (null === $expression->target) {
+            return null;
+        }
+
+        $name = $expression->arguments->elements[0] ?? null;
+        $callback = $expression->arguments->elements[1] ?? null;
+        if (null === $name || null === $callback || $expression->arguments->count() > 2) {
+            return null;
+        }
+
+        if (!$name instanceof IdentifierExpression) {
+            throw new InvalidMacroCallException(
+                'The `exists_one` macro requires the first argument to be an identifier.',
+                $name->getSpan(),
+            );
+        }
+
+        $target = $this->run($expression->target);
+        if (!$target instanceof ListValue) {
+            throw new InvalidMacroCallException(
+                Str\format('The `exists_one` macro requires a list target, got `%s`', $target->getType()),
+                $expression->target->getSpan(),
+            );
+        }
+
+        $environment = $this->environment->fork();
+        $true_count = 0;
+        try {
+            foreach ($target->value as $value) {
+                $this->environment->addVariable($name->identifier->name, $value);
+
+                $result = $this->run($callback);
+                if (!$result instanceof BooleanValue) {
+                    throw new InvalidMacroCallException(
+                        Str\format('The `exists_one` macro predicate must result in a boolean, got `%s`', $result->getType()),
+                        $callback->getSpan(),
+                    );
+                }
+
+                if ($result->value) {
+                    $true_count++;
+                }
+            }
+        } finally {
+            $this->environment = $environment;
+        }
+
+        return new BooleanValue($true_count === 1);
     }
 }

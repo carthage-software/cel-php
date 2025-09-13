@@ -100,5 +100,30 @@ final class MacroTest extends RuntimeTestCase
                 [],
                 new InvalidMacroCallException('The `all` macro requires a list target, got `int`', new Span(0, 1)),
             ];
+
+        yield 'Macro exists: one true' => ['[1, -1, 3].exists(x, x < 0)', [], new BooleanValue(true)];
+        yield 'Macro exists: all false' => ['[1, 2, 3].exists(x, x < 0)', [], new BooleanValue(false)];
+        yield 'Macro exists: empty list' => ['[].exists(x, x > 0)', [], new BooleanValue(false)];
+        yield 'Macro exists error: predicate returns non-boolean' => [
+            '[1, 2, 3].exists(x, x + 1)',
+            [],
+            new InvalidMacroCallException(
+                'The `exists` macro predicate must result in a boolean, got `int`',
+                new Span(19, 24),
+            ),
+        ];
+
+        yield 'Macro exists_one: exactly one true' => ['[-1, 1, 2].exists_one(x, x < 0)', [], new BooleanValue(true)];
+        yield 'Macro exists_one: zero trues' => ['[1, 2, 3].exists_one(x, x < 0)', [], new BooleanValue(false)];
+        yield 'Macro exists_one: multiple trues' => ['[-1, -2, 1].exists_one(x, x < 0)', [], new BooleanValue(false)];
+        yield 'Macro exists_one: empty list' => ['[].exists_one(x, x > 0)', [], new BooleanValue(false)];
+        yield 'Macro exists_one error: predicate returns non-boolean' => [
+            '[1, 2, 3].exists_one(x, x + 1)',
+            [],
+            new InvalidMacroCallException(
+                'The `exists_one` macro predicate must result in a boolean, got `int`',
+                new Span(22, 27),
+            ),
+        ];
     }
 }
