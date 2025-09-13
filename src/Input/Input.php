@@ -6,13 +6,11 @@ namespace Cel\Input;
 
 use Cel\Input\Exception\OutOfBoundsException;
 use Override;
+use Psl\Math;
+use Psl\Str;
+use Psl\Str\Byte;
 
 use function ctype_space;
-use function min;
-use function strcasecmp;
-use function strlen;
-use function strpos;
-use function substr;
 
 /**
  * A concrete implementation of {@see InputInterface} that operates on a string of bytes.
@@ -41,7 +39,7 @@ final class Input implements InputInterface
     public function __construct(string $bytes, int $cursor = 0)
     {
         $this->bytes = $bytes;
-        $this->length = strlen($this->bytes);
+        $this->length = Byte\length($this->bytes);
         $this->cursor = $cursor;
     }
 
@@ -82,14 +80,15 @@ final class Input implements InputInterface
     #[Override]
     public function sliceInRange(int $from, int $to): string
     {
-        $start = min($from, $this->length);
-        $end = min($to, $this->length);
+        $start = Math\minva($from, $this->length);
+        $end = Math\minva($to, $this->length);
 
-        if ($start >= $end) {
+        $offset = $end - $start;
+        if ($offset < 1) {
             return '';
         }
 
-        return substr($this->bytes, $start, $end - $start);
+        return Byte\slice($this->bytes, $start, $offset);
     }
 
     #[Override]
@@ -106,7 +105,7 @@ final class Input implements InputInterface
     #[Override]
     public function skip(int $count): void
     {
-        $this->cursor = min($this->cursor + $count, $this->length);
+        $this->cursor = Math\minva($this->cursor + $count, $this->length);
     }
 
     /**
@@ -115,15 +114,15 @@ final class Input implements InputInterface
     #[Override]
     public function consume(int $count): string
     {
-        $substring = $this->read($count);
-        $this->skip(strlen($substring));
-        return $substring;
+        $slice = $this->read($count);
+        $this->skip(Byte\length($slice));
+        return $slice;
     }
 
     #[Override]
     public function consumeRemaining(): string
     {
-        $remaining = substr($this->bytes, $this->cursor);
+        $remaining = Byte\slice($this->bytes, $this->cursor);
         $this->cursor = $this->length;
         return $remaining;
     }
@@ -131,14 +130,18 @@ final class Input implements InputInterface
     #[Override]
     public function consumeUntil(string $search, bool $ignoreCase = false): string
     {
-        $function = $ignoreCase ? stripos(...) : strpos(...);
+        $function = $ignoreCase ? Byte\search_ci(...) : Byte\search(...);
         $position = $function($this->bytes, $search, $this->cursor);
-
-        if ($position === false) { // @mago-expect lint:no-boolean-literal-comparison
+        if ($position === null) {
             return $this->consumeRemaining();
         }
 
-        $slice = substr($this->bytes, $this->cursor, $position - $this->cursor);
+        $offset = $position - $this->cursor;
+        if ($offset < 1) {
+            return '';
+        }
+
+        $slice = Byte\slice($this->bytes, $this->cursor, $offset);
         $this->cursor = $position;
 
         return $slice;
@@ -147,13 +150,18 @@ final class Input implements InputInterface
     #[Override]
     public function consumeThrough(string $search): string
     {
-        $position = strpos($this->bytes, $search, $this->cursor);
-        if ($position === false) { // @mago-expect lint:no-boolean-literal-comparison
+        $position = Byte\search($this->bytes, $search, $this->cursor);
+        if ($position === null) {
             return $this->consumeRemaining();
         }
 
-        $end_position = $position + strlen($search);
-        $slice = substr($this->bytes, $this->cursor, $end_position - $this->cursor);
+        $end_position = $position + Byte\length($search);
+        $offset = $end_position - $this->cursor;
+        if ($offset < 1) {
+            return '';
+        }
+
+        $slice = Byte\slice($this->bytes, $this->cursor, $offset);
         $this->cursor = $end_position;
 
         return $slice;
@@ -167,7 +175,12 @@ final class Input implements InputInterface
             $this->cursor++;
         }
 
-        return substr($this->bytes, $start, $this->cursor - $start);
+        $offset = $this->cursor - $start;
+        if ($offset < 1) {
+            return '';
+        }
+
+        return Byte\slice($this->bytes, $start, $offset);
     }
 
     /**
@@ -176,7 +189,7 @@ final class Input implements InputInterface
     #[Override]
     public function read(int $count): string
     {
-        return substr($this->bytes, $this->cursor, $count);
+        return Byte\slice($this->bytes, $this->cursor, $count);
     }
 
     /**
@@ -195,10 +208,10 @@ final class Input implements InputInterface
     #[Override]
     public function isAt(string $search, bool $ignoreCase = false): bool
     {
-        $slice = $this->read(strlen($search));
+        $slice = $this->read(Byte\length($search));
 
         if ($ignoreCase) {
-            return strcasecmp($slice, $search) === 0;
+            return Byte\compare_ci($slice, $search) === 0;
         }
 
         return $slice === $search;
@@ -213,6 +226,10 @@ final class Input implements InputInterface
     {
         $from = $this->cursor + $offset;
 
-        return substr($this->bytes, $from, $n);
+        try {
+            return Byte\slice($this->bytes, $from, $n);
+        } catch (Str\Exception\OutOfBoundsException) {
+            return '';
+        }
     }
 }

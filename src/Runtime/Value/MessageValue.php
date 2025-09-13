@@ -1,0 +1,81 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cel\Runtime\Value;
+
+use Cel\Runtime\Exception\UnsupportedOperationException;
+use Cel\Runtime\Message\MessageInterface;
+use Override;
+
+/**
+ * Represents a message value.
+ */
+final readonly class MessageValue extends Value
+{
+    /**
+     * @param class-string<MessageInterface> $type
+     * @param array<string, Value> $fields
+     */
+    public function __construct(
+        public string $type,
+        public array $fields,
+    ) {}
+
+    #[Override]
+    public function getKind(): ValueKind
+    {
+        return ValueKind::Message;
+    }
+
+    #[Override]
+    public function isEqual(Value $other): bool
+    {
+        if (!$other instanceof MessageValue) {
+            throw UnsupportedOperationException::forEquality($this, $other);
+        }
+
+        if ($this->type !== $other->type) {
+            return false;
+        }
+
+        foreach ($this->fields as $field => $value) {
+            $otherValue = $other->getField($field);
+
+            if ($otherValue === null || !$value->isEqual($otherValue)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    #[Override]
+    public function isLessThan(Value $other): bool
+    {
+        throw UnsupportedOperationException::forComparison($this, $other);
+    }
+
+    #[Override]
+    public function isGreaterThan(Value $other): bool
+    {
+        throw UnsupportedOperationException::forComparison($this, $other);
+    }
+
+    /**
+     * @mago-expect analysis:possibly-static-access-on-interface
+     */
+    #[Override]
+    public function getNativeValue(): object
+    {
+        return $this->type::fromCelValue($this);
+    }
+
+    /**
+     * Retrieves a field by name.
+     */
+    public function getField(string $name): null|Value
+    {
+        return $this->fields[$name] ?? null;
+    }
+}

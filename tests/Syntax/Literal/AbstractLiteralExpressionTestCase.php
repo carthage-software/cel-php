@@ -10,6 +10,7 @@ use Cel\Syntax\Literal\LiteralExpression;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use Psl\Str\Byte;
 
 /**
  * @template T
@@ -26,7 +27,7 @@ abstract class AbstractLiteralExpressionTestCase extends TestCase
     public function testLiteral(): void
     {
         [$value, $raw] = $this->getTestValue();
-        $span = new Span(0, \strlen($raw));
+        $span = new Span(0, Byte\length($raw));
 
         [$literal, $expectedValue, $expectedRaw, $expectedSpan, $expectedKind] = $this->createLiteral(
             $value,

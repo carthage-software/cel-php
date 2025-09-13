@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Cel\Span;
 
-use JsonSerializable;
 use Override;
+use Psl\Str;
+use Stringable;
 
 /**
  * Represents a segment of the source code, defined by a start and end position.
@@ -13,7 +14,7 @@ use Override;
  * Spans are used to associate tokens and AST nodes with their original location
  * in the source, which is crucial for error reporting and debugging.
  */
-final readonly class Span implements JsonSerializable
+final readonly class Span implements Stringable
 {
     /**
      * @param int<0, max> $start The starting byte offset of the span (inclusive).
@@ -90,16 +91,11 @@ final readonly class Span implements JsonSerializable
     }
 
     /**
-     * Serializes the span to a JSON-compatible array.
-     *
-     * @return list{int, int}
+     * @inheritDoc
      */
     #[Override]
-    public function jsonSerialize(): array
+    public function __toString(): string
     {
-        return [
-            $this->start,
-            $this->end,
-        ];
+        return Str\format('[%d..%d]', $this->start, $this->end);
     }
 }

@@ -8,14 +8,14 @@ fmt:
     ./vendor/bin/mago --config config/mago.toml fmt
 
 lint:
-    ./vendor/bin/mago --config config/mago.toml lint
+    ./vendor/bin/mago --config config/mago.toml lint --sort
 
 fix:
     ./vendor/bin/mago --config config/mago.toml lint --fix --unsafe
     ./vendor/bin/mago --config config/mago.toml fmt
 
 analyze:
-    ./vendor/bin/mago --config config/mago.toml analyze
+    ./vendor/bin/mago --config config/mago.toml analyze --sort
 
 typos:
     typos -c config/typos.toml

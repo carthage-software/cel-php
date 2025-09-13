@@ -1,0 +1,54 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cel\Runtime\Extension\Lists\Function;
+
+use Cel\Runtime\Function\FunctionInterface;
+use Cel\Runtime\Value\ListValue;
+use Cel\Runtime\Value\Value;
+use Cel\Runtime\Value\ValueKind;
+use Cel\Syntax\Member\CallExpression;
+use Override;
+
+/**
+ * @mago-expect analysis:unused-parameter
+ */
+final readonly class FlattenFunction implements FunctionInterface
+{
+    #[Override]
+    public function getName(): string
+    {
+        return 'flatten';
+    }
+
+    /**
+     * @return iterable<list<ValueKind>, (callable(CallExpression, list<Value>): Value)>
+     */
+    #[Override]
+    public function getOverloads(): iterable
+    {
+        yield [ValueKind::List] =>
+            /**
+             * @param CallExpression $call      The call expression representing the function call.
+             * @param list<Value>    $arguments The arguments passed to the function.
+             */
+            static function (CallExpression $call, array $arguments): ListValue {
+                /** @var ListValue $list */
+                $list = $arguments[0];
+
+                $flattened = [];
+                foreach ($list->value as $item) {
+                    if ($item instanceof ListValue) {
+                        foreach ($item->value as $nested_item) {
+                            $flattened[] = $nested_item;
+                        }
+                    } else {
+                        $flattened[] = $item;
+                    }
+                }
+
+                return new ListValue($flattened);
+            };
+    }
+}

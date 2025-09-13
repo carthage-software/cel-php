@@ -41,6 +41,7 @@ use Cel\Token\TokenKind;
 use Closure;
 use Error;
 use Override;
+use Psl\Str\Byte;
 
 use function rtrim;
 use function substr;
@@ -52,6 +53,12 @@ final class Parser implements ParserInterface
 
     private TokenStream $stream;
 
+    /**
+     * @param LexerInterface $lexer
+     *
+     * @throws UnexpectedEndOfFileException If the end of the file is reached unexpectedly.
+     * @throws UnexpectedTokenException If an unexpected token is encountered.
+     */
     #[Override]
     public function construct(LexerInterface $lexer): Expression
     {
@@ -372,18 +379,18 @@ final class Parser implements ParserInterface
         return match ($token->kind) {
             TokenKind::LiteralInt => new IntegerLiteralExpression((int) $token->value, $token->value, $token->span),
             TokenKind::LiteralUInt => new UnsignedIntegerLiteralExpression(
-                (int) rtrim($token->value, 'uU'),
+                (int) Byte\trim_right($token->value, 'uU'),
                 $token->value,
                 $token->span,
             ),
             TokenKind::LiteralFloat => new FloatLiteralExpression((float) $token->value, $token->value, $token->span), // @mago-expect analysis:invalid-type-cast
             TokenKind::LiteralString => new StringLiteralExpression(
-                trim($token->value, "'\""),
+                Byte\trim($token->value, "'\""),
                 $token->value,
                 $token->span,
             ),
             TokenKind::BytesSequence => new BytesLiteralExpression(
-                trim(substr($token->value, 1), "'\""),
+                Byte\trim(Byte\slice($token->value, 1), "'\""),
                 $token->value,
                 $token->span,
             ),

@@ -15,8 +15,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-
-use function count;
+use Psl\Iter;
 
 #[CoversClass(Lexer::class)]
 #[UsesClass(Input::class)]
@@ -62,7 +61,7 @@ final class LexerTest extends TestCase
             $tokens[] = $token;
         }
 
-        static::assertCount(count($expectedTokens), $tokens);
+        static::assertCount(Iter\count($expectedTokens), $tokens);
 
         foreach ($expectedTokens as $i => $expected) {
             if (!isset($tokens[$i])) {
@@ -86,62 +85,67 @@ final class LexerTest extends TestCase
     public static function provideTokenizationCases(): iterable
     {
         // Delimiters and Operators
-        yield 'Parentheses' => [
-            '()',
+        yield 'Parentheses' =>
             [
-                [TokenKind::LeftParenthesis,  '(', 0, 1],
-                [TokenKind::RightParenthesis, ')', 1, 2],
-            ],
-        ];
-        yield 'Brackets' => [
-            '[]',
+                '()',
+                [
+                    [TokenKind::LeftParenthesis,  '(', 0, 1],
+                    [TokenKind::RightParenthesis, ')', 1, 2],
+                ],
+            ];
+        yield 'Brackets' =>
             [
-                [TokenKind::LeftBracket,  '[', 0, 1],
-                [TokenKind::RightBracket, ']', 1, 2],
-            ],
-        ];
-        yield 'Braces' => [
-            '{}',
+                '[]',
+                [
+                    [TokenKind::LeftBracket,  '[', 0, 1],
+                    [TokenKind::RightBracket, ']', 1, 2],
+                ],
+            ];
+        yield 'Braces' =>
             [
-                [TokenKind::LeftBrace,  '{', 0, 1],
-                [TokenKind::RightBrace, '}', 1, 2],
-            ],
-        ];
-        yield 'Single-char operators' => [
-            '?.,:+-*/%!',
+                '{}',
+                [
+                    [TokenKind::LeftBrace,  '{', 0, 1],
+                    [TokenKind::RightBrace, '}', 1, 2],
+                ],
+            ];
+        yield 'Single-char operators' =>
             [
-                [TokenKind::Question, '?', 0, 1],
-                [TokenKind::Dot,      '.', 1, 2],
-                [TokenKind::Comma,    ',', 2, 3],
-                [TokenKind::Colon,    ':', 3, 4],
-                [TokenKind::Plus,     '+', 4, 5],
-                [TokenKind::Minus,    '-', 5, 6],
-                [TokenKind::Asterisk, '*', 6, 7],
-                [TokenKind::Slash,    '/', 7, 8],
-                [TokenKind::Percent,  '%', 8, 9],
-                [TokenKind::Bang,     '!', 9, 10],
-            ],
-        ];
-        yield 'Multi-char operators' => [
-            '&& || == != <= >= < >',
+                '?.,:+-*/%!',
+                [
+                    [TokenKind::Question, '?', 0, 1],
+                    [TokenKind::Dot,      '.', 1, 2],
+                    [TokenKind::Comma,    ',', 2, 3],
+                    [TokenKind::Colon,    ':', 3, 4],
+                    [TokenKind::Plus,     '+', 4, 5],
+                    [TokenKind::Minus,    '-', 5, 6],
+                    [TokenKind::Asterisk, '*', 6, 7],
+                    [TokenKind::Slash,    '/', 7, 8],
+                    [TokenKind::Percent,  '%', 8, 9],
+                    [TokenKind::Bang,     '!', 9, 10],
+                ],
+            ];
+        yield 'Multi-char operators' =>
             [
-                [TokenKind::DoubleAmpersand, '&&', 0,  2],
-                [TokenKind::Whitespace,      ' ',  2,  3],
-                [TokenKind::DoublePipe,      '||', 3,  5],
-                [TokenKind::Whitespace,      ' ',  5,  6],
-                [TokenKind::Equal,           '==', 6,  8],
-                [TokenKind::Whitespace,      ' ',  8,  9],
-                [TokenKind::NotEqual,        '!=', 9,  11],
-                [TokenKind::Whitespace,      ' ',  11, 12],
-                [TokenKind::LessOrEqual,     '<=', 12, 14],
-                [TokenKind::Whitespace,      ' ',  14, 15],
-                [TokenKind::GreaterOrEqual,  '>=', 15, 17],
-                [TokenKind::Whitespace,      ' ',  17, 18],
-                [TokenKind::Less,            '<',  18, 19],
-                [TokenKind::Whitespace,      ' ',  19, 20],
-                [TokenKind::Greater,         '>',  20, 21],
-            ],
-        ];
+                '&& || == != <= >= < >',
+                [
+                    [TokenKind::DoubleAmpersand, '&&', 0,  2],
+                    [TokenKind::Whitespace,      ' ',  2,  3],
+                    [TokenKind::DoublePipe,      '||', 3,  5],
+                    [TokenKind::Whitespace,      ' ',  5,  6],
+                    [TokenKind::Equal,           '==', 6,  8],
+                    [TokenKind::Whitespace,      ' ',  8,  9],
+                    [TokenKind::NotEqual,        '!=', 9,  11],
+                    [TokenKind::Whitespace,      ' ',  11, 12],
+                    [TokenKind::LessOrEqual,     '<=', 12, 14],
+                    [TokenKind::Whitespace,      ' ',  14, 15],
+                    [TokenKind::GreaterOrEqual,  '>=', 15, 17],
+                    [TokenKind::Whitespace,      ' ',  17, 18],
+                    [TokenKind::Less,            '<',  18, 19],
+                    [TokenKind::Whitespace,      ' ',  19, 20],
+                    [TokenKind::Greater,         '>',  20, 21],
+                ],
+            ];
 
         // Literals
         $tripleSingle = "'''a\"\"b'c'''";
@@ -171,28 +175,30 @@ final class LexerTest extends TestCase
         yield 'Float with just exponent' => ['1e5', [[TokenKind::LiteralFloat, '1e5', 0, 3]]];
 
         // Keywords and Identifiers
-        yield 'Keywords' => [
-            'true false null in',
+        yield 'Keywords' =>
             [
-                [TokenKind::True,       'true',  0,  4],
-                [TokenKind::Whitespace, ' ',     4,  5],
-                [TokenKind::False,      'false', 5,  10],
-                [TokenKind::Whitespace, ' ',     10, 11],
-                [TokenKind::Null,       'null',  11, 15],
-                [TokenKind::Whitespace, ' ',     15, 16],
-                [TokenKind::In,         'in',    16, 18],
-            ],
-        ];
-        yield 'Reserved words' => [
-            'if else for',
+                'true false null in',
+                [
+                    [TokenKind::True,       'true',  0,  4],
+                    [TokenKind::Whitespace, ' ',     4,  5],
+                    [TokenKind::False,      'false', 5,  10],
+                    [TokenKind::Whitespace, ' ',     10, 11],
+                    [TokenKind::Null,       'null',  11, 15],
+                    [TokenKind::Whitespace, ' ',     15, 16],
+                    [TokenKind::In,         'in',    16, 18],
+                ],
+            ];
+        yield 'Reserved words' =>
             [
-                [TokenKind::If,         'if',   0, 2],
-                [TokenKind::Whitespace, ' ',    2, 3],
-                [TokenKind::Else,       'else', 3, 7],
-                [TokenKind::Whitespace, ' ',    7, 8],
-                [TokenKind::For,        'for',  8, 11],
-            ],
-        ];
+                'if else for',
+                [
+                    [TokenKind::If,         'if',   0, 2],
+                    [TokenKind::Whitespace, ' ',    2, 3],
+                    [TokenKind::Else,       'else', 3, 7],
+                    [TokenKind::Whitespace, ' ',    7, 8],
+                    [TokenKind::For,        'for',  8, 11],
+                ],
+            ];
         yield 'Identifier' => ['my_var', [[TokenKind::Identifier, 'my_var', 0, 6]]];
         yield 'Identifier starting with underscore' => ['_a', [[TokenKind::Identifier, '_a', 0, 2]]];
 
@@ -208,68 +214,76 @@ final class LexerTest extends TestCase
         yield 'Empty input' => ['', []];
         yield 'Single character identifier' => ['a', [[TokenKind::Identifier, 'a', 0, 1]]];
         yield 'Single digit' => ['1', [[TokenKind::LiteralInt, '1', 0, 1]]];
-        yield 'Dot not followed by digit' => [
-            '.a',
+        yield 'Dot not followed by digit' =>
             [
-                [TokenKind::Dot,        '.', 0, 1],
-                [TokenKind::Identifier, 'a', 1, 2],
-            ],
-        ];
+                '.a',
+                [
+                    [TokenKind::Dot,        '.', 0, 1],
+                    [TokenKind::Identifier, 'a', 1, 2],
+                ],
+            ];
 
         yield 'Single ampersand' => ['&', [[TokenKind::Unrecognized, '&', 0, 1]]];
         yield 'Single pipe' => ['|', [[TokenKind::Unrecognized, '|', 0, 1]]];
 
-        yield 'Double bang' => [
-            '!!',
+        yield 'Double bang' =>
             [
-                [TokenKind::Bang, '!', 0, 1],
-                [TokenKind::Bang, '!', 1, 2],
-            ],
-        ];
-        yield 'Double greater' => [
-            '>>',
+                '!!',
+                [
+                    [TokenKind::Bang, '!', 0, 1],
+                    [TokenKind::Bang, '!', 1, 2],
+                ],
+            ];
+        yield 'Double greater' =>
             [
-                [TokenKind::Greater, '>', 0, 1],
-                [TokenKind::Greater, '>', 1, 2],
-            ],
-        ];
-        yield 'Double right parenthesis' => [
-            '))',
+                '>>',
+                [
+                    [TokenKind::Greater, '>', 0, 1],
+                    [TokenKind::Greater, '>', 1, 2],
+                ],
+            ];
+        yield 'Double right parenthesis' =>
             [
-                [TokenKind::RightParenthesis, ')', 0, 1],
-                [TokenKind::RightParenthesis, ')', 1, 2],
-            ],
-        ];
-        yield 'Double right bracket' => [
-            ']]',
+                '))',
+                [
+                    [TokenKind::RightParenthesis, ')', 0, 1],
+                    [TokenKind::RightParenthesis, ')', 1, 2],
+                ],
+            ];
+        yield 'Double right bracket' =>
             [
-                [TokenKind::RightBracket, ']', 0, 1],
-                [TokenKind::RightBracket, ']', 1, 2],
-            ],
-        ];
-        yield 'Double right brace' => [
-            '}}',
+                ']]',
+                [
+                    [TokenKind::RightBracket, ']', 0, 1],
+                    [TokenKind::RightBracket, ']', 1, 2],
+                ],
+            ];
+        yield 'Double right brace' =>
             [
-                [TokenKind::RightBrace, '}', 0, 1],
-                [TokenKind::RightBrace, '}', 1, 2],
-            ],
-        ];
+                '}}',
+                [
+                    [TokenKind::RightBrace, '}', 0, 1],
+                    [TokenKind::RightBrace, '}', 1, 2],
+                ],
+            ];
 
         yield 'Comment without newline' => ['//foo', [[TokenKind::Comment, '//foo', 0, 5]]];
-        yield 'Comment with newline' => [
-            "//foo\n1",
+        yield 'Comment with newline' =>
             [
-                [TokenKind::Comment,    "//foo\n", 0, 6],
-                [TokenKind::LiteralInt, '1',       6, 7],
-            ],
-        ];
-        yield 'Equals sign followed by letter' => [
-            '=a',
+                "//foo\n1",
+                [
+                    [TokenKind::Comment,    "//foo\n", 0, 6],
+                    [TokenKind::LiteralInt, '1',       6, 7],
+                ],
+            ];
+        yield 'Equals sign followed by letter' =>
             [
-                [TokenKind::Unrecognized, '=', 0, 1],
-                [TokenKind::Identifier,   'a', 1, 2],
-            ],
-        ];
+                '=a',
+                [
+                    [TokenKind::Unrecognized, '=', 0, 1],
+                    [TokenKind::Identifier,   'a', 1, 2],
+                ],
+            ];
     }
 
     public function testLosslessTokenization(): void

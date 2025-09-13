@@ -1,0 +1,65 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cel\Runtime\Extension\Math\Function;
+
+use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Function\FunctionInterface;
+use Cel\Runtime\Value\FloatValue;
+use Cel\Runtime\Value\IntegerValue;
+use Cel\Runtime\Value\ListValue;
+use Cel\Runtime\Value\Value;
+use Cel\Runtime\Value\ValueKind;
+use Cel\Syntax\Member\CallExpression;
+use Override;
+use Psl\Math;
+use Psl\Str;
+use Psl\Type;
+
+final readonly class MinFunction implements FunctionInterface
+{
+    #[Override]
+    public function getName(): string
+    {
+        return 'min';
+    }
+
+    #[Override]
+    public function getOverloads(): iterable
+    {
+        yield [ValueKind::List] =>
+            /**
+             * @param CallExpression $call      The call expression representing the function call.
+             * @param list<Value>    $arguments The arguments passed to the function.
+             */
+            static function (CallExpression $call, array $arguments): Value {
+                /** @var ListValue $list */
+                $list = $arguments[0];
+
+                /** @var list<int|float> $numbers */
+                $numbers = [];
+                foreach ($list->value as $item) {
+                    if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
+                        throw new RuntimeException(
+                            Str\format('min() only supports lists of integers and floats, got `%s`', $item->getType()),
+                            $call->getSpan(),
+                        );
+                    }
+                    $numbers[] = $item->getNativeValue();
+                }
+
+                if ([] === $numbers) {
+                    throw new RuntimeException('min() requires a non-empty list', $call->getSpan());
+                }
+
+                $result = Math\min($numbers);
+
+                if (Type\int()->matches($result)) {
+                    return new IntegerValue($result);
+                }
+
+                return new FloatValue($result);
+            };
+    }
+}

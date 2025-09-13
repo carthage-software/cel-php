@@ -1,15 +1,15 @@
 php-version = "8.4.0"
 
 [source]
-paths = ["src/", "tests/"]
+paths = ["src/", "examples/", "tests/"]
 includes = ["vendor"]
 excludes = []
 
 [linter]
-integrations = ["phpunit"]
+integrations = ["phpunit", "php-standard-library"]
 
 [linter.rules]
-# Complexity
+# Complexity 😖
 too-many-methods = { threshold = 20 }
 excessive-parameter-list = { threshold = 10 }
 halstead = { effort-threshold = 20_000, difficulty-threshold = 20, volume-threshold = 1_500 }
@@ -26,7 +26,5 @@ literal-named-argument = { enabled = false }
 no-boolean-flag-parameter = { enabled = false }
 
 [analyzer]
-find-unused-expressions = true
-find-unused-definitions = true
 analyze-dead-code = true
 perform-heuristic-checks = true

@@ -79,9 +79,9 @@ final class SpanTest extends TestCase
         static::assertFalse($span->isBefore(10));
     }
 
-    public function testJsonSerialize(): void
+    public function testStringRepresentation(): void
     {
         $span = new Span(5, 15);
-        static::assertSame([5, 15], $span->jsonSerialize());
+        static::assertSame('[5..15]', (string) $span);
     }
 }

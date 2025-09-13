@@ -6,13 +6,12 @@ namespace Cel\Lexer\Internal;
 
 use Cel\Input\InputInterface;
 use Cel\Token\TokenKind;
+use Psl\Str;
+use Psl\Str\Byte;
 
 use function ctype_alnum;
 use function ctype_alpha;
 use function ctype_digit;
-use function str_repeat;
-use function strlen;
-use function strtolower;
 
 /**
  * @internal
@@ -61,14 +60,14 @@ final readonly class Utils
 
     public static function isAtStringLiteral(InputInterface $input): bool
     {
-        $c1 = strtolower($input->peek(0, 1));
+        $c1 = Byte\lowercase($input->peek(0, 1));
 
         if ($c1 === '\'' || $c1 === '"') {
             return true;
         }
 
         if ($c1 === 'r' || $c1 === 'b') {
-            $c2 = strtolower($input->peek(1, 1));
+            $c2 = Byte\lowercase($input->peek(1, 1));
             if ($c2 === '\'' || $c2 === '"') {
                 return true;
             }
@@ -105,7 +104,7 @@ final readonly class Utils
 
         // Check for prefixes (0x, 0o, 0b)
         if ($input->peek($length, 1) === '0' && ctype_alpha($input->peek($length + 1, 1))) {
-            $prefix = strtolower($input->peek($length + 1, 1));
+            $prefix = Byte\lowercase($input->peek($length + 1, 1));
             $consumed = self::readPrefixedInteger($input, $prefix, $length);
             if ($consumed > 0) {
                 $length = $consumed;
@@ -120,7 +119,7 @@ final readonly class Utils
         $kind = $isFloat ? TokenKind::LiteralFloat : TokenKind::LiteralInt;
 
         // Check for uint suffix, but only if not a float
-        $suffix = strtolower($input->peek($length, 1));
+        $suffix = Byte\lowercase($input->peek($length, 1));
         if (!$isFloat && $suffix === 'u') {
             $length++;
             $kind = TokenKind::LiteralUInt;
@@ -138,21 +137,21 @@ final readonly class Utils
     {
         $prefix = null;
         $char = $input->peek(0, 1);
-        if (strtolower($char) === 'r' || strtolower($char) === 'b') {
+        if (Byte\lowercase($char) === 'r' || Byte\lowercase($char) === 'b') {
             $prefix = $char;
         }
 
         $scan_offset = $prefix !== null ? 1 : 0;
         $quote = $input->peek($scan_offset, 1);
         $is_triple = $input->peek($scan_offset + 1, 2) === $quote . $quote;
-        $terminator = $is_triple ? str_repeat($quote, 3) : $quote;
-        $is_raw = strtolower($prefix ?? '') === 'r';
-        $initial_offset = $scan_offset + strlen($terminator);
+        $terminator = $is_triple ? Str\repeat($quote, 3) : $quote;
+        $is_raw = Byte\lowercase($prefix ?? '') === 'r';
+        $initial_offset = $scan_offset + Byte\length($terminator);
 
         $final_offset = self::consumeLiteralString($input, $terminator, $is_raw, $initial_offset);
 
         $value = $input->consume($final_offset);
-        $kind = strtolower($prefix ?? '') === 'b' ? TokenKind::BytesSequence : TokenKind::LiteralString;
+        $kind = Byte\lowercase($prefix ?? '') === 'b' ? TokenKind::BytesSequence : TokenKind::LiteralString;
 
         return [$kind, $value];
     }
@@ -196,8 +195,8 @@ final readonly class Utils
         }
 
         // Base case: Found the terminator
-        if ($input->peek($scan_offset, strlen($terminator)) === $terminator) {
-            return $scan_offset + strlen($terminator);
+        if ($input->peek($scan_offset, Byte\length($terminator)) === $terminator) {
+            return $scan_offset + Byte\length($terminator);
         }
 
         // Recursive step

@@ -7,8 +7,7 @@ namespace Cel\Tests\Syntax\Unary;
 use Cel\Syntax\Unary\UnaryOperatorKind;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-
-use function array_map;
+use Psl\Vec;
 
 #[CoversClass(UnaryOperatorKind::class)]
 final class UnaryOperatorKindTest extends TestCase
@@ -16,7 +15,7 @@ final class UnaryOperatorKindTest extends TestCase
     public function testEnumCases(): void
     {
         $cases = UnaryOperatorKind::cases();
-        $caseNames = array_map(fn(UnaryOperatorKind $c): string => $c->name, $cases);
+        $caseNames = Vec\map($cases, static fn(UnaryOperatorKind $c): string => $c->name);
 
         static::assertCount(2, $cases);
         static::assertContains('Negate', $caseNames);

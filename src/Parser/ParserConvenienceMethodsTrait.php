@@ -7,6 +7,8 @@ namespace Cel\Parser;
 use Cel\Input\Input;
 use Cel\Input\InputInterface;
 use Cel\Lexer\Lexer;
+use Cel\Parser\Exception\UnexpectedEndOfFileException;
+use Cel\Parser\Exception\UnexpectedTokenException;
 use Cel\Syntax\Expression;
 
 /**
@@ -20,6 +22,9 @@ trait ParserConvenienceMethodsTrait
      * @param string $string The string to parse.
      *
      * @return Expression The root node of the resulting expression tree.
+     *
+     * @throws UnexpectedEndOfFileException If the end of the file is reached unexpectedly.
+     * @throws UnexpectedTokenException If an unexpected token is encountered.
      */
     public function parseString(string $string): Expression
     {
@@ -32,6 +37,9 @@ trait ParserConvenienceMethodsTrait
      * @param InputInterface $input The input to parse.
      *
      * @return Expression The root node of the resulting expression tree.
+     *
+     * @throws UnexpectedEndOfFileException If the end of the file is reached unexpectedly.
+     * @throws UnexpectedTokenException If an unexpected token is encountered.
      */
     public function parse(InputInterface $input): Expression
     {

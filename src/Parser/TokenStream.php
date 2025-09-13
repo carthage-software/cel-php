@@ -11,9 +11,9 @@ use Cel\Parser\Exception\UnexpectedTokenException;
 use Cel\Token\Token;
 use Cel\Token\TokenKind;
 use Override;
+use Psl\Iter;
 
 use function array_shift;
-use function count;
 
 /**
  * A buffered token stream that wraps a Lexer, providing lookahead
@@ -51,7 +51,7 @@ final class TokenStream implements HasCursorInterface
     {
         $this->fillBuffer(1);
 
-        return count($this->buffer) === 0;
+        return Iter\count($this->buffer) === 0;
     }
 
     /**
@@ -62,11 +62,11 @@ final class TokenStream implements HasCursorInterface
     public function consume(): Token
     {
         $this->fillBuffer(1);
-        if (count($this->buffer) === 0) {
+        $token = array_shift($this->buffer);
+        if (null === $token) {
             throw new UnexpectedEndOfFileException($this->cursorPosition(), []);
         }
 
-        $token = array_shift($this->buffer);
         $this->cursor = $token->span->end;
 
         return $token;
@@ -130,7 +130,7 @@ final class TokenStream implements HasCursorInterface
      */
     private function fillBuffer(int $n): void
     {
-        while (count($this->buffer) < $n) {
+        while (Iter\count($this->buffer) < $n) {
             $token = $this->lexer->advance();
             if ($token === null) {
                 // Lexer has reached the end.

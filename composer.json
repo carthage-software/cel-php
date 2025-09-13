@@ -6,7 +6,10 @@
   "autoload": {
     "psr-4": {
       "Cel\\": "src/"
-    }
+    },
+    "files": [
+        "src/functions.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
@@ -21,20 +24,16 @@
   ],
   "require": {
     "php": "~8.4 || ~8.5",
-    "ext-bcmath": "*",
-    "ext-intl": "*",
-    "ext-mbstring": "*",
-    "ext-xml": "*"
+    "azjezz/psl": "dev-next"
   },
   "require-dev": {
-    "carthage-software/mago": "^1.0.0-beta.10",
+    "carthage-software/mago": "^1.0.0-beta.14",
     "phpunit/phpunit": "^12.3",
     "php-coveralls/php-coveralls": "^2.8",
     "infection/infection": "^0.31.2"
   },
   "config": {
     "allow-plugins": {
-      "symfony/flex": true,
       "carthage-software/mago": true,
       "infection/extension-installer": true
     }

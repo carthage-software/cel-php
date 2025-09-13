@@ -8,10 +8,8 @@ use ArrayIterator;
 use Cel\Span\Span;
 use IteratorAggregate;
 use Override;
+use Psl\Iter;
 use Traversable;
-
-use function array_key_last;
-use function count;
 
 /**
  * Represents a punctuated list of nodes, like arguments in a function call or elements in a list literal.
@@ -43,7 +41,7 @@ final readonly class PunctuatedSequence implements IteratorAggregate
         }
 
         // If there are as many commas as elements, there's a trailing one.
-        return count($this->commas) === count($this->elements);
+        return Iter\count($this->commas) === Iter\count($this->elements);
     }
 
     /**
@@ -51,7 +49,7 @@ final readonly class PunctuatedSequence implements IteratorAggregate
      */
     public function count(): int
     {
-        return count($this->elements);
+        return Iter\count($this->elements);
     }
 
     /**
@@ -69,19 +67,15 @@ final readonly class PunctuatedSequence implements IteratorAggregate
      */
     public function getSpan(): null|Span
     {
-        if ([] === $this->elements) {
+        $firstSpan = Iter\first($this->elements)?->getSpan();
+        $lastSpan = Iter\last($this->elements)?->getSpan();
+        if (null === $firstSpan || null === $lastSpan) {
             return null;
         }
 
-        $firstSpan = $this->elements[0]->getSpan();
-        $lastSpan = $this->elements[array_key_last($this->elements)]->getSpan();
-
-        if ([] !== $this->commas) {
-            $lastKey = array_key_last($this->commas);
-            $lastComma = $this->commas[$lastKey];
-            if ($lastComma->end > $lastSpan->end) {
-                $lastSpan = $lastComma;
-            }
+        $lastComma = Iter\last($this->commas);
+        if (null !== $lastComma && $lastComma->end > $lastSpan->end) {
+            $lastSpan = $lastComma;
         }
 
         return $firstSpan->join($lastSpan);
