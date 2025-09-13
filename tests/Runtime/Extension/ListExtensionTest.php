@@ -133,4 +133,46 @@ final class ListExtensionTest extends RuntimeTestCase
                 new RuntimeException('join: expects a list of strings', new Span(0, 17)),
             ];
     }
+
+    public function testGetChunkFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('[1, 2, 3, 4].chunk(2)');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetContainsFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('[1, 2, 3].contains(2)');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetFlattenFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('[[1, 2], [3, 4]].flatten()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetJoinFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('["a", "b", "c"].join("-")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetReverseFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('[1, 2, 3].reverse()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetSortFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('[3, 1, 2].sort()');
+
+        static::assertTrue($receipt->idempotent);
+    }
 }

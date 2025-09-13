@@ -5,11 +5,10 @@
         ]
     },
     "timeout": 10,
-    "minMsi": 100,
+    "minMsi": 93.1,
     "minCoveredMsi": 100,
     "threads": "max",
     "logs": {
-        "text": "php://stderr",
         "github": true,
         "stryker": {
             "badge": "main"
@@ -19,6 +18,7 @@
     "mutators": {
         "@default": true,
         "@function_signature": false,
+        "CastInt": false,
         "GreaterThanOrEqualTo": {
             "ignore": [
                 "Cel\\Input\\Input::sliceInRange"

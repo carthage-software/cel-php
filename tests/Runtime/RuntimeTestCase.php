@@ -10,6 +10,7 @@ use Cel\Runtime\Environment\Environment;
 use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
 use Cel\Runtime\Runtime;
+use Cel\Runtime\RuntimeReceipt;
 use Cel\Runtime\Value\Value;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -30,8 +31,11 @@ abstract class RuntimeTestCase extends TestCase
     /**
      * @param array<string, mixed> $variables
      */
-    protected function evaluate(string $code, array $variables = [], null|Configuration $configuration = null): Value
-    {
+    protected function evaluate(
+        string $code,
+        array $variables = [],
+        null|Configuration $configuration = null,
+    ): RuntimeReceipt {
         $parser = new Parser();
         $ast = $parser->parseString($code);
 
@@ -41,7 +45,8 @@ abstract class RuntimeTestCase extends TestCase
         }
 
         $runtime = new Runtime($configuration ?? new Configuration());
-        return $runtime->run($ast, $environment)->result;
+
+        return $runtime->run($ast, $environment);
     }
 
     /**
@@ -59,7 +64,7 @@ abstract class RuntimeTestCase extends TestCase
             self::expectExceptionMessage($expectedResult->getMessage());
         }
 
-        $actualResult = $this->evaluate($code, $variables, $configuration);
+        $actualResult = $this->evaluate($code, $variables, $configuration)->result;
         if (!$expectedResult instanceof Value) {
             static::fail('Expected exception of type '
             . $expectedResult::class

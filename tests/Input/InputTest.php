@@ -50,6 +50,7 @@ final class InputTest extends TestCase
     {
         $input = new Input('0123456789');
         static::assertSame('234', $input->sliceInRange(2, 5));
+        static::assertSame('2', $input->sliceInRange(2, 3));
         static::assertSame('89', $input->sliceInRange(8, 12)); // Clamp end
         static::assertSame('', $input->sliceInRange(5, 5));
         static::assertSame('', $input->sliceInRange(6, 5));
@@ -119,6 +120,10 @@ final class InputTest extends TestCase
         // Not found
         static::assertSame('again', $input->consumeUntil('??'));
         static::assertTrue($input->hasReachedEnd());
+
+        $input = new Input('a--b');
+        static::assertSame('a', $input->consumeUntil('--'));
+        static::assertSame(1, $input->cursorPosition());
     }
 
     public function testConsumeUntilIgnoreCase(): void
@@ -143,6 +148,10 @@ final class InputTest extends TestCase
         // Not found
         static::assertSame('third', $input->consumeThrough('??'));
         static::assertTrue($input->hasReachedEnd());
+
+        $input = new Input('|a');
+        static::assertSame('|', $input->consumeThrough('|'));
+        static::assertSame(1, $input->cursorPosition());
     }
 
     public function testConsumeWhitespace(): void
@@ -277,6 +286,14 @@ final class InputTest extends TestCase
     {
         $input = new Input('aBc');
         static::assertFalse($input->isAt('ab'));
+    }
+
+    public function testConsumeWhitespaceSingle(): void
+    {
+        $input = new Input(' next');
+        static::assertSame(' ', $input->consumeWhiteSpace());
+        static::assertSame(1, $input->cursorPosition());
+        static::assertSame('n', $input->read(1));
     }
 
     public function testSliceInRangeAtEnd(): void

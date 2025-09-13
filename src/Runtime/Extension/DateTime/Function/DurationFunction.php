@@ -38,48 +38,49 @@ final readonly class DurationFunction implements FunctionInterface
     #[Override]
     public function getOverloads(): iterable
     {
-        yield [ValueKind::String] =>
-            /**
-             * @param CallExpression $call      The call expression representing the function call.
-             * @param list<Value>    $arguments The arguments passed to the function.
-             */
-            static function (CallExpression $call, array $arguments): DurationValue {
-                /** @var StringValue $value */
-                $value = $arguments[0];
-                $durationStr = $value->value;
+        yield [ValueKind::String] => /**
+         * @param CallExpression $call      The call expression representing the function call.
+         * @param list<Value>    $arguments The arguments passed to the function.
+         */
+        static function (CallExpression $call, array $arguments): DurationValue {
+            /** @var StringValue $value */
+            $value = $arguments[0];
+            $durationStr = $value->value;
 
-                $matches = Regex\first_match($durationStr, self::DURATION_PATTERN);
-                if (null === $matches) {
-                    throw new TypeConversionException(
-                        Str\format('Invalid duration format: "%s"', $durationStr),
-                        $call->getSpan(),
-                    );
-                }
-
-                $sign = ($matches[1] ?? '+') === '-' ? -1 : 1;
-                $hours = (int) ($matches[2] ?? 0);
-                $minutes = (int) ($matches[3] ?? 0);
-                $secondsWithFraction = (float) ($matches[4] ?? 0.0); // @mago-expect analysis:invalid-type-cast (we know it's a valid float)
-                $milliseconds = (int) ($matches[5] ?? 0);
-                $microseconds = (int) ($matches[6] ?? 0);
-                $nanoseconds = (int) ($matches[7] ?? 0);
-
-                $totalNanoseconds = (int) (
-                    ($secondsWithFraction - (int) $secondsWithFraction)
-                    * DateTime\NANOSECONDS_PER_SECOND
+            $matches = Regex\first_match($durationStr, self::DURATION_PATTERN);
+            if (null === $matches) {
+                throw new TypeConversionException(
+                    Str\format('Invalid duration format: "%s"', $durationStr),
+                    $call->getSpan(),
                 );
-                $totalNanoseconds += $milliseconds * DateTime\MICROSECONDS_PER_SECOND;
-                $totalNanoseconds += $microseconds * DateTime\NANOSECONDS_PER_MICROSECOND;
-                $totalNanoseconds += $nanoseconds;
+            }
 
-                $duration = Duration::fromParts(
-                    $sign * $hours,
-                    $sign * $minutes,
-                    $sign * (int) $secondsWithFraction,
-                    $sign * $totalNanoseconds,
-                );
+            $negate = ($matches[1] ?? '+') === '-' ? true : false;
+            $hours = (int) ($matches[2] ?? 0);
+            $minutes = (int) ($matches[3] ?? 0);
+            $secondsWithFraction = (float) ($matches[4] ?? 0.0); // @mago-expect analysis:invalid-type-cast (we know it's a valid float)
+            $milliseconds = (int) ($matches[5] ?? 0);
+            $microseconds = (int) ($matches[6] ?? 0);
+            $nanoseconds = (int) ($matches[7] ?? 0);
 
-                return new DurationValue($duration);
-            };
+            $totalNanoseconds = (int) (
+                ($secondsWithFraction - (int) $secondsWithFraction)
+                * DateTime\NANOSECONDS_PER_SECOND
+            );
+            $totalNanoseconds += $milliseconds * DateTime\MICROSECONDS_PER_SECOND;
+            $totalNanoseconds += $microseconds * DateTime\NANOSECONDS_PER_MICROSECOND;
+            $totalNanoseconds += $nanoseconds;
+
+            if ($negate) {
+                $hours = -$hours;
+                $minutes = -$minutes;
+                $secondsWithFraction = -$secondsWithFraction;
+                $totalNanoseconds = -$totalNanoseconds;
+            }
+
+            $duration = Duration::fromParts($hours, $minutes, (int) $secondsWithFraction, $totalNanoseconds);
+
+            return new DurationValue($duration);
+        };
     }
 }

@@ -93,6 +93,62 @@ final class DateTimeExtensionTest extends RuntimeTestCase
                 new TypeConversionException('Invalid duration format: "1 year"', new Span(0, 15)),
             ];
 
+        yield 'DateTime duration(): hours only' =>
+        [
+            'duration("1h")',
+            [],
+            new DurationValue(Duration::hours(1)),
+        ];
+
+        yield 'DateTime duration(): minutes only' =>
+        [
+            'duration("30m")',
+            [],
+            new DurationValue(Duration::minutes(30)),
+        ];
+
+        yield 'DateTime duration(): seconds only' =>
+            [
+                'duration("5s")',
+                [],
+                new DurationValue(Duration::seconds(5)),
+            ];
+
+        yield 'DateTime duration(): ms only' =>
+            [
+                'duration("500ms")',
+                [],
+                new DurationValue(Duration::milliseconds(500)),
+            ];
+
+        yield 'DateTime duration(): us only' =>
+            [
+                'duration("500us")',
+                [],
+                new DurationValue(Duration::microseconds(500)),
+            ];
+
+        yield 'DateTime duration(): ns only' =>
+            [
+                'duration("500ns")',
+                [],
+                new DurationValue(Duration::nanoseconds(500)),
+            ];
+
+        yield 'DateTime getMilliseconds(): with nanoseconds' =>
+            [
+                'timestamp("2025-09-13T10:20:30.123456789Z").getMilliseconds()',
+                [],
+                new IntegerValue(123),
+            ];
+
+        yield 'DateTime duration(): milliseconds only' =>
+            [
+                'duration("123ms")',
+                [],
+                new DurationValue(Duration::milliseconds(123)),
+            ];
+
         // getHours()
         yield 'DateTime getHours(): duration' => ['getHours(duration("3h30m"))', [], new IntegerValue(3)];
         yield 'DateTime getHours(): timestamp UTC' =>
@@ -202,11 +258,95 @@ final class DateTimeExtensionTest extends RuntimeTestCase
     public function testNowFunctionReturnsCurrentTimestamp(): void
     {
         $before = Timestamp::now();
-        $result = $this->evaluate('now()');
+        $result = $this->evaluate('now()')->result;
         $after = Timestamp::now();
 
         static::assertInstanceOf(TimestampValue::class, $result);
         static::assertTrue($result->value->afterOrAtTheSameTime($before));
         static::assertTrue($result->value->beforeOrAtTheSameTime($after));
+    }
+
+    public function testNowFunctionIsNotIdempotent(): void
+    {
+        $receipt = $this->evaluate('now()');
+
+        static::assertFalse($receipt->idempotent);
+    }
+
+    public function testTimestampFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-09-13T12:30:05Z")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testDurationFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('duration("1h30m")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetHoursFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('duration("3h30m").getHours()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetMinutesFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('duration("1h30m15s").getMinutes()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetSecondsFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-09-13T10:20:30Z").getSeconds()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetMillisecondsFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-09-13T10:20:30.456Z").getMilliseconds()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetFullYearFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-09-13T10:00:00Z").getFullYear()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetMonthFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-09-13T10:00:00Z").getMonth()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetDayOfMonthFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-09-13T10:00:00Z").getDayOfMonth()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetDayOfYearFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-01-10T10:00:00Z").getDayOfYear()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetDayOfWeekFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-09-13T10:00:00Z").getDayOfWeek()');
+
+        static::assertTrue($receipt->idempotent);
     }
 }
