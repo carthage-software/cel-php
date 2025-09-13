@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Lists\Function;
+namespace Cel\Runtime\Extension\List\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\ListValue;
@@ -15,12 +15,12 @@ use Psl\Vec;
 /**
  * @mago-expect analysis:unused-parameter
  */
-final readonly class SortFunction implements FunctionInterface
+final readonly class ReverseFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'sort';
+        return 'reverse';
     }
 
     /**
@@ -47,15 +47,7 @@ final readonly class SortFunction implements FunctionInterface
                 /** @var ListValue $list */
                 $list = $arguments[0];
 
-                $sorted_list = Vec\sort($list->value, static function (Value $a, Value $b): int {
-                    if ($a->isEqual($b)) {
-                        return 0;
-                    }
-
-                    return $a->isLessThan($b) ? -1 : 1;
-                });
-
-                return new ListValue($sorted_list);
+                return new ListValue(Vec\reverse($list->value));
             };
     }
 }

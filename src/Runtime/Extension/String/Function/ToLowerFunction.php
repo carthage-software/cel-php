@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Strings\Function;
+namespace Cel\Runtime\Extension\String\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
-use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\Value;
@@ -18,12 +17,12 @@ use Psl\Str\Byte;
 /**
  * @mago-expect analysis:unused-parameter
  */
-final readonly class StartsWithFunction implements FunctionInterface
+final readonly class ToLowerFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'startsWith';
+        return 'toLower';
     }
 
     /**
@@ -41,40 +40,28 @@ final readonly class StartsWithFunction implements FunctionInterface
     #[Override]
     public function getOverloads(): iterable
     {
-        yield [ValueKind::String, ValueKind::String] =>
+        yield [ValueKind::String] =>
             /**
              * @param CallExpression $call      The call expression representing the function call.
              * @param list<Value>    $arguments The arguments passed to the function.
              */
-            static function (CallExpression $call, array $arguments): BooleanValue {
+            static function (CallExpression $call, array $arguments): StringValue {
                 /** @var StringValue $target */
                 $target = $arguments[0];
-                /** @var StringValue $prefix */
-                $prefix = $arguments[1];
 
-                if ($prefix->value === '') {
-                    return new BooleanValue(true);
-                }
-
-                return new BooleanValue(Str\starts_with($target->value, $prefix->value));
+                return new StringValue(Str\lowercase($target->value));
             };
 
-        yield [ValueKind::Bytes, ValueKind::Bytes] =>
+        yield [ValueKind::Bytes] =>
             /**
              * @param CallExpression $call      The call expression representing the function call.
              * @param list<Value>    $arguments The arguments passed to the function.
              */
-            static function (CallExpression $call, array $arguments): BooleanValue {
+            static function (CallExpression $call, array $arguments): BytesValue {
                 /** @var BytesValue $target */
                 $target = $arguments[0];
-                /** @var BytesValue $prefix */
-                $prefix = $arguments[1];
 
-                if ($prefix->value === '') {
-                    return new BooleanValue(true);
-                }
-
-                return new BooleanValue(Byte\starts_with($target->value, $prefix->value));
+                return new BytesValue(Byte\lowercase($target->value));
             };
     }
 }

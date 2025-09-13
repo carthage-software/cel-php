@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Lists\Function;
+namespace Cel\Runtime\Extension\List\Function;
 
 use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Function\FunctionInterface;

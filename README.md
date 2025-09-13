@@ -7,13 +7,13 @@
 [![Latest Stable Version](https://poser.pugx.org/carthage-software/cel-php/v/stable.svg)](https://packagist.org/packages/carthage-software/cel-php)
 [![License](https://poser.pugx.org/carthage-software/cel-php/license.svg)](https://packagist.org/packages/carthage-software/cel-php)
 
-**This project is currently under heavy development and is not yet ready for production use.**
-
 This repository contains a PHP implementation of the [Common Expression Language (CEL)](https://github.com/google/cel-spec).
 
 ## Table of Contents
 
-- [TODO](#todo)
+- [Documentation](#documentation)
+- [Example](#example)
+- [Specification Compliance](#specification-compliance)
 - [License](#license)
 - [Security Policy](#security-policy)
 - [Code of Conduct](#code-of-conduct)
@@ -21,6 +21,11 @@ This repository contains a PHP implementation of the [Common Expression Language
 - [Development](#development)
   - [Justfile Recipes](#justfile-recipes)
   - [Local Setup](#local-setup)
+
+## Documentation
+
+- [Getting Started](./docs/usage.md)
+- [Standard Extensions Reference](./docs/extensions.md)
 
 ## Example
 
@@ -56,12 +61,12 @@ try {
 }
 ```
 
-## TODO
+## Specification Compliance
 
-As mentioned earlier, this project is still under heavy development. Below is a non-exhaustive list of features and improvements that are planned:
+This project is still under heavy development. Below is a non-exhaustive list of features and their implementation status according to the CEL specification.
 
 - Language Features
-  - [x] Implement Macros
+  - [x] Macros
     - [x] `has(e.f)`
     - [x] `e.all(x, p)`
     - [x] `e.exists(x, p)`
@@ -69,7 +74,7 @@ As mentioned earlier, this project is still under heavy development. Below is a 
     - [x] `e.map(x, t)` (for lists and maps)
     - [x] `e.map(x, p, t)`
     - [x] `e.filter(x, p)` (for lists and maps)
-  - Types
+  - [x] Types
     - [x] String
     - [x] Bytes
     - [x] Integer
@@ -83,24 +88,13 @@ As mentioned earlier, this project is still under heavy development. Below is a 
     - [x] Duration
     - [x] Timestamp
 - Interpreter & Runtime
-  - [x] Tree-Walking Interpreter (Implemented)
+  - [x] Tree-Walking Interpreter
   - [ ] Stack-Based Interpreter
-    - [ ] Design opcode set
-    - [ ] Implement compiler (AST -> Bytecode)
-    - [ ] Implement stack-based VM
 - Performance
   - [ ] Caching Strategy
-    - [ ] Investigate and implement caching for parsed expressions (AST).
-    - [ ] Explore potential for caching evaluation results for idempotent functions.
-      - [x] Implement logic for determining idempotency of evaluated expressions.
-  - [ ] Benchmarking
 - API & Quality
   - [ ] API Improvements
-    - [ ] General review and cleanup of the public-facing API.
   - [ ] Testing & Coverage
-    - [ ] Achieve 100% test coverage.
-    - [ ] Achieve 100% mutation score.
-    - [x] Achieve 100% static analysis type coverage.
 
 ## License
 
@@ -140,7 +134,7 @@ To get started with local development, you'll need to install `just` and `typos`
 If you have Rust and Cargo installed, you can install `just` via Cargo:
 
 ```bash
-cargo install just
+car go install just
 ```
 
 Alternatively, you can find other installation methods in the [Just documentation](https://github.com/casey/just#installation).
@@ -150,7 +144,7 @@ Alternatively, you can find other installation methods in the [Just documentatio
 If you have Rust and Cargo installed, you can install `typos` via Cargo:
 
 ```bash
-cargo install typos-cli
+car go install typos-cli
 ```
 
 After installing `just` and `typos`, you can install the project dependencies and run verification checks:

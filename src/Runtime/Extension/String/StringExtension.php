@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Strings;
+namespace Cel\Runtime\Extension\String;
 
 use Cel\Runtime\Extension\ExtensionInterface;
 use Override;
 
-final readonly class StringsExtension implements ExtensionInterface
+final readonly class StringExtension implements ExtensionInterface
 {
     /**
      * @inheritDoc

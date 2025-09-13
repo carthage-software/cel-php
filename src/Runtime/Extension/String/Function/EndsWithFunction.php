@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Strings\Function;
+namespace Cel\Runtime\Extension\String\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\BooleanValue;
@@ -18,12 +18,12 @@ use Psl\Str\Byte;
 /**
  * @mago-expect analysis:unused-parameter
  */
-final readonly class ContainsFunction implements FunctionInterface
+final readonly class EndsWithFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'contains';
+        return 'endsWith';
     }
 
     /**
@@ -49,10 +49,14 @@ final readonly class ContainsFunction implements FunctionInterface
             static function (CallExpression $call, array $arguments): BooleanValue {
                 /** @var StringValue $target */
                 $target = $arguments[0];
-                /** @var StringValue $substring */
-                $substring = $arguments[1];
+                /** @var StringValue $suffix */
+                $suffix = $arguments[1];
 
-                return new BooleanValue(Str\contains($target->value, $substring->value));
+                if ($suffix->value === '') {
+                    return new BooleanValue(true);
+                }
+
+                return new BooleanValue(Str\ends_with($target->value, $suffix->value));
             };
 
         yield [ValueKind::Bytes, ValueKind::Bytes] =>
@@ -63,10 +67,14 @@ final readonly class ContainsFunction implements FunctionInterface
             static function (CallExpression $call, array $arguments): BooleanValue {
                 /** @var BytesValue $target */
                 $target = $arguments[0];
-                /** @var BytesValue $substring */
-                $substring = $arguments[1];
+                /** @var BytesValue $suffix */
+                $suffix = $arguments[1];
 
-                return new BooleanValue(Byte\contains($target->value, $substring->value));
+                if ($suffix->value === '') {
+                    return new BooleanValue(true);
+                }
+
+                return new BooleanValue(Byte\ends_with($target->value, $suffix->value));
             };
     }
 }

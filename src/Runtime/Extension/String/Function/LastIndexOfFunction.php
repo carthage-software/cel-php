@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Strings\Function;
+namespace Cel\Runtime\Extension\String\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\BytesValue;
@@ -18,12 +18,12 @@ use Psl\Str\Byte;
 /**
  * @mago-expect analysis:unused-parameter
  */
-final readonly class IndexOfFunction implements FunctionInterface
+final readonly class LastIndexOfFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'indexOf';
+        return 'lastIndexOf';
     }
 
     /**
@@ -53,10 +53,10 @@ final readonly class IndexOfFunction implements FunctionInterface
                 $needle = $arguments[1];
 
                 if ($needle->value === '') {
-                    return new IntegerValue(0);
+                    return new IntegerValue(Str\length($haystack->value));
                 }
 
-                $pos = Str\search($haystack->value, $needle->value);
+                $pos = Str\search_last($haystack->value, $needle->value);
 
                 return new IntegerValue($pos ?? -1);
             };
@@ -78,7 +78,7 @@ final readonly class IndexOfFunction implements FunctionInterface
                     return new IntegerValue($offset->value);
                 }
 
-                $pos = Str\search($haystack->value, $needle->value, $offset->value);
+                $pos = Str\search_last($haystack->value, $needle->value, $offset->value);
 
                 return new IntegerValue($pos ?? -1);
             };
@@ -95,10 +95,10 @@ final readonly class IndexOfFunction implements FunctionInterface
                 $needle = $arguments[1];
 
                 if ($needle->value === '') {
-                    return new IntegerValue(0);
+                    return new IntegerValue(Str\length($haystack->value));
                 }
 
-                $pos = Byte\search($haystack->value, $needle->value);
+                $pos = Byte\search_last($haystack->value, $needle->value);
 
                 return new IntegerValue($pos ?? -1);
             };
@@ -120,7 +120,7 @@ final readonly class IndexOfFunction implements FunctionInterface
                     return new IntegerValue($offset->value);
                 }
 
-                $pos = Byte\search($haystack->value, $needle->value, $offset->value);
+                $pos = Byte\search_last($haystack->value, $needle->value, $offset->value);
 
                 return new IntegerValue($pos ?? -1);
             };

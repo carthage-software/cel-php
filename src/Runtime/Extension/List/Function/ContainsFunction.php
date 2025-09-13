@@ -2,24 +2,26 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Lists\Function;
+namespace Cel\Runtime\Extension\List\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Function\FunctionInterface;
-use Cel\Runtime\Value\IntegerValue;
+use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\ListValue;
 use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;
 use Cel\Syntax\Member\CallExpression;
 use Override;
-use Psl\Vec;
+use Psl\Iter;
 
-final readonly class ChunkFunction implements FunctionInterface
+/**
+ * @mago-expect analysis:unused-parameter
+ */
+final readonly class ContainsFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'chunk';
+        return 'contains';
     }
 
     /**
@@ -37,24 +39,24 @@ final readonly class ChunkFunction implements FunctionInterface
     #[Override]
     public function getOverloads(): iterable
     {
-        yield [ValueKind::List, ValueKind::Integer] =>
+        $handler =
             /**
              * @param CallExpression $call      The call expression representing the function call.
              * @param list<Value>    $arguments The arguments passed to the function.
              */
-            static function (CallExpression $call, array $arguments): ListValue {
+            static function (CallExpression $call, array $arguments): BooleanValue {
                 /** @var ListValue $list */
                 $list = $arguments[0];
-                /** @var IntegerValue $size */
-                $size = $arguments[1];
+                $element = $arguments[1];
 
-                if ($size->value <= 0) {
-                    throw new RuntimeException('Chunk size must be a positive integer', $call->getSpan());
-                }
-
-                $chunks = Vec\chunk($list->value, $size->value);
-
-                return new ListValue(Vec\map($chunks, static fn(array $chunk): ListValue => new ListValue($chunk)));
+                return new BooleanValue(Iter\any($list->value, static fn(Value $item): bool => $item->isEqual(
+                    $element,
+                )));
             };
+
+        // Dynamically generate an overload for each possible type in the list.
+        foreach (ValueKind::cases() as $kind) {
+            yield [ValueKind::List, $kind] => $handler;
+        }
     }
 }

@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Lists\Function;
+namespace Cel\Runtime\Extension\List\Function;
 
+use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Function\FunctionInterface;
+use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
 use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;
 use Cel\Syntax\Member\CallExpression;
 use Override;
+use Psl\Vec;
 
-/**
- * @mago-expect analysis:unused-parameter
- */
-final readonly class FlattenFunction implements FunctionInterface
+final readonly class ChunkFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'flatten';
+        return 'chunk';
     }
 
     /**
@@ -37,7 +37,7 @@ final readonly class FlattenFunction implements FunctionInterface
     #[Override]
     public function getOverloads(): iterable
     {
-        yield [ValueKind::List] =>
+        yield [ValueKind::List, ValueKind::Integer] =>
             /**
              * @param CallExpression $call      The call expression representing the function call.
              * @param list<Value>    $arguments The arguments passed to the function.
@@ -45,19 +45,16 @@ final readonly class FlattenFunction implements FunctionInterface
             static function (CallExpression $call, array $arguments): ListValue {
                 /** @var ListValue $list */
                 $list = $arguments[0];
+                /** @var IntegerValue $size */
+                $size = $arguments[1];
 
-                $flattened = [];
-                foreach ($list->value as $item) {
-                    if ($item instanceof ListValue) {
-                        foreach ($item->value as $nested_item) {
-                            $flattened[] = $nested_item;
-                        }
-                    } else {
-                        $flattened[] = $item;
-                    }
+                if ($size->value <= 0) {
+                    throw new RuntimeException('Chunk size must be a positive integer', $call->getSpan());
                 }
 
-                return new ListValue($flattened);
+                $chunks = Vec\chunk($list->value, $size->value);
+
+                return new ListValue(Vec\map($chunks, static fn(array $chunk): ListValue => new ListValue($chunk)));
             };
     }
 }

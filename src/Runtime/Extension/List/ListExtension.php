@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Lists;
+namespace Cel\Runtime\Extension\List;
 
 use Cel\Runtime\Extension\ExtensionInterface;
 use Override;
 
-final readonly class ListsExtension implements ExtensionInterface
+final readonly class ListExtension implements ExtensionInterface
 {
     /**
      * @inheritDoc

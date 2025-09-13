@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Strings\Function;
+namespace Cel\Runtime\Extension\String\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
+use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\Value;
@@ -17,12 +18,12 @@ use Psl\Str\Byte;
 /**
  * @mago-expect analysis:unused-parameter
  */
-final readonly class ToAsciiLowerFunction implements FunctionInterface
+final readonly class ContainsFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'toAsciiLower';
+        return 'contains';
     }
 
     /**
@@ -40,43 +41,32 @@ final readonly class ToAsciiLowerFunction implements FunctionInterface
     #[Override]
     public function getOverloads(): iterable
     {
-        yield [ValueKind::String] =>
+        yield [ValueKind::String, ValueKind::String] =>
             /**
              * @param CallExpression $call      The call expression representing the function call.
              * @param list<Value>    $arguments The arguments passed to the function.
              */
-            static function (CallExpression $call, array $arguments): StringValue {
+            static function (CallExpression $call, array $arguments): BooleanValue {
                 /** @var StringValue $target */
                 $target = $arguments[0];
+                /** @var StringValue $substring */
+                $substring = $arguments[1];
 
-                $result = '';
-                foreach (Str\chunk($target->value) as $char) {
-                    $ord = Str\ord($char);
-                    // A = 65, Z = 90
-                    $result .= $ord >= 65 && $ord <= 90 ? Str\lowercase($char) : $char;
-                }
-
-                return new StringValue($result);
+                return new BooleanValue(Str\contains($target->value, $substring->value));
             };
 
-        yield [ValueKind::Bytes] =>
+        yield [ValueKind::Bytes, ValueKind::Bytes] =>
             /**
              * @param CallExpression $call      The call expression representing the function call.
              * @param list<Value>    $arguments The arguments passed to the function.
              */
-            static function (CallExpression $call, array $arguments): BytesValue {
+            static function (CallExpression $call, array $arguments): BooleanValue {
                 /** @var BytesValue $target */
                 $target = $arguments[0];
+                /** @var BytesValue $substring */
+                $substring = $arguments[1];
 
-                $result = '';
-                for ($i = 0; $i < Byte\length($target->value); ++$i) {
-                    $byte = $target->value[$i];
-                    $ord = Byte\ord($byte);
-                    // A = 65, Z = 90
-                    $result .= $ord >= 65 && $ord <= 90 ? Byte\chr($ord + 32) : $byte;
-                }
-
-                return new BytesValue($result);
+                return new BooleanValue(Byte\contains($target->value, $substring->value));
             };
     }
 }

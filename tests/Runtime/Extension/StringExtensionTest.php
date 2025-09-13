@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cel\Tests\Runtime\Extension;
 
 use Cel\Runtime\Exception\RuntimeException;
-use Cel\Runtime\Extension\Strings;
+use Cel\Runtime\Extension\String as Strings;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
@@ -16,7 +16,7 @@ use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Medium;
 
-#[CoversClass(Strings\StringsExtension::class)]
+#[CoversClass(Strings\StringExtension::class)]
 #[CoversClass(Strings\Function\ContainsFunction::class)]
 #[CoversClass(Strings\Function\EndsWithFunction::class)]
 #[CoversClass(Strings\Function\IndexOfFunction::class)]

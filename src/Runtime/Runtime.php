@@ -8,9 +8,9 @@ use Cel\Runtime\Environment\EnvironmentInterface;
 use Cel\Runtime\Extension\Core\CoreExtension;
 use Cel\Runtime\Extension\DateTime\DateTimeExtension;
 use Cel\Runtime\Extension\ExtensionInterface;
-use Cel\Runtime\Extension\Lists\ListsExtension;
+use Cel\Runtime\Extension\List\ListExtension;
 use Cel\Runtime\Extension\Math\MathExtension;
-use Cel\Runtime\Extension\Strings\StringsExtension;
+use Cel\Runtime\Extension\String\StringExtension;
 use Cel\Runtime\Function\FunctionRegistry;
 use Cel\Runtime\Interpreter\InterpreterFactory;
 use Cel\Syntax\Expression;
@@ -36,11 +36,11 @@ final readonly class Runtime implements RuntimeInterface
         }
 
         if ($this->configuration->enableStringExtension) {
-            $this->register(new StringsExtension());
+            $this->register(new StringExtension());
         }
 
         if ($this->configuration->enableListExtension) {
-            $this->register(new ListsExtension());
+            $this->register(new ListExtension());
         }
     }
 

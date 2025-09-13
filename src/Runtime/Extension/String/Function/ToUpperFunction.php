@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Strings\Function;
+namespace Cel\Runtime\Extension\String\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\BytesValue;
@@ -17,12 +17,12 @@ use Psl\Str\Byte;
 /**
  * @mago-expect analysis:unused-parameter
  */
-final readonly class TrimLeftFunction implements FunctionInterface
+final readonly class ToUpperFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'trimLeft';
+        return 'toUpper';
     }
 
     /**
@@ -49,21 +49,7 @@ final readonly class TrimLeftFunction implements FunctionInterface
                 /** @var StringValue $target */
                 $target = $arguments[0];
 
-                return new StringValue(Str\trim_left($target->value));
-            };
-
-        yield [ValueKind::String, ValueKind::String] =>
-            /**
-             * @param CallExpression $call      The call expression representing the function call.
-             * @param list<Value>    $arguments The arguments passed to the function.
-             */
-            static function (CallExpression $call, array $arguments): StringValue {
-                /** @var StringValue $target */
-                $target = $arguments[0];
-                /** @var StringValue $characters */
-                $characters = $arguments[1];
-
-                return new StringValue(Str\trim_left($target->value, $characters->value));
+                return new StringValue(Str\uppercase($target->value));
             };
 
         yield [ValueKind::Bytes] =>
@@ -75,21 +61,7 @@ final readonly class TrimLeftFunction implements FunctionInterface
                 /** @var BytesValue $target */
                 $target = $arguments[0];
 
-                return new BytesValue(Byte\trim_left($target->value));
-            };
-
-        yield [ValueKind::Bytes, ValueKind::Bytes] =>
-            /**
-             * @param CallExpression $call      The call expression representing the function call.
-             * @param list<Value>    $arguments The arguments passed to the function.
-             */
-            static function (CallExpression $call, array $arguments): BytesValue {
-                /** @var BytesValue $target */
-                $target = $arguments[0];
-                /** @var BytesValue $characters */
-                $characters = $arguments[1];
-
-                return new BytesValue(Byte\trim_left($target->value, $characters->value));
+                return new BytesValue(Byte\uppercase($target->value));
             };
     }
 }

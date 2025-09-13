@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Runtime\Extension\Strings\Function;
+namespace Cel\Runtime\Extension\String\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\BytesValue;
@@ -17,12 +17,12 @@ use Psl\Str\Byte;
 /**
  * @mago-expect analysis:unused-parameter
  */
-final readonly class ToLowerFunction implements FunctionInterface
+final readonly class ToAsciiUpperFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'toLower';
+        return 'toAsciiUpper';
     }
 
     /**
@@ -49,7 +49,14 @@ final readonly class ToLowerFunction implements FunctionInterface
                 /** @var StringValue $target */
                 $target = $arguments[0];
 
-                return new StringValue(Str\lowercase($target->value));
+                $result = '';
+                foreach (Str\chunk($target->value) as $char) {
+                    $ord = Str\ord($char);
+                    // a = 97, z = 122
+                    $result .= $ord >= 97 && $ord <= 122 ? Str\uppercase($char) : $char;
+                }
+
+                return new StringValue($result);
             };
 
         yield [ValueKind::Bytes] =>
@@ -61,7 +68,15 @@ final readonly class ToLowerFunction implements FunctionInterface
                 /** @var BytesValue $target */
                 $target = $arguments[0];
 
-                return new BytesValue(Byte\lowercase($target->value));
+                $result = '';
+                for ($i = 0; $i < Byte\length($target->value); ++$i) {
+                    $byte = $target->value[$i];
+                    $ord = Byte\ord($byte);
+                    // a = 97, z = 122
+                    $result .= $ord >= 97 && $ord <= 122 ? Byte\chr($ord - 32) : $byte;
+                }
+
+                return new BytesValue($result);
             };
     }
 }
