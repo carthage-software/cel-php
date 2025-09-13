@@ -8,14 +8,17 @@ use Cel\Runtime\Exception\TypeConversionException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\BytesValue;
+use Cel\Runtime\Value\DurationValue;
 use Cel\Runtime\Value\FloatValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
+use Cel\Runtime\Value\TimestampValue;
 use Cel\Runtime\Value\UnsignedIntegerValue;
 use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;
 use Cel\Syntax\Member\CallExpression;
 use Override;
+use Psl\DateTime\FormatPattern;
 use Psl\Str;
 
 /**
@@ -124,6 +127,31 @@ final readonly class StringFunction implements FunctionInterface
 
                 // Assuming bytes are valid UTF-8, as per CEL spec for string conversion
                 return new StringValue($value->value);
+            };
+
+        yield [ValueKind::Timestamp] =>
+            /**
+             * @param CallExpression $call      The call expression representing the function call.
+             * @param list<Value>    $arguments The arguments passed to the function.
+             */
+            static function (CallExpression $call, array $arguments): StringValue {
+                /** @var TimestampValue $value */
+                $value = $arguments[0];
+
+                return new StringValue($value->value->format(FormatPattern::Rfc3339));
+            };
+
+        yield [ValueKind::Duration] =>
+            /**
+             * @param CallExpression $call      The call expression representing the function call.
+             * @param list<Value>    $arguments The arguments passed to the function.
+             */
+            static function (CallExpression $call, array $arguments): StringValue {
+                /** @var DurationValue $value */
+                $value = $arguments[0];
+                $totalSeconds = (int) $value->value->getTotalSeconds();
+
+                return new StringValue(Str\format('%ds', $totalSeconds));
             };
     }
 }

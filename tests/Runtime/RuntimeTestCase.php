@@ -29,8 +29,7 @@ abstract class RuntimeTestCase extends TestCase
     /**
      * @param array<string, mixed> $variables
      */
-    #[DataProvider('provideEvaluationCases')]
-    public function testRun(string $code, array $variables, Value|RuntimeException $expectedResult): void
+    protected function evaluate(string $code, array $variables = []): Value
     {
         $parser = new Parser();
         $ast = $parser->parseString($code);
@@ -40,13 +39,22 @@ abstract class RuntimeTestCase extends TestCase
             $environment->addVariable($name, Value::from($value));
         }
 
+        $runtime = new Runtime();
+        return $runtime->run($ast, $environment)->result;
+    }
+
+    /**
+     * @param array<string, mixed> $variables
+     */
+    #[DataProvider('provideEvaluationCases')]
+    public function testRun(string $code, array $variables, Value|RuntimeException $expectedResult): void
+    {
         if ($expectedResult instanceof RuntimeException) {
             self::expectException($expectedResult::class);
             self::expectExceptionMessage($expectedResult->getMessage());
         }
 
-        $runtime = new Runtime();
-        $actualResult = $runtime->run($ast, $environment)->result;
+        $actualResult = $this->evaluate($code, $variables);
         if (!$expectedResult instanceof Value) {
             static::fail('Expected exception of type '
             . $expectedResult::class

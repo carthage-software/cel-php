@@ -67,12 +67,12 @@ final readonly class PunctuatedSequence implements IteratorAggregate
      */
     public function getSpan(): null|Span
     {
-        $firstSpan = Iter\first($this->elements)?->getSpan();
-        $lastSpan = Iter\last($this->elements)?->getSpan();
-        if (null === $firstSpan || null === $lastSpan) {
+        if ([] === $this->elements) {
             return null;
         }
 
+        $firstSpan = Iter\first($this->elements)->getSpan();
+        $lastSpan = Iter\last($this->elements)->getSpan();
         $lastComma = Iter\last($this->commas);
         if (null !== $lastComma && $lastComma->end > $lastSpan->end) {
             $lastSpan = $lastComma;

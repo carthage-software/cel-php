@@ -6,6 +6,7 @@ namespace Cel\Runtime;
 
 use Cel\Runtime\Environment\EnvironmentInterface;
 use Cel\Runtime\Extension\Core\CoreExtension;
+use Cel\Runtime\Extension\DateTime\DateTimeExtension;
 use Cel\Runtime\Extension\ExtensionInterface;
 use Cel\Runtime\Extension\Lists\ListsExtension;
 use Cel\Runtime\Extension\Math\MathExtension;
@@ -25,6 +26,7 @@ final readonly class Runtime implements RuntimeInterface
         $this->register(new StringsExtension());
         $this->register(new ListsExtension());
         $this->register(new MathExtension());
+        $this->register(new DateTimeExtension());
     }
 
     /**
