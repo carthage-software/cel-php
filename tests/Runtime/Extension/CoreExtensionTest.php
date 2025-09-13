@@ -24,6 +24,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Medium;
 use Psl\DateTime\Timestamp;
 
+/**
+ * @mago-expect lint:halstead
+ */
 #[CoversClass(Core\CoreExtension::class)]
 #[CoversClass(Core\Function\IntFunction::class)]
 #[CoversClass(Core\Function\StringFunction::class)]

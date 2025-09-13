@@ -168,4 +168,102 @@ final class StringExtensionTest extends RuntimeTestCase
                 new StringValue('TACOCÆT XII'),
             ];
     }
+
+    public function testContainsFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('contains("foo", "bar")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testEndsWithFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('endsWith("foo", "bar")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testStartsWithFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('startsWith("foo", "bar")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testIndexOfFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('indexOf("foo", "o")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testLastIndexOfFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('lastIndexOf("foo", "o")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testReplaceFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('replace("foo", "o", "a")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testSplitFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('split("foo-bar", "-")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testToAsciiLowerFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('toAsciiLower("FOO")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testToAsciiUpperFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('toAsciiUpper("foo")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testToLowerFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('toLower("FOO")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testToUpperFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('toUpper("foo")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testTrimFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('trim("  foo  ")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testTrimLeftFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('trimLeft("  foo  ")');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testTrimRightFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('trimRight("  foo  ")');
+
+        static::assertTrue($receipt->idempotent);
+    }
 }
