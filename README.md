@@ -61,7 +61,7 @@ try {
 As mentioned earlier, this project is still under heavy development. Below is a non-exhaustive list of features and improvements that are planned:
 
 - Language Features
-  - [ ] Implement Macros
+  - [x] Implement Macros
     - [x] `has(e.f)`
     - [x] `e.all(x, p)`
     - [x] `e.exists(x, p)`
@@ -69,12 +69,6 @@ As mentioned earlier, this project is still under heavy development. Below is a 
     - [x] `e.map(x, t)` (for lists and maps)
     - [x] `e.map(x, p, t)`
     - [x] `e.filter(x, p)` (for lists and maps)
-  - [ ] Support Optional Access
-    - [ ] Implement `foo.?bar` syntax, similar to cel-go ( this is *NOT* part of the CEL spec ).
-    - [ ] Support Message Creation
-      - [ ] Implement `a.b.C{foo: 1}` syntax at runtime ( currently allowed by the parser, but results in a runtime error ).
-      - [ ] Add a configuration layer to control which message types can be constructed at runtime.
-        - For security reasons, we want to restrict which PHP classes can be instantiated via CEL expressions.
 - Interpreter & Runtime
   - [x] Tree-Walking Interpreter (Implemented)
   - [ ] Stack-Based Interpreter
