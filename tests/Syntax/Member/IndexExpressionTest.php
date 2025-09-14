@@ -10,15 +10,8 @@ use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Literal\IntegerLiteralExpression;
 use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Syntax\Member\IndexExpression;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(IndexExpression::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(IntegerLiteralExpression::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(IdentifierExpression::class)]
 final class IndexExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void

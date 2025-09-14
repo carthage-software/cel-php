@@ -8,14 +8,8 @@ use Cel\Parser\Exception\UnexpectedTokenException;
 use Cel\Span\Span;
 use Cel\Token\Token;
 use Cel\Token\TokenKind;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(UnexpectedTokenException::class)]
-#[UsesClass(Token::class)]
-#[UsesClass(TokenKind::class)]
-#[UsesClass(Span::class)]
 final class UnexpectedTokenExceptionTest extends TestCase
 {
     public function testUnexpectedTokenExceptionWithoutExpectedTokens(): void

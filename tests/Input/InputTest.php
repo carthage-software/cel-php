@@ -6,15 +6,11 @@ namespace Cel\Tests\Input;
 
 use Cel\Input\Exception\OutOfBoundsException;
 use Cel\Input\Input;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @mago-expect lint:too-many-methods
  */
-#[CoversClass(Input::class)]
-#[UsesClass(OutOfBoundsException::class)]
 final class InputTest extends TestCase
 {
     public function testEmptyInput(): void

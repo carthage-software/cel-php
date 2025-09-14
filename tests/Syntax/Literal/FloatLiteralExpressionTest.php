@@ -8,14 +8,10 @@ use Cel\Span\Span;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\Literal\FloatLiteralExpression;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 
 /**
  * @extends AbstractLiteralExpressionTestCase<float>
  */
-#[CoversClass(FloatLiteralExpression::class)]
-#[UsesClass(Span::class)]
 final class FloatLiteralExpressionTest extends AbstractLiteralExpressionTestCase
 {
     /**

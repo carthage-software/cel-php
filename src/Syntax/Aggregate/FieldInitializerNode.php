@@ -6,7 +6,6 @@ namespace Cel\Syntax\Aggregate;
 
 use Cel\Span\Span;
 use Cel\Syntax\Expression;
-use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Node;
 use Cel\Syntax\SelectorNode;
 use Override;

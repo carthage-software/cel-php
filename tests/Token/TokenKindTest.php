@@ -7,14 +7,9 @@ namespace Cel\Tests\Token;
 use Cel\Token\Associativity;
 use Cel\Token\Precedence;
 use Cel\Token\TokenKind;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(TokenKind::class)]
-#[UsesClass(Precedence::class)]
-#[UsesClass(Associativity::class)]
 final class TokenKindTest extends TestCase
 {
     #[DataProvider('provideDelimiterCases')]

@@ -7,16 +7,12 @@ namespace Cel\Tests\Syntax\Literal;
 use Cel\Span\Span;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\Literal\LiteralExpression;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psl\Str\Byte;
 
 /**
  * @template T
  */
-#[CoversClass(LiteralExpression::class)]
-#[UsesClass(Span::class)]
 abstract class AbstractLiteralExpressionTestCase extends TestCase
 {
     /**

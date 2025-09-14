@@ -156,10 +156,8 @@ final class Input implements InputInterface
         }
 
         $end_position = $position + Byte\length($search);
+        /** @var int<1, max> $offset */
         $offset = $end_position - $this->cursor;
-        if ($offset < 1) {
-            return '';
-        }
 
         $slice = Byte\slice($this->bytes, $this->cursor, $offset);
         $this->cursor = $end_position;
@@ -175,10 +173,8 @@ final class Input implements InputInterface
             $this->cursor++;
         }
 
+        /** @var int<1, max> $offset */
         $offset = $this->cursor - $start;
-        if ($offset < 1) {
-            return '';
-        }
 
         return Byte\slice($this->bytes, $start, $offset);
     }

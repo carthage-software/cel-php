@@ -11,14 +11,7 @@ use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Syntax\ParenthesizedExpression;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(UnwrapParenthesesOptimization::class)]
-#[UsesClass(ParenthesizedExpression::class)]
-#[UsesClass(IdentifierExpression::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(Span::class)]
 final class UnwrapParenthesesOptimizationTest extends OptimizationTestCase
 {
     #[Override]

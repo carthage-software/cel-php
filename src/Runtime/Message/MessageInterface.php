@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Message;
 
-use Cel\Runtime\Exception\IncompatibleValueTypeException;
 use Cel\Runtime\Exception\InvalidMessageFieldsException;
 use Cel\Runtime\Value\Value;
 

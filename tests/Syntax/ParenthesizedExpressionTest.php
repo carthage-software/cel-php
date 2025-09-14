@@ -9,14 +9,8 @@ use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Syntax\ParenthesizedExpression;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(ParenthesizedExpression::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(IdentifierExpression::class)]
 final class ParenthesizedExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void

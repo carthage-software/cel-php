@@ -9,12 +9,8 @@ use Cel\Runtime\Value\MessageValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\Value;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(MessageValue::class)]
-#[UsesClass(StringValue::class)]
 final class MessageValueTest extends TestCase
 {
     public function testValue(): void

@@ -6,18 +6,10 @@ namespace Cel\Tests\Syntax\Aggregate;
 
 use Cel\Span\Span;
 use Cel\Syntax\Aggregate\FieldInitializerNode;
-use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Literal\StringLiteralExpression;
 use Cel\Syntax\SelectorNode;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(FieldInitializerNode::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(StringLiteralExpression::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(SelectorNode::class)]
 final class FieldInitializerNodeTest extends TestCase
 {
     public function testConstructorAndGetters(): void

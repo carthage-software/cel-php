@@ -7,19 +7,11 @@ namespace Cel\Tests\Syntax\Aggregate;
 use Cel\Span\Span;
 use Cel\Syntax\Aggregate\FieldInitializerNode;
 use Cel\Syntax\Aggregate\MessageExpression;
-use Cel\Syntax\Expression;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\PunctuatedSequence;
 use Cel\Syntax\SelectorNode;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(MessageExpression::class)]
-#[UsesClass(PunctuatedSequence::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(SelectorNode::class)]
-#[UsesClass(FieldInitializerNode::class)]
 final class MessageExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void

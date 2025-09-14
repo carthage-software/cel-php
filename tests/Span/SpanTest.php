@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Cel\Tests\Span;
 
 use Cel\Span\Span;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Span::class)]
 final class SpanTest extends TestCase
 {
     public function testZero(): void

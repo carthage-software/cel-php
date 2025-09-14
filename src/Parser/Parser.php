@@ -43,10 +43,6 @@ use Error;
 use Override;
 use Psl\Str\Byte;
 
-use function rtrim;
-use function substr;
-use function trim;
-
 final class Parser implements ParserInterface
 {
     use ParserConvenienceMethodsTrait;

@@ -6,32 +6,15 @@ namespace Cel\Tests\Runtime\Extension;
 
 use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Exception\TypeConversionException;
-use Cel\Runtime\Extension\DateTime;
 use Cel\Runtime\Value\DurationValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\TimestampValue;
 use Cel\Span\Span;
 use Cel\Tests\Runtime\RuntimeTestCase;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Medium;
 use Psl\DateTime\Duration;
 use Psl\DateTime\Timestamp;
 
-#[CoversClass(DateTime\DateTimeExtension::class)]
-#[CoversClass(DateTime\Function\DurationFunction::class)]
-#[CoversClass(DateTime\Function\TimestampFunction::class)]
-#[CoversClass(DateTime\Function\NowFunction::class)]
-#[CoversClass(DateTime\Function\GetHoursFunction::class)]
-#[CoversClass(DateTime\Function\GetMinutesFunction::class)]
-#[CoversClass(DateTime\Function\GetSecondsFunction::class)]
-#[CoversClass(DateTime\Function\GetMillisecondsFunction::class)]
-#[CoversClass(DateTime\Function\GetFullYearFunction::class)]
-#[CoversClass(DateTime\Function\GetMonthFunction::class)]
-#[CoversClass(DateTime\Function\GetDayOfMonthFunction::class)]
-#[CoversClass(DateTime\Function\GetDayOfYearFunction::class)]
-#[CoversClass(DateTime\Function\GetDayOfWeekFunction::class)]
-#[Medium]
 final class DateTimeExtensionTest extends RuntimeTestCase
 {
     #[Override]

@@ -7,13 +7,8 @@ namespace Cel\Tests\Token;
 use Cel\Span\Span;
 use Cel\Token\Token;
 use Cel\Token\TokenKind;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Token::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(TokenKind::class)]
 final class TokenTest extends TestCase
 {
     public function testConstructorAndProperties(): void

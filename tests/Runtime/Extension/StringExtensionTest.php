@@ -5,33 +5,18 @@ declare(strict_types=1);
 namespace Cel\Tests\Runtime\Extension;
 
 use Cel\Runtime\Exception\RuntimeException;
-use Cel\Runtime\Extension\String as Strings;
 use Cel\Runtime\Value\BooleanValue;
+use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\Value;
 use Cel\Tests\Runtime\RuntimeTestCase;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Medium;
 
-#[CoversClass(Strings\StringExtension::class)]
-#[CoversClass(Strings\Function\ContainsFunction::class)]
-#[CoversClass(Strings\Function\EndsWithFunction::class)]
-#[CoversClass(Strings\Function\IndexOfFunction::class)]
-#[CoversClass(Strings\Function\LastIndexOfFunction::class)]
-#[CoversClass(Strings\Function\ReplaceFunction::class)]
-#[CoversClass(Strings\Function\SplitFunction::class)]
-#[CoversClass(Strings\Function\StartsWithFunction::class)]
-#[CoversClass(Strings\Function\ToAsciiLowerFunction::class)]
-#[CoversClass(Strings\Function\ToAsciiUpperFunction::class)]
-#[CoversClass(Strings\Function\ToLowerFunction::class)]
-#[CoversClass(Strings\Function\ToUpperFunction::class)]
-#[CoversClass(Strings\Function\TrimFunction::class)]
-#[CoversClass(Strings\Function\TrimLeftFunction::class)]
-#[CoversClass(Strings\Function\TrimRightFunction::class)]
-#[Medium]
+/**
+ * @mago-expect lint:halstead
+ */
 final class StringExtensionTest extends RuntimeTestCase
 {
     /**
@@ -166,6 +151,136 @@ final class StringExtensionTest extends RuntimeTestCase
                 'toAsciiUpper("TacoCÆt Xii")',
                 [],
                 new StringValue('TACOCÆT XII'),
+            ];
+
+        /// Bytes
+
+        yield 'Bytes contains: found' => ['contains(b"hello world", b"world")', [], new BooleanValue(true)];
+        yield 'Bytes contains: not found' => ['contains(b"hello world", b"galaxy")', [], new BooleanValue(false)];
+        yield 'Bytes contains: empty substring' => ['contains(b"hello", b"")', [], new BooleanValue(true)];
+        yield 'Bytes contains: identical strings' => ['contains(b"hello", b"hello")', [], new BooleanValue(true)];
+        yield 'Bytes contains: substring at start' =>
+            [
+                'contains(b"hello world", b"hello")',
+                [],
+                new BooleanValue(true),
+            ];
+        yield 'Bytes contains: substring at end' => ['contains(b"hello world", b"world")', [], new BooleanValue(true)];
+
+        yield 'Bytes endsWith: found' => ['endsWith(b"hello world", b"world")', [], new BooleanValue(true)];
+        yield 'Bytes endsWith: not found' => ['endsWith(b"hello world", b"hello")', [], new BooleanValue(false)];
+        yield 'Bytes endsWith: empty substring' => ['endsWith(b"hello", b"")', [], new BooleanValue(true)];
+        yield 'Bytes endsWith: identical strings' => ['endsWith(b"hello", b"hello")', [], new BooleanValue(true)];
+
+        yield 'Bytes startsWith: found' => ['startsWith(b"hello world", b"hello")', [], new BooleanValue(true)];
+        yield 'Bytes startsWith: not found' => ['startsWith(b"hello world", b"world")', [], new BooleanValue(false)];
+        yield 'Bytes startsWith: empty substring' => ['startsWith(b"hello", b"")', [], new BooleanValue(true)];
+        yield 'Bytes startsWith: identical strings' => ['startsWith(b"hello", b"hello")', [], new BooleanValue(true)];
+
+        yield 'Bytes indexOf: simple found' => ['indexOf(b"hello mellow", b"ello")', [], new IntegerValue(1)];
+        yield 'Bytes indexOf: not found' => ['indexOf(b"hello mellow", b"jello")', [], new IntegerValue(-1)];
+        yield 'Bytes indexOf: empty substring' => ['indexOf(b"hello", b"")', [], new IntegerValue(0)];
+        yield 'Bytes indexOf: with offset' => ['indexOf(b"hello mellow", b"ello", 2)', [], new IntegerValue(7)];
+        yield 'Bytes indexOf: with offset not found' =>
+            [
+                'indexOf(b"hello mellow", b"ello", 8)',
+                [],
+                new IntegerValue(-1),
+            ];
+        yield 'Bytes indexOf: empty substring with offset' =>
+            [
+                'indexOf(b"hello mellow", b"", 2)',
+                [],
+                new IntegerValue(2),
+            ];
+        yield 'Bytes indexOf: negative offset error' =>
+            [
+                'indexOf(b"hello mellow", b"ello", -1)',
+                [],
+                new IntegerValue(-1),
+            ];
+
+        yield 'Bytes lastIndexOf: simple found' => ['lastIndexOf(b"hello mellow", b"ello")', [], new IntegerValue(7)];
+        yield 'Bytes lastIndexOf: not found' => ['lastIndexOf(b"hello mellow", b"jello")', [], new IntegerValue(-1)];
+        yield 'Bytes lastIndexOf: empty substring' => ['lastIndexOf(b"hello", b"")', [], new IntegerValue(5)];
+        yield 'Bytes lastIndexOf: with offset' => ['lastIndexOf(b"hello mellow", b"ello", 6)', [], new IntegerValue(7)];
+        yield 'Bytes lastIndexOf: with offset not found' =>
+            [
+                'lastIndexOf(b"hello mellow", b"ello", 0)',
+                [],
+                new IntegerValue(7),
+            ];
+        yield 'Bytes lastIndexOf: empty substring with offset' =>
+            [
+                'lastIndexOf(b"hello mellow", b"", 0)',
+                [],
+                new IntegerValue(0),
+            ];
+        yield 'Bytes lastIndexOf: negative offset error' =>
+            [
+                'lastIndexOf(b"hello mellow", b"ello", -1)',
+                [],
+                new IntegerValue(-1),
+            ];
+
+        yield 'Bytes replace: all occurrences' =>
+            [
+                'replace(b"hello hello", b"he", b"we")',
+                [],
+                new BytesValue('wello wello'),
+            ];
+        yield 'Bytes replace: empty needle' =>
+            [
+                'replace(b"hello hello", b"", b"_")',
+                [],
+                new BytesValue('_h_e_l_l_o_ _h_e_l_l_o_'),
+            ];
+        yield 'Bytes replace: empty replacement' =>
+            [
+                'replace(b"hello hello", b"h", b"")',
+                [],
+                new BytesValue('ello ello'),
+            ];
+
+        yield 'Bytes split: simple' =>
+            [
+                'split(b"a-b-c", b"-")',
+                [],
+                new ListValue([new BytesValue('a'), new BytesValue('b'), new BytesValue('c')]),
+            ];
+        yield 'Bytes split: one limit' => ['split(b"a-b-c", b"-", 1)', [], new ListValue([new BytesValue('a-b-c')])];
+        yield 'Bytes split: two limit' =>
+            [
+                'split(b"a-b-c", b"-", 2)',
+                [],
+                new ListValue([new BytesValue('a'), new BytesValue('b-c')]),
+            ];
+        yield 'Bytes split: empty delimiter' =>
+            [
+                'split(b"hello", b"")',
+                [],
+                new ListValue([
+                    new BytesValue('h'),
+                    new BytesValue('e'),
+                    new BytesValue('l'),
+                    new BytesValue('l'),
+                    new BytesValue('o'),
+                ]),
+            ];
+
+        yield 'Bytes toAsciiLower: mixed case' => ['toAsciiLower(b"TacoCat")', [], new BytesValue('tacocat')];
+        yield 'Bytes toAsciiLower: with non-ascii' =>
+            [
+                'toAsciiLower(b"TacoCÆt Xii")',
+                [],
+                new BytesValue('tacocÆt xii'),
+            ];
+        yield 'Bytes toAsciiUpper: mixed case' => ['toAsciiUpper(b"TacoCat")', [], new BytesValue('TACOCAT')];
+        yield 'Bytes toAsciiUpper: with non-ascii' =>
+            [
+                'toAsciiUpper(b"TacoCÆt Xii")',
+                [],
+                new BytesValue('TACOCÆT XII'),
             ];
     }
 

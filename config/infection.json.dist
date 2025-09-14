@@ -4,7 +4,7 @@
             "src"
         ]
     },
-    "timeout": 10,
+    "timeout": 5,
     "minMsi": 94,
     "minCoveredMsi": 94,
     "threads": "max",

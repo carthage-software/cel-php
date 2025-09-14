@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Cel\Tests\Syntax;
 
 use Cel\Syntax\ExpressionKind;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psl\Vec;
 
-#[CoversClass(ExpressionKind::class)]
 final class ExpressionKindTest extends TestCase
 {
     public function testEnumCases(): void

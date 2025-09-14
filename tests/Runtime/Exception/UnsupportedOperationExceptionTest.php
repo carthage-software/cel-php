@@ -6,12 +6,8 @@ namespace Cel\Tests\Runtime\Exception;
 
 use Cel\Runtime\Exception\UnsupportedOperationException;
 use Cel\Span\Span;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(UnsupportedOperationException::class)]
-#[UsesClass(Span::class)]
 final class UnsupportedOperationExceptionTest extends TestCase
 {
     public function testException(): void

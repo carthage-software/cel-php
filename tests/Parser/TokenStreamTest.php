@@ -5,27 +5,13 @@ declare(strict_types=1);
 namespace Cel\Tests\Parser;
 
 use Cel\Input\Input;
-use Cel\Lexer\Internal\Utils;
 use Cel\Lexer\Lexer;
 use Cel\Parser\Exception\UnexpectedEndOfFileException;
 use Cel\Parser\Exception\UnexpectedTokenException;
 use Cel\Parser\TokenStream;
-use Cel\Span\Span;
-use Cel\Token\Token;
 use Cel\Token\TokenKind;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(TokenStream::class)]
-#[UsesClass(Lexer::class)]
-#[UsesClass(Input::class)]
-#[UsesClass(Token::class)]
-#[UsesClass(TokenKind::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(UnexpectedEndOfFileException::class)]
-#[UsesClass(UnexpectedTokenException::class)]
-#[UsesClass(Utils::class)]
 final class TokenStreamTest extends TestCase
 {
     public function testConsumeAndPeek(): void

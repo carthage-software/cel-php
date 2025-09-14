@@ -8,7 +8,6 @@ use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\EnvironmentInterface;
 use Cel\Runtime\Exception\InvalidConditionTypeException;
 use Cel\Runtime\Exception\InvalidMacroCallException;
-use Cel\Runtime\Exception\InvalidMessageFieldsException;
 use Cel\Runtime\Exception\MessageConstructionException;
 use Cel\Runtime\Exception\NoSuchFunctionException;
 use Cel\Runtime\Exception\NoSuchKeyException;
@@ -1011,17 +1010,20 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         $target = $this->run($expression->target);
-        if (!$target instanceof ListValue) {
+        if (!$target instanceof ListValue && !$target instanceof MapValue) {
             throw new InvalidMacroCallException(
-                Str\format('The `all` macro requires a list target, got `%s`', $target->getType()),
+                Str\format('The `all` macro requires a list or map target, got `%s`', $target->getType()),
                 $expression->target->getSpan(),
             );
         }
 
+        /** @var list<Value> $items */
+        $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
+
         $environment = $this->environment->fork();
         try {
             $all_true = true;
-            foreach ($target->value as $value) {
+            foreach ($items as $value) {
                 $this->environment->addVariable($name->identifier->name, $value);
 
                 $result = $this->run($callback);
@@ -1067,17 +1069,20 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         $target = $this->run($expression->target);
-        if (!$target instanceof ListValue) {
+        if (!$target instanceof ListValue && !$target instanceof MapValue) {
             throw new InvalidMacroCallException(
-                Str\format('The `exists` macro requires a list target, got `%s`', $target->getType()),
+                Str\format('The `exists` macro requires a list or map target, got `%s`', $target->getType()),
                 $expression->target->getSpan(),
             );
         }
 
+        /** @var list<Value> $items */
+        $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
+
         $environment = $this->environment->fork();
         try {
             $found_one = false;
-            foreach ($target->value as $value) {
+            foreach ($items as $value) {
                 $this->environment->addVariable($name->identifier->name, $value);
 
                 $result = $this->run($callback);
@@ -1126,17 +1131,20 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         $target = $this->run($expression->target);
-        if (!$target instanceof ListValue) {
+        if (!$target instanceof ListValue && !$target instanceof MapValue) {
             throw new InvalidMacroCallException(
-                Str\format('The `exists_one` macro requires a list target, got `%s`', $target->getType()),
+                Str\format('The `exists_one` macro requires a list or map target, got `%s`', $target->getType()),
                 $expression->target->getSpan(),
             );
         }
 
+        /** @var list<Value> $items */
+        $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
+
         $environment = $this->environment->fork();
         $true_count = 0;
         try {
-            foreach ($target->value as $value) {
+            foreach ($items as $value) {
                 $this->environment->addVariable($name->identifier->name, $value);
 
                 $result = $this->run($callback);

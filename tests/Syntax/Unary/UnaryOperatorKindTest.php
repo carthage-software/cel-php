@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Cel\Tests\Syntax\Unary;
 
 use Cel\Syntax\Unary\UnaryOperatorKind;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psl\Vec;
 
-#[CoversClass(UnaryOperatorKind::class)]
 final class UnaryOperatorKindTest extends TestCase
 {
     public function testEnumCases(): void

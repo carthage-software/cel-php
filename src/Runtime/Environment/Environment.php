@@ -8,8 +8,6 @@ use Cel\Runtime\Value\Value;
 use Override;
 use Psl\Iter;
 
-use function array_key_exists;
-
 /**
  * A mutable environment for the CEL runtime.
  */

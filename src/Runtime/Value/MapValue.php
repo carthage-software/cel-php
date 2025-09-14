@@ -8,10 +8,6 @@ use Cel\Runtime\Exception\UnsupportedOperationException;
 use Override;
 use Psl\Dict;
 use Psl\Iter;
-use Psl\Vec;
-
-use function array_map;
-use function count;
 
 /**
  * Represents a map value.

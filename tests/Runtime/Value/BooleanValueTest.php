@@ -4,17 +4,75 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Runtime\Value;
 
+use Cel\Runtime\Exception\UnsupportedOperationException;
 use Cel\Runtime\Value\BooleanValue;
-use PHPUnit\Framework\Attributes\CoversClass;
+use Cel\Runtime\Value\IntegerValue;
+use Cel\Runtime\Value\Value;
+use Cel\Runtime\Value\ValueKind;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(BooleanValue::class)]
 final class BooleanValueTest extends TestCase
 {
-    public function testValue(): void
+    public function testConstructorAndGetters(): void
     {
         $value = new BooleanValue(true);
+        static::assertTrue($value->value);
         static::assertTrue($value->getNativeValue());
+        static::assertSame(ValueKind::Boolean, $value->getKind());
         static::assertSame('bool', $value->getType());
+    }
+
+    #[DataProvider('provideEqualityCases')]
+    public function testIsEqual(bool $expected, Value $a, Value $b): void
+    {
+        static::assertSame($expected, $a->isEqual($b));
+    }
+
+    public static function provideEqualityCases(): iterable
+    {
+        yield 'true == true' => [true, new BooleanValue(true), new BooleanValue(true)];
+        yield 'false == false' => [true, new BooleanValue(false), new BooleanValue(false)];
+        yield 'true == false' => [false, new BooleanValue(true), new BooleanValue(false)];
+        yield 'false == true' => [false, new BooleanValue(false), new BooleanValue(true)];
+    }
+
+    public function testIsEqualThrowsOnIncompatibleType(): void
+    {
+        $this->expectException(UnsupportedOperationException::class);
+        $this->expectExceptionMessage('Cannot compare values of type `bool` and `int` for equality');
+
+        new BooleanValue(true)->isEqual(new IntegerValue(1));
+    }
+
+    #[DataProvider('provideComparisonCases')]
+    public function testComparisons(Value $a, Value $b, bool $isLess, bool $isGreater): void
+    {
+        static::assertSame($isLess, $a->isLessThan($b));
+        static::assertSame($isGreater, $a->isGreaterThan($b));
+    }
+
+    public static function provideComparisonCases(): iterable
+    {
+        yield 'true vs false' => [new BooleanValue(true), new BooleanValue(false), false, true];
+        yield 'false vs true' => [new BooleanValue(false), new BooleanValue(true), true, false];
+        yield 'true vs true' => [new BooleanValue(true), new BooleanValue(true), false, false];
+        yield 'false vs false' => [new BooleanValue(false), new BooleanValue(false), false, false];
+    }
+
+    public function testIsLessThanThrowsOnIncompatibleType(): void
+    {
+        $this->expectException(UnsupportedOperationException::class);
+        $this->expectExceptionMessage('Cannot compare values of type `bool` and `int`');
+
+        new BooleanValue(true)->isLessThan(new IntegerValue(1));
+    }
+
+    public function testIsGreaterThanThrowsOnIncompatibleType(): void
+    {
+        $this->expectException(UnsupportedOperationException::class);
+        $this->expectExceptionMessage('Cannot compare values of type `bool` and `int`');
+
+        new BooleanValue(true)->isGreaterThan(new IntegerValue(1));
     }
 }

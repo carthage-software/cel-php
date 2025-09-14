@@ -11,15 +11,8 @@ use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Syntax\Unary\UnaryExpression;
 use Cel\Syntax\Unary\UnaryOperator;
 use Cel\Syntax\Unary\UnaryOperatorKind;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(UnaryExpression::class)]
-#[UsesClass(UnaryOperator::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(IdentifierExpression::class)]
 final class UnaryExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void

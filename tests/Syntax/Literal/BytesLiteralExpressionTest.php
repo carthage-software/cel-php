@@ -8,14 +8,10 @@ use Cel\Span\Span;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\Literal\BytesLiteralExpression;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 
 /**
  * @extends AbstractLiteralExpressionTestCase<string>
  */
-#[CoversClass(BytesLiteralExpression::class)]
-#[UsesClass(Span::class)]
 final class BytesLiteralExpressionTest extends AbstractLiteralExpressionTestCase
 {
     /**

@@ -12,16 +12,8 @@ use Cel\Syntax\Member\CallExpression;
 use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Syntax\PunctuatedSequence;
 use Cel\Syntax\SelectorNode;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(CallExpression::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(PunctuatedSequence::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(IdentifierExpression::class)]
-#[UsesClass(SelectorNode::class)]
 final class CallExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void

@@ -6,12 +6,8 @@ namespace Cel\Tests\Runtime\Exception;
 
 use Cel\Runtime\Exception\NoSuchKeyException;
 use Cel\Span\Span;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(NoSuchKeyException::class)]
-#[UsesClass(Span::class)]
 final class NoSuchKeyExceptionTest extends TestCase
 {
     public function testException(): void

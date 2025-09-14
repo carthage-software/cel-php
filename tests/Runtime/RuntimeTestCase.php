@@ -8,13 +8,10 @@ use Cel\Parser\Parser;
 use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\Environment;
 use Cel\Runtime\Exception\RuntimeException;
-use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
 use Cel\Runtime\Runtime;
 use Cel\Runtime\RuntimeReceipt;
 use Cel\Runtime\Value\Value;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Medium;
 use PHPUnit\Framework\TestCase;
 use Psl\Str;
 
@@ -23,9 +20,6 @@ use function var_export;
 /**
  * @mago-expect lint:no-debug-symbols
  */
-#[CoversClass(Runtime::class)]
-#[CoversClass(TreeWalkingInterpreter::class)]
-#[Medium]
 abstract class RuntimeTestCase extends TestCase
 {
     /**

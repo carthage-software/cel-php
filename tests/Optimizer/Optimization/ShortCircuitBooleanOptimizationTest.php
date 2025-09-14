@@ -14,17 +14,7 @@ use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Literal\BoolLiteralExpression;
 use Cel\Syntax\Member\IdentifierExpression;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(ShortCircuitBooleanOptimization::class)]
-#[UsesClass(BinaryExpression::class)]
-#[UsesClass(BoolLiteralExpression::class)]
-#[UsesClass(IdentifierExpression::class)]
-#[UsesClass(BinaryOperator::class)]
-#[UsesClass(BinaryOperatorKind::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(Span::class)]
 final class ShortCircuitBooleanOptimizationTest extends OptimizationTestCase
 {
     #[Override]

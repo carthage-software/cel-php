@@ -11,15 +11,8 @@ use Cel\Syntax\Binary\BinaryOperatorKind;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Member\IdentifierExpression;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(BinaryExpression::class)]
-#[UsesClass(BinaryOperator::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(IdentifierExpression::class)]
 final class BinaryExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void

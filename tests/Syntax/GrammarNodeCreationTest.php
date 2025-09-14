@@ -14,7 +14,6 @@ use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Syntax\Binary\BinaryOperator;
 use Cel\Syntax\Binary\BinaryOperatorKind;
 use Cel\Syntax\ConditionalExpression;
-use Cel\Syntax\Expression;
 use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Literal\BoolLiteralExpression;
 use Cel\Syntax\Literal\BytesLiteralExpression;
@@ -33,39 +32,8 @@ use Cel\Syntax\SelectorNode;
 use Cel\Syntax\Unary\UnaryExpression;
 use Cel\Syntax\Unary\UnaryOperator;
 use Cel\Syntax\Unary\UnaryOperatorKind;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\CoversNothing;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[UsesClass(Span::class)]
-#[CoversClass(IdentifierNode::class)]
-#[CoversClass(SelectorNode::class)]
-#[CoversClass(PunctuatedSequence::class)]
-#[CoversClass(BinaryOperator::class)]
-#[CoversClass(BinaryOperatorKind::class)]
-#[CoversClass(UnaryOperator::class)]
-#[CoversClass(UnaryOperatorKind::class)]
-#[CoversClass(BoolLiteralExpression::class)]
-#[CoversClass(BytesLiteralExpression::class)]
-#[CoversClass(FloatLiteralExpression::class)]
-#[CoversClass(IntegerLiteralExpression::class)]
-#[CoversClass(NullLiteralExpression::class)]
-#[CoversClass(StringLiteralExpression::class)]
-#[CoversClass(UnsignedIntegerLiteralExpression::class)]
-#[CoversClass(IdentifierExpression::class)]
-#[CoversClass(ParenthesizedExpression::class)]
-#[CoversClass(ListExpression::class)]
-#[CoversClass(MapEntryNode::class)]
-#[CoversClass(MapExpression::class)]
-#[CoversClass(FieldInitializerNode::class)]
-#[CoversClass(MessageExpression::class)]
-#[CoversClass(BinaryExpression::class)]
-#[CoversClass(ConditionalExpression::class)]
-#[CoversClass(MemberAccessExpression::class)]
-#[CoversClass(IndexExpression::class)]
-#[CoversClass(CallExpression::class)]
-#[CoversClass(UnaryExpression::class)]
 final class GrammarNodeCreationTest extends TestCase
 {
     public function testLiteralNodes(): void

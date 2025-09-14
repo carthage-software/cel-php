@@ -7,7 +7,6 @@ namespace Cel\Tests\Runtime\Value;
 use Cel\Runtime\Exception\IncompatibleValueTypeException;
 use Cel\Runtime\Message\MessageInterface;
 use Cel\Runtime\Value\BooleanValue;
-use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\FloatValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
@@ -17,15 +16,10 @@ use Cel\Runtime\Value\NullValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\Value;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Medium;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-#[CoversClass(Value::class)]
-#[Medium]
 final class ValueTest extends TestCase
 {
     /**

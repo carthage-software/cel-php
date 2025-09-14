@@ -8,14 +8,10 @@ use Cel\Span\Span;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\Literal\BoolLiteralExpression;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 
 /**
  * @extends AbstractLiteralExpressionTestCase<bool>
  */
-#[CoversClass(BoolLiteralExpression::class)]
-#[UsesClass(Span::class)]
 final class BooleanLiteralExpressionTest extends AbstractLiteralExpressionTestCase
 {
     /**

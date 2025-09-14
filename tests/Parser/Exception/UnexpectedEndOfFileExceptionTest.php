@@ -6,12 +6,8 @@ namespace Cel\Tests\Parser\Exception;
 
 use Cel\Parser\Exception\UnexpectedEndOfFileException;
 use Cel\Token\TokenKind;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(UnexpectedEndOfFileException::class)]
-#[UsesClass(TokenKind::class)]
 final class UnexpectedEndOfFileExceptionTest extends TestCase
 {
     public function testUnexpectedEndOfFileExceptionWithoutExpectedTokens(): void

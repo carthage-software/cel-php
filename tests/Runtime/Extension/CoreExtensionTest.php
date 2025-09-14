@@ -8,7 +8,6 @@ use Cel\Runtime\Exception\NoSuchOverloadException;
 use Cel\Runtime\Exception\OverflowException;
 use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Exception\TypeConversionException;
-use Cel\Runtime\Extension\Core;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\FloatValue;
@@ -20,23 +19,11 @@ use Cel\Runtime\Value\Value;
 use Cel\Span\Span;
 use Cel\Tests\Runtime\RuntimeTestCase;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Medium;
 use Psl\DateTime\Timestamp;
 
 /**
  * @mago-expect lint:halstead
  */
-#[CoversClass(Core\CoreExtension::class)]
-#[CoversClass(Core\Function\IntFunction::class)]
-#[CoversClass(Core\Function\StringFunction::class)]
-#[CoversClass(Core\Function\UIntFunction::class)]
-#[CoversClass(Core\Function\FloatFunction::class)]
-#[CoversClass(Core\Function\BoolFunction::class)]
-#[CoversClass(Core\Function\SizeFunction::class)]
-#[CoversClass(Core\Function\BytesFunction::class)]
-#[CoversClass(Core\Function\TypeOfFunction::class)]
-#[Medium]
 final class CoreExtensionTest extends RuntimeTestCase
 {
     /**

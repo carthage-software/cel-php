@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cel\Tests\Runtime\Extension;
 
 use Cel\Runtime\Exception\RuntimeException;
-use Cel\Runtime\Extension\List;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
@@ -14,17 +13,7 @@ use Cel\Runtime\Value\Value;
 use Cel\Span\Span;
 use Cel\Tests\Runtime\RuntimeTestCase;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Medium;
 
-#[CoversClass(List\ListExtension::class)]
-#[CoversClass(List\Function\ChunkFunction::class)]
-#[CoversClass(List\Function\ContainsFunction::class)]
-#[CoversClass(List\Function\FlattenFunction::class)]
-#[CoversClass(List\Function\JoinFunction::class)]
-#[CoversClass(List\Function\ReverseFunction::class)]
-#[CoversClass(List\Function\SortFunction::class)]
-#[Medium]
 final class ListExtensionTest extends RuntimeTestCase
 {
     /**

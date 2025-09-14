@@ -7,7 +7,6 @@ namespace Cel\Runtime;
 use Cel\Runtime\Environment\EnvironmentInterface;
 use Cel\Runtime\Exception\ConflictingFunctionSignatureException;
 use Cel\Runtime\Extension\ExtensionInterface;
-use Cel\Runtime\Value\Value;
 use Cel\Syntax\Expression;
 
 interface RuntimeInterface

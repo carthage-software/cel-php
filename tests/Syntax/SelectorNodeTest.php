@@ -6,12 +6,8 @@ namespace Cel\Tests\Syntax;
 
 use Cel\Span\Span;
 use Cel\Syntax\SelectorNode;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(SelectorNode::class)]
-#[UsesClass(Span::class)]
 final class SelectorNodeTest extends TestCase
 {
     public function testConstructorAndGetters(): void

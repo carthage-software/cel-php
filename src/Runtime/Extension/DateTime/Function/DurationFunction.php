@@ -16,7 +16,6 @@ use Psl\DateTime;
 use Psl\DateTime\Duration;
 use Psl\Regex;
 use Psl\Str;
-use Psl\Type;
 
 final readonly class DurationFunction implements FunctionInterface
 {

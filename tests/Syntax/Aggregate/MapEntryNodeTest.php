@@ -9,15 +9,8 @@ use Cel\Syntax\Aggregate\MapEntryNode;
 use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Literal\StringLiteralExpression;
 use Cel\Syntax\Member\IdentifierExpression;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(MapEntryNode::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(StringLiteralExpression::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(IdentifierExpression::class)]
 final class MapEntryNodeTest extends TestCase
 {
     public function testConstructorAndGetters(): void

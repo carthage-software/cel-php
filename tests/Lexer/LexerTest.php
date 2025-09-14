@@ -5,24 +5,13 @@ declare(strict_types=1);
 namespace Cel\Tests\Lexer;
 
 use Cel\Input\Input;
-use Cel\Lexer\Internal\Utils;
 use Cel\Lexer\Lexer;
-use Cel\Span\Span;
 use Cel\Tests\ResourceProviderTrait;
-use Cel\Token\Token;
 use Cel\Token\TokenKind;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psl\Iter;
 
-#[CoversClass(Lexer::class)]
-#[UsesClass(Input::class)]
-#[UsesClass(Token::class)]
-#[UsesClass(TokenKind::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(Utils::class)]
 final class LexerTest extends TestCase
 {
     use ResourceProviderTrait;

@@ -9,13 +9,8 @@ use Cel\Syntax\Aggregate\MapEntryNode;
 use Cel\Syntax\Aggregate\MapExpression;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\PunctuatedSequence;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(MapExpression::class)]
-#[UsesClass(PunctuatedSequence::class)]
-#[UsesClass(Span::class)]
 final class MapExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void

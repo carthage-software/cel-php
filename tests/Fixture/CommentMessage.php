@@ -13,8 +13,6 @@ use Override;
 use Psl\Str;
 use Psl\Type;
 
-use function Psl\Str;
-
 final readonly class CommentMessage implements MessageInterface
 {
     public function __construct(

@@ -6,12 +6,8 @@ namespace Cel\Tests\Runtime\Exception;
 
 use Cel\Runtime\Exception\IncompatibleValueTypeException;
 use Cel\Span\Span;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(IncompatibleValueTypeException::class)]
-#[UsesClass(Span::class)]
 final class IncompatibleValueTypeExceptionTest extends TestCase
 {
     public function testException(): void

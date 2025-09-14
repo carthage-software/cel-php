@@ -8,14 +8,10 @@ use Cel\Span\Span;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\Literal\NullLiteralExpression;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 
 /**
  * @extends AbstractLiteralExpressionTestCase<null>
  */
-#[CoversClass(NullLiteralExpression::class)]
-#[UsesClass(Span::class)]
 final class NullLiteralExpressionTest extends AbstractLiteralExpressionTestCase
 {
     /**

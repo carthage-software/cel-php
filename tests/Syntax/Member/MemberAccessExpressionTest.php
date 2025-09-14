@@ -10,15 +10,8 @@ use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Syntax\Member\MemberAccessExpression;
 use Cel\Syntax\SelectorNode;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(MemberAccessExpression::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(SelectorNode::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(IdentifierExpression::class)]
 final class MemberAccessExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void

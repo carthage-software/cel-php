@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace Cel\Runtime\Exception;
 
 use Cel\Runtime\Value\ValueKind;
-use Cel\Span\Span;
 use Cel\Syntax\Member\CallExpression;
 use Psl\Iter;
 use Psl\Str;
 use Psl\Vec;
 
-use function array_map;
 use function array_pop;
-use function count;
-use function implode;
 
 /**
  * Exception thrown when a function is called with an invalid set of argument types.

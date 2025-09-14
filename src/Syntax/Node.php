@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cel\Syntax;
 
 use Cel\Span\Span;
-use Override;
 
 /**
  * The base class for all nodes in the Abstract Syntax Tree (AST).

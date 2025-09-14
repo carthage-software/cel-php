@@ -5,15 +5,11 @@ declare(strict_types=1);
 namespace Cel\Tests\Runtime;
 
 use Cel\Runtime\Configuration;
-use Cel\Runtime\Exception\InvalidMessageFieldsException;
 use Cel\Runtime\Exception\MessageConstructionException;
 use Cel\Runtime\Exception\NoSuchOverloadException;
 use Cel\Runtime\Exception\NoSuchTypeException;
 use Cel\Runtime\Exception\OverflowException;
 use Cel\Runtime\Exception\RuntimeException;
-use Cel\Runtime\Exception\UnsupportedOperationException;
-use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
-use Cel\Runtime\Runtime;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\MessageValue;
 use Cel\Runtime\Value\StringValue;
@@ -23,12 +19,7 @@ use Cel\Span\Span;
 use Cel\Tests\Fixture\CommentMessage;
 use Cel\Tests\Fixture\UserMessage;
 use Override;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Medium;
 
-#[CoversClass(Runtime::class)]
-#[CoversClass(TreeWalkingInterpreter::class)]
-#[Medium]
 final class RuntimeTest extends RuntimeTestCase
 {
     /**

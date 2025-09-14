@@ -11,10 +11,6 @@ use Psl\Str;
 use Psl\Vec;
 use RuntimeException;
 
-use function array_map;
-use function count;
-use function implode;
-
 final class UnexpectedTokenException extends RuntimeException implements ExceptionInterface
 {
     /**

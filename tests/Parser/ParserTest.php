@@ -4,25 +4,16 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Parser;
 
-use Cel\Input\Input;
-use Cel\Lexer\Internal\Utils;
-use Cel\Lexer\Lexer;
 use Cel\Parser\Exception\UnexpectedEndOfFileException;
 use Cel\Parser\Exception\UnexpectedTokenException;
 use Cel\Parser\Parser;
-use Cel\Parser\TokenStream;
-use Cel\Span\Span;
-use Cel\Syntax\Aggregate\FieldInitializerNode;
 use Cel\Syntax\Aggregate\ListExpression;
-use Cel\Syntax\Aggregate\MapEntryNode;
 use Cel\Syntax\Aggregate\MapExpression;
 use Cel\Syntax\Aggregate\MessageExpression;
 use Cel\Syntax\Binary\BinaryExpression;
-use Cel\Syntax\Binary\BinaryOperator;
 use Cel\Syntax\Binary\BinaryOperatorKind;
 use Cel\Syntax\ConditionalExpression;
 use Cel\Syntax\Expression;
-use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Literal\BoolLiteralExpression;
 use Cel\Syntax\Literal\BytesLiteralExpression;
 use Cel\Syntax\Literal\FloatLiteralExpression;
@@ -35,54 +26,20 @@ use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Syntax\Member\IndexExpression;
 use Cel\Syntax\Member\MemberAccessExpression;
 use Cel\Syntax\ParenthesizedExpression;
-use Cel\Syntax\PunctuatedSequence;
-use Cel\Syntax\SelectorNode;
 use Cel\Syntax\Unary\UnaryExpression;
-use Cel\Syntax\Unary\UnaryOperator;
 use Cel\Syntax\Unary\UnaryOperatorKind;
 use Cel\Tests\ResourceProviderTrait;
-use Cel\Token\Token;
-use Cel\Token\TokenKind;
-use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversNamespace;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\UsesClass;
+use PHPUnit\Framework\Attributes\UsesNamespace;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Parser::class)]
-#[UsesClass(Input::class)]
-#[UsesClass(Lexer::class)]
-#[UsesClass(TokenStream::class)]
-#[UsesClass(Token::class)]
-#[UsesClass(TokenKind::class)]
-#[UsesClass(Span::class)]
-#[UsesClass(Utils::class)]
-#[UsesClass(PunctuatedSequence::class)]
-#[UsesClass(FieldInitializerNode::class)]
-#[UsesClass(MapEntryNode::class)]
-#[UsesClass(BinaryOperator::class)]
-#[UsesClass(UnaryOperator::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(SelectorNode::class)]
-#[UsesClass(IntegerLiteralExpression::class)]
-#[UsesClass(BinaryExpression::class)]
-#[UsesClass(ParenthesizedExpression::class)]
-#[UsesClass(UnaryExpression::class)]
-#[UsesClass(IdentifierExpression::class)]
-#[UsesClass(MemberAccessExpression::class)]
-#[UsesClass(IndexExpression::class)]
-#[UsesClass(CallExpression::class)]
-#[UsesClass(ListExpression::class)]
-#[UsesClass(StringLiteralExpression::class)]
-#[UsesClass(BoolLiteralExpression::class)]
-#[UsesClass(MapExpression::class)]
-#[UsesClass(MessageExpression::class)]
-#[UsesClass(ConditionalExpression::class)]
-#[UsesClass(UnexpectedEndOfFileException::class)]
-#[UsesClass(UnexpectedTokenException::class)]
-#[UsesClass(UnsignedIntegerLiteralExpression::class)]
-#[UsesClass(FloatLiteralExpression::class)]
-#[UsesClass(BytesLiteralExpression::class)]
-#[UsesClass(NullLiteralExpression::class)]
+#[UsesNamespace('Cel\Span')]
+#[UsesNamespace('Cel\Input')]
+#[UsesNamespace('Cel\Token')]
+#[UsesNamespace('Cel\Lexer')]
+#[CoversNamespace('Cel\Syntax')]
+#[CoversNamespace('Cel\Parser')]
 final class ParserTest extends TestCase
 {
     use ResourceProviderTrait;

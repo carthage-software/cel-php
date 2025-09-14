@@ -6,12 +6,8 @@ namespace Cel\Tests\Runtime\Environment;
 
 use Cel\Runtime\Environment\Environment;
 use Cel\Runtime\Value\IntegerValue;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Environment::class)]
-#[UsesClass(IntegerValue::class)]
 final class EnvironmentTest extends TestCase
 {
     public function testVariables(): void

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cel\Runtime\Extension\Core\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
-use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;

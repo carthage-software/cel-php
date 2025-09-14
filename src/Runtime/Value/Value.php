@@ -7,21 +7,12 @@ namespace Cel\Runtime\Value;
 use Cel\Runtime\Exception\IncompatibleValueTypeException;
 use Cel\Runtime\Exception\UnsupportedOperationException;
 use Cel\Runtime\Message\MessageInterface;
-use Cel\Span\Span;
 use Psl\Dict;
 use Psl\Str;
 use Psl\Type;
-use Psl\Vec;
 
-use function array_is_list;
-use function array_map;
 use function gettype;
-use function is_array;
-use function is_bool;
-use function is_float;
-use function is_int;
 use function is_object;
-use function is_string;
 
 /**
  * Represents a value in the CEL runtime.

@@ -12,8 +12,6 @@ use Cel\Syntax\Member\CallExpression;
 use Psl\Str;
 use Psl\Vec;
 
-use function array_map;
-
 final class FunctionRegistry
 {
     /**

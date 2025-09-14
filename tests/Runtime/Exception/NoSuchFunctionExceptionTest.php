@@ -6,12 +6,8 @@ namespace Cel\Tests\Runtime\Exception;
 
 use Cel\Runtime\Exception\NoSuchFunctionException;
 use Cel\Span\Span;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(NoSuchFunctionException::class)]
-#[UsesClass(Span::class)]
 final class NoSuchFunctionExceptionTest extends TestCase
 {
     public function testException(): void

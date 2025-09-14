@@ -2,21 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Cel\Tests\Syntax\PunctuatedSequenceTest;
+namespace Cel\Tests\Syntax;
 
 use Cel\Span\Span;
 use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\PunctuatedSequence;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 use function iterator_to_array;
 
-#[CoversClass(PunctuatedSequence::class)]
-#[UsesClass(IdentifierNode::class)]
-#[UsesClass(Span::class)]
 final class PunctuatedSequenceTest extends TestCase
 {
     public function testGetIterator(): void

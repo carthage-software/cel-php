@@ -6,7 +6,6 @@ namespace Cel\Runtime\Extension\String\Function;
 
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\BytesValue;
-use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;
@@ -79,6 +78,16 @@ final readonly class ReplaceFunction implements FunctionInterface
                 $needle = $arguments[1];
                 /** @var BytesValue $replacement */
                 $replacement = $arguments[2];
+
+                if ($needle->value === '') {
+                    // If the needle is an empty string, we insert the replacement between every character.
+                    $result = Str\join(Byte\chunk($haystack->value), $replacement->value) . $replacement->value;
+                    if ($haystack->value !== '') {
+                        $result = $replacement->value . $result;
+                    }
+
+                    return new BytesValue($result);
+                }
 
                 return new BytesValue(Byte\replace($haystack->value, $needle->value, $replacement->value));
             };

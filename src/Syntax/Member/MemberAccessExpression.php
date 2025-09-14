@@ -7,7 +7,6 @@ namespace Cel\Syntax\Member;
 use Cel\Span\Span;
 use Cel\Syntax\Expression;
 use Cel\Syntax\ExpressionKind;
-use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\SelectorNode;
 use Override;
 
