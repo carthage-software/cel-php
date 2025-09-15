@@ -24,10 +24,10 @@
   ],
   "require": {
     "php": "~8.4 || ~8.5",
-    "azjezz/psl": "dev-next"
+    "azjezz/psl": "4.0.0"
   },
   "require-dev": {
-    "carthage-software/mago": "^1.0.0-beta.14",
+    "carthage-software/mago": "^1.0.0-beta.15",
     "phpunit/phpunit": "^12.3",
     "php-coveralls/php-coveralls": "^2.8",
     "infection/infection": "^0.31.2"

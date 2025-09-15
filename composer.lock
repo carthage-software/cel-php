@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9baffbe1415487ee1d66a4d6cab12606",
+    "content-hash": "d7d46bd117009b8e1c809cc761de4830",
     "packages": [
         {
             "name": "azjezz/psl",
-            "version": "dev-next",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azjezz/psl.git",
-                "reference": "37a873b446955c388cd2519447a5abb760ebf111"
+                "reference": "d8ec6d06224d101e84e33259edabd76197fbe797"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azjezz/psl/zipball/37a873b446955c388cd2519447a5abb760ebf111",
-                "reference": "37a873b446955c388cd2519447a5abb760ebf111",
+                "url": "https://api.github.com/repos/azjezz/psl/zipball/d8ec6d06224d101e84e33259edabd76197fbe797",
+                "reference": "d8ec6d06224d101e84e33259edabd76197fbe797",
                 "shasum": ""
             },
             "require": {
@@ -30,7 +30,7 @@
                 "revolt/event-loop": "^1.0.7"
             },
             "require-dev": {
-                "carthage-software/mago": "^1.0.0-beta.7",
+                "carthage-software/mago": "^1.0.0-beta.15",
                 "infection/infection": "^0.31.2",
                 "php-coveralls/php-coveralls": "^2.7.0",
                 "phpbench/phpbench": "^1.4.0",
@@ -40,7 +40,6 @@
                 "php-standard-library/phpstan-extension": "PHPStan integration",
                 "php-standard-library/psalm-plugin": "Psalm integration"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "thanks": {
@@ -69,7 +68,7 @@
             "description": "PHP Standard Library",
             "support": {
                 "issues": "https://github.com/azjezz/psl/issues",
-                "source": "https://github.com/azjezz/psl/tree/next"
+                "source": "https://github.com/azjezz/psl/tree/4.0.0"
             },
             "funding": [
                 {
@@ -77,7 +76,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-13T05:50:31+00:00"
+            "time": "2025-09-15T18:04:07+00:00"
         },
         {
             "name": "revolt/event-loop",
@@ -155,16 +154,16 @@
     "packages-dev": [
         {
             "name": "carthage-software/mago",
-            "version": "1.0.0-beta.14",
+            "version": "1.0.0-beta.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "28df10deb41891818aab27392e07383f3eec7b16"
+                "reference": "5b6fd303218bdfa903d529f4f327cbf7557deacb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/28df10deb41891818aab27392e07383f3eec7b16",
-                "reference": "28df10deb41891818aab27392e07383f3eec7b16",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/5b6fd303218bdfa903d529f4f327cbf7557deacb",
+                "reference": "5b6fd303218bdfa903d529f4f327cbf7557deacb",
                 "shasum": ""
             },
             "require": {
@@ -202,7 +201,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.0.0-beta.14"
+                "source": "https://github.com/carthage-software/mago/tree/1.0.0-beta.15"
             },
             "funding": [
                 {
@@ -210,7 +209,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-12T23:21:44+00:00"
+            "time": "2025-09-15T17:17:56+00:00"
         },
         {
             "name": "colinodell/json5",
@@ -1269,16 +1268,16 @@
         },
         {
             "name": "marc-mabe/php-enum",
-            "version": "v4.7.1",
+            "version": "v4.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/marc-mabe/php-enum.git",
-                "reference": "7159809e5cfa041dca28e61f7f7ae58063aae8ed"
+                "reference": "bb426fcdd65c60fb3638ef741e8782508fda7eef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marc-mabe/php-enum/zipball/7159809e5cfa041dca28e61f7f7ae58063aae8ed",
-                "reference": "7159809e5cfa041dca28e61f7f7ae58063aae8ed",
+                "url": "https://api.github.com/repos/marc-mabe/php-enum/zipball/bb426fcdd65c60fb3638ef741e8782508fda7eef",
+                "reference": "bb426fcdd65c60fb3638ef741e8782508fda7eef",
                 "shasum": ""
             },
             "require": {
@@ -1336,9 +1335,9 @@
             ],
             "support": {
                 "issues": "https://github.com/marc-mabe/php-enum/issues",
-                "source": "https://github.com/marc-mabe/php-enum/tree/v4.7.1"
+                "source": "https://github.com/marc-mabe/php-enum/tree/v4.7.2"
             },
-            "time": "2024-11-28T04:54:44+00:00"
+            "time": "2025-09-14T11:18:39+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -5085,7 +5084,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "azjezz/psl": 20,
         "carthage-software/mago": 10
     },
     "prefer-stable": false,
