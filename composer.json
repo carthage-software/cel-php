@@ -24,7 +24,7 @@
   ],
   "require": {
     "php": "~8.4 || ~8.5",
-    "azjezz/psl": "4.0.0"
+    "azjezz/psl": "~3.2 || ~4.0"
   },
   "require-dev": {
     "carthage-software/mago": "^1.0.0-beta.15",
