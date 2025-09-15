@@ -42,23 +42,22 @@ final class ValueTest extends TestCase
         yield 'string' => ['hello', StringValue::class];
         yield 'list' => [[], ListValue::class];
         yield 'map' => [['a' => 'b'], MapValue::class];
-        yield 'message' =>
-            [
-                new class() implements MessageInterface {
-                    #[Override]
-                    public function toCelValue(): Value
-                    {
-                        return new MessageValue($this, []);
-                    }
+        yield 'message' => [
+            new class() implements MessageInterface {
+                #[Override]
+                public function toCelValue(): Value
+                {
+                    return new MessageValue($this, []);
+                }
 
-                    #[Override]
-                    public static function fromCelFields(array $_fields): static
-                    {
-                        return new static();
-                    }
-                },
-                MessageValue::class,
-            ];
+                #[Override]
+                public static function fromCelFields(array $_fields): static
+                {
+                    return new static();
+                }
+            },
+            MessageValue::class,
+        ];
     }
 
     public function testFromUnsupportedObject(): void

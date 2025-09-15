@@ -36,18 +36,16 @@ final class TimestampValueTest extends TestCase
 
     public static function provideIsEqualCases(): iterable
     {
-        yield 'equal timestamps' =>
-            [
-                new TimestampValue(Timestamp::fromParts(100)),
-                new TimestampValue(Timestamp::fromParts(100)),
-                true,
-            ];
-        yield 'not equal timestamps' =>
-            [
-                new TimestampValue(Timestamp::fromParts(100)),
-                new TimestampValue(Timestamp::fromParts(200)),
-                false,
-            ];
+        yield 'equal timestamps' => [
+            new TimestampValue(Timestamp::fromParts(100)),
+            new TimestampValue(Timestamp::fromParts(100)),
+            true,
+        ];
+        yield 'not equal timestamps' => [
+            new TimestampValue(Timestamp::fromParts(100)),
+            new TimestampValue(Timestamp::fromParts(200)),
+            false,
+        ];
     }
 
     public function testIsEqualThrowsExceptionForDifferentValueType(): void
@@ -69,24 +67,21 @@ final class TimestampValueTest extends TestCase
 
     public static function provideIsGreaterThanCases(): iterable
     {
-        yield 'greater than' =>
-            [
-                new TimestampValue(Timestamp::fromParts(200)),
-                new TimestampValue(Timestamp::fromParts(100)),
-                true,
-            ];
-        yield 'not greater than (equal)' =>
-            [
-                new TimestampValue(Timestamp::fromParts(100)),
-                new TimestampValue(Timestamp::fromParts(100)),
-                false,
-            ];
-        yield 'not greater than (less)' =>
-            [
-                new TimestampValue(Timestamp::fromParts(100)),
-                new TimestampValue(Timestamp::fromParts(200)),
-                false,
-            ];
+        yield 'greater than' => [
+            new TimestampValue(Timestamp::fromParts(200)),
+            new TimestampValue(Timestamp::fromParts(100)),
+            true,
+        ];
+        yield 'not greater than (equal)' => [
+            new TimestampValue(Timestamp::fromParts(100)),
+            new TimestampValue(Timestamp::fromParts(100)),
+            false,
+        ];
+        yield 'not greater than (less)' => [
+            new TimestampValue(Timestamp::fromParts(100)),
+            new TimestampValue(Timestamp::fromParts(200)),
+            false,
+        ];
     }
 
     public function testIsGreaterThanThrowsExceptionForDifferentValueType(): void
@@ -108,24 +103,21 @@ final class TimestampValueTest extends TestCase
 
     public static function provideIsLessThanCases(): iterable
     {
-        yield 'less than' =>
-            [
-                new TimestampValue(Timestamp::fromParts(100)),
-                new TimestampValue(Timestamp::fromParts(200)),
-                true,
-            ];
-        yield 'not less than (equal)' =>
-            [
-                new TimestampValue(Timestamp::fromParts(100)),
-                new TimestampValue(Timestamp::fromParts(100)),
-                false,
-            ];
-        yield 'not less than (greater)' =>
-            [
-                new TimestampValue(Timestamp::fromParts(200)),
-                new TimestampValue(Timestamp::fromParts(100)),
-                false,
-            ];
+        yield 'less than' => [
+            new TimestampValue(Timestamp::fromParts(100)),
+            new TimestampValue(Timestamp::fromParts(200)),
+            true,
+        ];
+        yield 'not less than (equal)' => [
+            new TimestampValue(Timestamp::fromParts(100)),
+            new TimestampValue(Timestamp::fromParts(100)),
+            false,
+        ];
+        yield 'not less than (greater)' => [
+            new TimestampValue(Timestamp::fromParts(200)),
+            new TimestampValue(Timestamp::fromParts(100)),
+            false,
+        ];
     }
 
     public function testIsLessThanThrowsExceptionForDifferentValueType(): void

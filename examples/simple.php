@@ -24,7 +24,6 @@ try {
         ],
     ]);
 
-    // @mago-expect lint:no-debug-symbols
     IO\write_line('Result: %s(%s)', $result->getType(), var_export($result->getNativeValue(), true));
 } catch (Cel\Parser\Exception\ExceptionInterface $exception) {
     IO\write_error_line('Parse error: %s', $exception->getMessage());

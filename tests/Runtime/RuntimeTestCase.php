@@ -17,9 +17,6 @@ use Psl\Str;
 
 use function var_export;
 
-/**
- * @mago-expect lint:no-debug-symbols
- */
 abstract class RuntimeTestCase extends TestCase
 {
     /**

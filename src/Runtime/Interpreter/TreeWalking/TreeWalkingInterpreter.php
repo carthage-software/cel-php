@@ -840,6 +840,8 @@ final class TreeWalkingInterpreter implements InterpreterInterface
 
     /**
      * @throws RuntimeException
+     *
+     * @mago-expect analysis:possibly-static-access-on-interface
      */
     private function message(MessageExpression $expression): Value
     {
@@ -878,7 +880,6 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         try {
-            // @mago-expect analysis:possibly-static-access-on-interface
             return new MessageValue($foundClassname::fromCelFields($fields), $fields);
         } catch (Throwable $e) {
             throw new MessageConstructionException(

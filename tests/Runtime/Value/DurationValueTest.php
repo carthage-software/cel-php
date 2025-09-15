@@ -36,24 +36,21 @@ final class DurationValueTest extends TestCase
 
     public static function provideIsEqualCases(): iterable
     {
-        yield 'equal durations' =>
-            [
-                new DurationValue(Duration::days(1)),
-                new DurationValue(Duration::days(1)),
-                true,
-            ];
-        yield 'not equal durations' =>
-            [
-                new DurationValue(Duration::days(1)),
-                new DurationValue(Duration::days(2)),
-                false,
-            ];
-        yield 'equal durations with different units' =>
-            [
-                new DurationValue(Duration::hours(24)),
-                new DurationValue(Duration::days(1)),
-                true,
-            ];
+        yield 'equal durations' => [
+            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::days(1)),
+            true,
+        ];
+        yield 'not equal durations' => [
+            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::days(2)),
+            false,
+        ];
+        yield 'equal durations with different units' => [
+            new DurationValue(Duration::hours(24)),
+            new DurationValue(Duration::days(1)),
+            true,
+        ];
     }
 
     public function testIsEqualThrowsExceptionForDifferentValueType(): void
@@ -75,24 +72,21 @@ final class DurationValueTest extends TestCase
 
     public static function provideIsGreaterThanCases(): iterable
     {
-        yield 'greater than' =>
-            [
-                new DurationValue(Duration::days(2)),
-                new DurationValue(Duration::days(1)),
-                true,
-            ];
-        yield 'not greater than (equal)' =>
-            [
-                new DurationValue(Duration::days(1)),
-                new DurationValue(Duration::days(1)),
-                false,
-            ];
-        yield 'not greater than (less)' =>
-            [
-                new DurationValue(Duration::days(1)),
-                new DurationValue(Duration::days(2)),
-                false,
-            ];
+        yield 'greater than' => [
+            new DurationValue(Duration::days(2)),
+            new DurationValue(Duration::days(1)),
+            true,
+        ];
+        yield 'not greater than (equal)' => [
+            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::days(1)),
+            false,
+        ];
+        yield 'not greater than (less)' => [
+            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::days(2)),
+            false,
+        ];
     }
 
     public function testIsGreaterThanThrowsExceptionForDifferentValueType(): void
@@ -114,24 +108,21 @@ final class DurationValueTest extends TestCase
 
     public static function provideIsLessThanCases(): iterable
     {
-        yield 'less than' =>
-            [
-                new DurationValue(Duration::days(1)),
-                new DurationValue(Duration::days(2)),
-                true,
-            ];
-        yield 'not less than (equal)' =>
-            [
-                new DurationValue(Duration::days(1)),
-                new DurationValue(Duration::days(1)),
-                false,
-            ];
-        yield 'not less than (greater)' =>
-            [
-                new DurationValue(Duration::days(2)),
-                new DurationValue(Duration::days(1)),
-                false,
-            ];
+        yield 'less than' => [
+            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::days(2)),
+            true,
+        ];
+        yield 'not less than (equal)' => [
+            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::days(1)),
+            false,
+        ];
+        yield 'not less than (greater)' => [
+            new DurationValue(Duration::days(2)),
+            new DurationValue(Duration::days(1)),
+            false,
+        ];
     }
 
     public function testIsLessThanThrowsExceptionForDifferentValueType(): void

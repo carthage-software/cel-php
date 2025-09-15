@@ -34,69 +34,57 @@ final class ShortCircuitBooleanOptimizationTest extends OptimizationTestCase
         $plus = new BinaryOperator(BinaryOperatorKind::Plus, Span::zero());
 
         // AND cases
-        yield 'expr && true -> expr' =>
-            [
-                new BinaryExpression($ident, $and, $true),
-                $ident,
-            ];
-        yield 'true && expr -> expr' =>
-            [
-                new BinaryExpression($true, $and, $ident),
-                $ident,
-            ];
-        yield 'expr && false -> false' =>
-            [
-                new BinaryExpression($ident, $and, $false),
-                $false,
-            ];
-        yield 'false && expr -> false' =>
-            [
-                new BinaryExpression($false, $and, $ident),
-                $false,
-            ];
-        yield 'expr && expr -> no change' =>
-            [
-                new BinaryExpression($ident, $and, $ident),
-                null,
-            ];
+        yield 'expr && true -> expr' => [
+            new BinaryExpression($ident, $and, $true),
+            $ident,
+        ];
+        yield 'true && expr -> expr' => [
+            new BinaryExpression($true, $and, $ident),
+            $ident,
+        ];
+        yield 'expr && false -> false' => [
+            new BinaryExpression($ident, $and, $false),
+            $false,
+        ];
+        yield 'false && expr -> false' => [
+            new BinaryExpression($false, $and, $ident),
+            $false,
+        ];
+        yield 'expr && expr -> no change' => [
+            new BinaryExpression($ident, $and, $ident),
+            null,
+        ];
 
         // OR cases
-        yield 'expr || true -> true' =>
-            [
-                new BinaryExpression($ident, $or, $true),
-                $true,
-            ];
-        yield 'true || expr -> true' =>
-            [
-                new BinaryExpression($true, $or, $ident),
-                $true,
-            ];
-        yield 'expr || false -> expr' =>
-            [
-                new BinaryExpression($ident, $or, $false),
-                $ident,
-            ];
-        yield 'false || expr -> expr' =>
-            [
-                new BinaryExpression($false, $or, $ident),
-                $ident,
-            ];
-        yield 'expr || expr -> no change' =>
-            [
-                new BinaryExpression($ident, $or, $ident),
-                null,
-            ];
+        yield 'expr || true -> true' => [
+            new BinaryExpression($ident, $or, $true),
+            $true,
+        ];
+        yield 'true || expr -> true' => [
+            new BinaryExpression($true, $or, $ident),
+            $true,
+        ];
+        yield 'expr || false -> expr' => [
+            new BinaryExpression($ident, $or, $false),
+            $ident,
+        ];
+        yield 'false || expr -> expr' => [
+            new BinaryExpression($false, $or, $ident),
+            $ident,
+        ];
+        yield 'expr || expr -> no change' => [
+            new BinaryExpression($ident, $or, $ident),
+            null,
+        ];
 
         // Non-applicable cases
-        yield 'Does not affect non-boolean binary op' =>
-            [
-                new BinaryExpression($ident, $plus, $ident),
-                null,
-            ];
-        yield 'Does not affect non-binary expression' =>
-            [
-                $ident,
-                null,
-            ];
+        yield 'Does not affect non-boolean binary op' => [
+            new BinaryExpression($ident, $plus, $ident),
+            null,
+        ];
+        yield 'Does not affect non-binary expression' => [
+            $ident,
+            null,
+        ];
     }
 }

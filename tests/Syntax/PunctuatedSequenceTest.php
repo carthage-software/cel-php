@@ -49,39 +49,35 @@ final class PunctuatedSequenceTest extends TestCase
     {
         yield 'empty' => [new PunctuatedSequence([], []), false];
 
-        yield 'no trailing' =>
-            [
-                new PunctuatedSequence([
-                    new IdentifierNode('a', new Span(0, 1)),
-                    new IdentifierNode('b', new Span(2, 3)),
-                ], [new Span(1, 2)]),
-                false,
-            ];
+        yield 'no trailing' => [
+            new PunctuatedSequence([
+                new IdentifierNode('a', new Span(0, 1)),
+                new IdentifierNode('b', new Span(2, 3)),
+            ], [new Span(1, 2)]),
+            false,
+        ];
 
-        yield 'with trailing' =>
-            [
-                new PunctuatedSequence([
-                    new IdentifierNode('a', new Span(0, 1)),
-                    new IdentifierNode('b', new Span(3, 4)),
-                ], [new Span(1, 2), new Span(4, 5)]),
-                true,
-            ];
+        yield 'with trailing' => [
+            new PunctuatedSequence([
+                new IdentifierNode('a', new Span(0, 1)),
+                new IdentifierNode('b', new Span(3, 4)),
+            ], [new Span(1, 2), new Span(4, 5)]),
+            true,
+        ];
 
-        yield 'single element no trailing' =>
-            [
-                new PunctuatedSequence([
-                    new IdentifierNode('a', new Span(0, 1)),
-                ], []),
-                false,
-            ];
+        yield 'single element no trailing' => [
+            new PunctuatedSequence([
+                new IdentifierNode('a', new Span(0, 1)),
+            ], []),
+            false,
+        ];
 
-        yield 'single element with trailing' =>
-            [
-                new PunctuatedSequence([
-                    new IdentifierNode('a', new Span(0, 1)),
-                ], [new Span(1, 2)]),
-                true,
-            ];
+        yield 'single element with trailing' => [
+            new PunctuatedSequence([
+                new IdentifierNode('a', new Span(0, 1)),
+            ], [new Span(1, 2)]),
+            true,
+        ];
     }
 
     #[DataProvider('provideSpanCases')]
@@ -104,43 +100,38 @@ final class PunctuatedSequenceTest extends TestCase
     {
         yield 'empty' => [null, new PunctuatedSequence([], [])];
 
-        yield 'single element' =>
-            [
-                new Span(0, 1),
-                new PunctuatedSequence([new IdentifierNode('a', new Span(0, 1))], []),
-            ];
+        yield 'single element' => [
+            new Span(0, 1),
+            new PunctuatedSequence([new IdentifierNode('a', new Span(0, 1))], []),
+        ];
 
-        yield 'single with trailing comma' =>
-            [
-                new Span(0, 2),
-                new PunctuatedSequence([new IdentifierNode('a', new Span(0, 1))], [new Span(1, 2)]),
-            ];
+        yield 'single with trailing comma' => [
+            new Span(0, 2),
+            new PunctuatedSequence([new IdentifierNode('a', new Span(0, 1))], [new Span(1, 2)]),
+        ];
 
-        yield 'multiple elements' =>
-            [
-                new Span(0, 3),
-                new PunctuatedSequence([
-                    new IdentifierNode('a', new Span(0, 1)),
-                    new IdentifierNode('b', new Span(2, 3)),
-                ], [new Span(1, 2)]),
-            ];
+        yield 'multiple elements' => [
+            new Span(0, 3),
+            new PunctuatedSequence([
+                new IdentifierNode('a', new Span(0, 1)),
+                new IdentifierNode('b', new Span(2, 3)),
+            ], [new Span(1, 2)]),
+        ];
 
-        yield 'multiple with trailing comma' =>
-            [
-                new Span(0, 4),
-                new PunctuatedSequence([
-                    new IdentifierNode('a', new Span(0, 1)),
-                    new IdentifierNode('b', new Span(2, 3)),
-                ], [new Span(1, 2), new Span(3, 4)]),
-            ];
+        yield 'multiple with trailing comma' => [
+            new Span(0, 4),
+            new PunctuatedSequence([
+                new IdentifierNode('a', new Span(0, 1)),
+                new IdentifierNode('b', new Span(2, 3)),
+            ], [new Span(1, 2), new Span(3, 4)]),
+        ];
 
-        yield 'comma end equals element end' =>
-            [
-                new Span(0, 3),
-                new PunctuatedSequence([
-                    new IdentifierNode('a', new Span(0, 1)),
-                    new IdentifierNode('b', new Span(2, 3)),
-                ], [new Span(1, 2), new Span(3, 3)]),
-            ];
+        yield 'comma end equals element end' => [
+            new Span(0, 3),
+            new PunctuatedSequence([
+                new IdentifierNode('a', new Span(0, 1)),
+                new IdentifierNode('b', new Span(2, 3)),
+            ], [new Span(1, 2), new Span(3, 3)]),
+        ];
     }
 }

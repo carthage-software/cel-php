@@ -72,21 +72,19 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core bool: unsigned integer non-zero' => ['bool(1u)', [], new BooleanValue(true)];
         yield 'Core bool: unsigned integer zero' => ['bool(0u)', [], new BooleanValue(false)];
 
-        yield 'Core bool: empty string error' =>
-            [
-                'bool("")',
-                [],
-                new TypeConversionException('Cannot convert string "" to boolean.', new Span(0, 8)),
-            ];
+        yield 'Core bool: empty string error' => [
+            'bool("")',
+            [],
+            new TypeConversionException('Cannot convert string "" to boolean.', new Span(0, 8)),
+        ];
 
         yield 'Core bool: bytes true' => ['bool(b"true")', [], new BooleanValue(true)];
         yield 'Core bool: bytes false' => ['bool(b"false")', [], new BooleanValue(false)];
-        yield 'Core bool: empty bytes error' =>
-            [
-                'bool(b"")',
-                [],
-                new TypeConversionException('Cannot convert bytes "" to boolean.', new Span(0, 9)),
-            ];
+        yield 'Core bool: empty bytes error' => [
+            'bool(b"")',
+            [],
+            new TypeConversionException('Cannot convert bytes "" to boolean.', new Span(0, 9)),
+        ];
 
         yield 'Core size: string' => ['size("hello")', [], new IntegerValue(5)];
         yield 'Core size: empty string' => ['size("")', [], new IntegerValue(0)];
@@ -95,86 +93,78 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core size: empty list' => ['size([])', [], new IntegerValue(0)];
         yield 'Core size: map' => ['size({"a": 1, "b": 2})', [], new IntegerValue(2)];
         yield 'Core size: empty map' => ['size({})', [], new IntegerValue(0)];
-        yield 'Core size: unsupported type (int)' =>
-            [
-                'size(123)',
-                [],
-                new NoSuchOverloadException(
-                    'Invalid arguments for function "size". Got `(int)`, but expected one of: `(string)`, `(bytes)`, `(list)`, or `(map)`',
-                    new Span(0, 7),
-                ),
-            ];
-        yield 'Core size: unsupported type (bool)' =>
-            [
-                'size(true)',
-                [],
-                new NoSuchOverloadException(
-                    'Invalid arguments for function "size". Got `(bool)`, but expected one of: `(string)`, `(bytes)`, `(list)`, or `(map)`',
-                    new Span(0, 8),
-                ),
-            ];
+        yield 'Core size: unsupported type (int)' => [
+            'size(123)',
+            [],
+            new NoSuchOverloadException(
+                'Invalid arguments for function "size". Got `(int)`, but expected one of: `(string)`, `(bytes)`, `(list)`, or `(map)`',
+                new Span(0, 7),
+            ),
+        ];
+        yield 'Core size: unsupported type (bool)' => [
+            'size(true)',
+            [],
+            new NoSuchOverloadException(
+                'Invalid arguments for function "size". Got `(bool)`, but expected one of: `(string)`, `(bytes)`, `(list)`, or `(map)`',
+                new Span(0, 8),
+            ),
+        ];
 
         yield 'Core bytes: from bytes' => ['bytes(b"hello")', [], new BytesValue('hello')];
         yield 'Core bytes: from string' => ['bytes("world")', [], new BytesValue('world')];
 
         yield 'Core float: from bytes' => ['float(b"123.45")', [], new FloatValue(123.45)];
 
-        yield 'Core int: float overflow high' =>
-            [
-                'int(9.3e18)',
-                [],
-                new OverflowException(
-                    'Float value 9.3E+18 overflows maximum integer value 9223372036854775807',
-                    new Span(0, 11),
-                ),
-            ];
+        yield 'Core int: float overflow high' => [
+            'int(9.3e18)',
+            [],
+            new OverflowException(
+                'Float value 9.3E+18 overflows maximum integer value 9223372036854775807',
+                new Span(0, 11),
+            ),
+        ];
 
-        yield 'Core int: float overflow low' =>
-            [
-                'int(-9.3e18)',
-                [],
-                new OverflowException(
-                    'Float value -9.3E+18 overflows maximum integer value 9223372036854775807',
-                    new Span(0, 12),
-                ),
-            ];
+        yield 'Core int: float overflow low' => [
+            'int(-9.3e18)',
+            [],
+            new OverflowException(
+                'Float value -9.3E+18 overflows maximum integer value 9223372036854775807',
+                new Span(0, 12),
+            ),
+        ];
 
         yield 'Core int: from bytes' => ['int(b"123")', [], new IntegerValue(123)];
 
-        yield 'Core string: from timestamp' =>
-            [
-                'string(t)',
-                ['t' => new TimestampValue(Timestamp::fromParts(1757766605, 123000000))],
-                new StringValue('2025-09-13T12:30:05.123Z'),
-            ];
+        yield 'Core string: from timestamp' => [
+            'string(t)',
+            ['t' => new TimestampValue(Timestamp::fromParts(1757766605, 123000000))],
+            new StringValue('2025-09-13T12:30:05.123Z'),
+        ];
 
         yield 'Core string: from bytes' => ['string(b"hello")', [], new StringValue('hello')];
 
         yield 'Core string: from duration' => ['string(duration("1h"))', [], new StringValue('3600s')];
 
         yield 'Core uint: from int' => ['uint(123)', [], new UnsignedIntegerValue(123)];
-        yield 'Core uint: from negative int' =>
-            [
-                'uint(-1)',
-                [],
-                new OverflowException('Integer value -1 overflows unsigned integer', new Span(0, 8)),
-            ];
+        yield 'Core uint: from negative int' => [
+            'uint(-1)',
+            [],
+            new OverflowException('Integer value -1 overflows unsigned integer', new Span(0, 8)),
+        ];
 
         yield 'Core uint: from zero int' => ['uint(0)', [], new UnsignedIntegerValue(0)];
 
         yield 'Core uint: from float' => ['uint(123.45)', [], new UnsignedIntegerValue(123)];
-        yield 'Core uint: from negative float' =>
-            [
-                'uint(-1.23)',
-                [],
-                new OverflowException('Float value -1.230000 overflows unsigned integer', new Span(0, 11)),
-            ];
-        yield 'Core uint: from float infinity' =>
-            [
-                'uint(inf)',
-                ['inf' => INF],
-                new OverflowException('Float value INF overflows unsigned integer', new Span(0, 9)),
-            ];
+        yield 'Core uint: from negative float' => [
+            'uint(-1.23)',
+            [],
+            new OverflowException('Float value -1.230000 overflows unsigned integer', new Span(0, 11)),
+        ];
+        yield 'Core uint: from float infinity' => [
+            'uint(inf)',
+            ['inf' => INF],
+            new OverflowException('Float value INF overflows unsigned integer', new Span(0, 9)),
+        ];
 
         yield 'Core uint: from zero float' => ['uint(0.0)', [], new UnsignedIntegerValue(0)];
 
@@ -182,20 +172,18 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core uint: from false' => ['uint(false)', [], new UnsignedIntegerValue(0)];
 
         yield 'Core uint: from string' => ['uint("123")', [], new UnsignedIntegerValue(123)];
-        yield 'Core uint: from invalid string' =>
-            [
-                'uint("abc")',
-                [],
-                new TypeConversionException('Cannot convert string "abc" to unsigned integer.', new Span(0, 11)),
-            ];
+        yield 'Core uint: from invalid string' => [
+            'uint("abc")',
+            [],
+            new TypeConversionException('Cannot convert string "abc" to unsigned integer.', new Span(0, 11)),
+        ];
 
         yield 'Core uint: from bytes' => ['uint(b"123")', [], new UnsignedIntegerValue(123)];
-        yield 'Core uint: from invalid bytes' =>
-            [
-                'uint(b"abc")',
-                [],
-                new TypeConversionException('Cannot convert bytes "abc" to unsigned integer.', new Span(0, 12)),
-            ];
+        yield 'Core uint: from invalid bytes' => [
+            'uint(b"abc")',
+            [],
+            new TypeConversionException('Cannot convert bytes "abc" to unsigned integer.', new Span(0, 12)),
+        ];
     }
 
     public function testBoolFunctionIsIdempotent(): void
