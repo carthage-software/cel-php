@@ -10,18 +10,14 @@ use Cel\Syntax\Expression;
 use PhpBench\Benchmark\Metadata\Annotations\Iterations;
 use PhpBench\Benchmark\Metadata\Annotations\Revs;
 use PhpBench\Benchmark\Metadata\Annotations\Warmup;
+use Psl\Vec;
 use Symfony\Component\Cache\Adapter\NullAdapter;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage as SymfonyExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\ParsedExpression as SymfonyExpression;
 
-use function array_keys;
-use function assert;
 use function extract;
 
-/**
- * @mago-expect lint:no-boolean-literal-comparison
- */
 final class EvaluationBenchmark
 {
     private const string CEL_EXPRESSION = <<<'CEL'
@@ -154,7 +150,7 @@ final class EvaluationBenchmark
         $symfony->addFunction(ExpressionFunction::fromPhp('mb_strtoupper', 'toUpper'));
 
         if ($expression === null) {
-            $expression = $symfony->parse(self::SEL_EXPRESSION, array_keys(self::ENVIRONMENT));
+            $expression = $symfony->parse(self::SEL_EXPRESSION, Vec\keys(self::ENVIRONMENT));
         }
 
         $_ = $symfony->evaluate($expression, self::ENVIRONMENT);

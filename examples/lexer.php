@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Cel\Examples;
+
 use Cel\Input\Input;
 use Cel\Lexer\Lexer;
 use Cel\Token\Token;

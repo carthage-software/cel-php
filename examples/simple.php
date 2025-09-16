@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
+namespace Cel\Examples;
+
+use Cel;
 use Psl\IO;
+
+use function var_export;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
