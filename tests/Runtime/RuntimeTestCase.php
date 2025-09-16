@@ -7,7 +7,7 @@ namespace Cel\Tests\Runtime;
 use Cel\Parser\Parser;
 use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\Environment;
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Runtime;
 use Cel\Runtime\RuntimeReceipt;
 use Cel\Runtime\Value\Value;
@@ -47,10 +47,10 @@ abstract class RuntimeTestCase extends TestCase
     public function testRun(
         string $code,
         array $variables,
-        Value|RuntimeException $expectedResult,
+        Value|EvaluationException $expectedResult,
         null|Configuration $configuration = null,
     ): void {
-        if ($expectedResult instanceof RuntimeException) {
+        if ($expectedResult instanceof EvaluationException) {
             self::expectException($expectedResult::class);
             self::expectExceptionMessage($expectedResult->getMessage());
         }
@@ -79,7 +79,7 @@ abstract class RuntimeTestCase extends TestCase
      * @return iterable<string, array{
      *     0: string,
      *     1: array<string, mixed>,
-     *     2: Value|RuntimeException,
+     *     2: Value|EvaluationException,
      *     3?: null|Configuration
      * }>
      */

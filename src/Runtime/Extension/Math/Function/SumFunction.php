@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\Math\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
@@ -47,7 +47,10 @@ final readonly class SumFunction implements FunctionInterface
                     return $v->value;
                 }
 
-                throw new RuntimeException('sum() only supports lists of integers, got ' . $v::class, $call->getSpan());
+                throw new EvaluationException(
+                    'sum() only supports lists of integers, got ' . $v::class,
+                    $call->getSpan(),
+                );
             })));
         };
     }

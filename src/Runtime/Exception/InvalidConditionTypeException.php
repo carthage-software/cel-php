@@ -7,6 +7,6 @@ namespace Cel\Runtime\Exception;
 /**
  * Thrown when a condition has an invalid type.
  */
-final class InvalidConditionTypeException extends RuntimeException
+final class InvalidConditionTypeException extends EvaluationException
 {
 }

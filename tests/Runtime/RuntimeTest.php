@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Cel\Tests\Runtime;
 
 use Cel\Runtime\Configuration;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Exception\MessageConstructionException;
 use Cel\Runtime\Exception\NoSuchOverloadException;
 use Cel\Runtime\Exception\NoSuchTypeException;
 use Cel\Runtime\Exception\OverflowException;
-use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\MessageValue;
 use Cel\Runtime\Value\StringValue;
@@ -26,7 +26,7 @@ final class RuntimeTest extends RuntimeTestCase
      * @return iterable<string, array{
      *     0: string,
      *     1: array<string, mixed>,
-     *     2: Value|RuntimeException,
+     *     2: Value|EvaluationException,
      *     3?: null|Configuration
      * }>
      */
@@ -137,6 +137,42 @@ final class RuntimeTest extends RuntimeTestCase
                 Span::zero(),
             ),
             Configuration::forAllowedMessages([CommentMessage::class]),
+        ];
+
+        yield 'Division by zero: 10 / 0' => [
+            '10 / 0',
+            [],
+            new EvaluationException('Failed to evaluate division: division by zero', new Span(0, 5)),
+        ];
+
+        yield 'Modulus by zero: 10 / 0' => [
+            '10 % 0',
+            [],
+            new EvaluationException('Failed to evaluate modulo: division by zero', new Span(0, 5)),
+        ];
+
+        yield 'Division by zero: 10u / 0u' => [
+            '10u / 0u',
+            [],
+            new EvaluationException('Failed to evaluate division: division by zero', new Span(0, 5)),
+        ];
+
+        yield 'Modulus by zero: 10u / 0u' => [
+            '10u % 0u',
+            [],
+            new EvaluationException('Failed to evaluate modulo: division by zero', new Span(0, 5)),
+        ];
+
+        yield 'Division by zero: 10.0 / 0.0' => [
+            '10.0 / 0.0',
+            [],
+            new EvaluationException('Failed to evaluate division: division by zero', new Span(0, 5)),
+        ];
+
+        yield 'Modulus by zero: 10.0 / 0.0' => [
+            '10.0 % 0.0',
+            [],
+            new EvaluationException('Failed to evaluate modulo: division by zero', new Span(0, 5)),
         ];
     }
 }

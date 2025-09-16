@@ -7,6 +7,6 @@ namespace Cel\Runtime\Exception;
 /**
  * Thrown when a variable is not defined in the environment.
  */
-final class NoSuchVariableException extends RuntimeException
+final class NoSuchVariableException extends EvaluationException
 {
 }

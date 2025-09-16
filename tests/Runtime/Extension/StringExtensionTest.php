@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Runtime\Extension;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\IntegerValue;
@@ -20,7 +20,7 @@ use Override;
 final class StringExtensionTest extends RuntimeTestCase
 {
     /**
-     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|RuntimeException}>
+     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|EvaluationException}>
      */
     #[Override]
     public static function provideEvaluationCases(): iterable

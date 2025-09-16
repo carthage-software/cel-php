@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Runtime;
 
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Exception\InvalidMacroCallException;
 use Cel\Runtime\Exception\NoSuchFunctionException;
 use Cel\Runtime\Exception\NoSuchVariableException;
-use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
@@ -21,7 +21,7 @@ use Override;
 final class MacroTest extends RuntimeTestCase
 {
     /**
-     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|RuntimeException}>
+     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|EvaluationException}>
      */
     #[Override]
     public static function provideEvaluationCases(): iterable

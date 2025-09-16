@@ -11,7 +11,7 @@ use Psl\Str;
 /**
  * Thrown when an operation is not supported for the given types.
  */
-final class UnsupportedOperationException extends RuntimeException
+final class UnsupportedOperationException extends EvaluationException
 {
     public static function forEquality(
         Value $that,

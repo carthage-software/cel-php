@@ -24,6 +24,8 @@
   ],
   "require": {
     "php": "~8.4 || ~8.5",
+    "ext-bcmath": "*",
+    "ext-intl": "*",
     "azjezz/psl": "~3.2 || ~4.0"
   },
   "require-dev": {

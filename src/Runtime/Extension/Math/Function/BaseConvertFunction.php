@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\Math\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
@@ -52,21 +52,21 @@ final readonly class BaseConvertFunction implements FunctionInterface
                 $toBase = $arguments[2];
 
                 if ($number->value === '') {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format('baseConvert: cannot convert empty string'),
                         $call->getSpan(),
                     );
                 }
 
                 if ($fromBase->value > 36 || $fromBase->value < 2) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format('baseConvert: from base %d is not in the range 2-36', $fromBase->value),
                         $call->getSpan(),
                     );
                 }
 
                 if ($toBase->value > 36 || $toBase->value < 2) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format('baseConvert: to base %d is not in the range 2-36', $toBase->value),
                         $call->getSpan(),
                     );

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\List\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
@@ -49,7 +49,7 @@ final readonly class ChunkFunction implements FunctionInterface
                 $size = $arguments[1];
 
                 if ($size->value <= 0) {
-                    throw new RuntimeException('Chunk size must be a positive integer', $call->getSpan());
+                    throw new EvaluationException('Chunk size must be a positive integer', $call->getSpan());
                 }
 
                 $chunks = Vec\chunk($list->value, $size->value);

@@ -6,6 +6,7 @@ namespace Cel\Runtime\Interpreter\TreeWalking;
 
 use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\EnvironmentInterface;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Exception\InvalidConditionTypeException;
 use Cel\Runtime\Exception\InvalidMacroCallException;
 use Cel\Runtime\Exception\MessageConstructionException;
@@ -15,7 +16,6 @@ use Cel\Runtime\Exception\NoSuchOverloadException;
 use Cel\Runtime\Exception\NoSuchTypeException;
 use Cel\Runtime\Exception\NoSuchVariableException;
 use Cel\Runtime\Exception\OverflowException;
-use Cel\Runtime\Exception\RuntimeException;
 use Cel\Runtime\Exception\UnexpectedMapKeyTypeException;
 use Cel\Runtime\Exception\UnsupportedOperationException;
 use Cel\Runtime\Function\FunctionRegistry;
@@ -55,6 +55,7 @@ use Cel\Syntax\ParenthesizedExpression;
 use Cel\Syntax\Unary\UnaryExpression;
 use Cel\Syntax\Unary\UnaryOperatorKind;
 use Closure;
+use DivisionByZeroError;
 use Override;
 use Psl\Iter;
 use Psl\Math;
@@ -176,7 +177,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function list(ListExpression $expression): Value
     {
@@ -189,7 +190,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function map(MapExpression $expression): Value
     {
@@ -210,7 +211,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function literal(LiteralExpression $expression): Value
     {
@@ -230,7 +231,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function unary(UnaryExpression $expression): Value
     {
@@ -266,7 +267,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binary(BinaryExpression $expression): Value
     {
@@ -292,7 +293,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryLessThan(Expression $left, Expression $right): BooleanValue
     {
@@ -300,7 +301,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryLessThanOrEqual(Expression $left, Expression $right): BooleanValue
     {
@@ -313,7 +314,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryGreaterThan(Expression $left, Expression $right): BooleanValue
     {
@@ -321,7 +322,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryGreaterThanOrEqual(Expression $left, Expression $right): BooleanValue
     {
@@ -334,7 +335,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryEquals(Expression $left, Expression $right): BooleanValue
     {
@@ -348,7 +349,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryNotEquals(Expression $left, Expression $right): BooleanValue
     {
@@ -364,7 +365,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     /**
      * @param (Closure(Value, Value): bool) $comparator
      *
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function compare(
         Expression $left,
@@ -395,7 +396,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryIn(Expression $left, Expression $right): Value
     {
@@ -415,7 +416,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryPlus(Expression $left, Expression $right): Value
     {
@@ -467,7 +468,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryMinus(Expression $left, Expression $right): Value
     {
@@ -518,7 +519,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryMultiply(Expression $left, Expression $right): Value
     {
@@ -552,69 +553,93 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryDivide(Expression $left, Expression $right): Value
     {
         $left_value = $this->run($left);
         $right_value = $this->run($right);
 
-        return match ($left_value::class) {
-            IntegerValue::class => $right_value instanceof IntegerValue
-                ? new IntegerValue(Math\div($left_value->value, $right_value->value))
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
+        try {
+            return match ($left_value::class) {
+                IntegerValue::class => $right_value instanceof IntegerValue
+                    ? new IntegerValue(Math\div($left_value->value, $right_value->value))
+                    : throw new NoSuchOverloadException(
+                        Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
+                        $left->getSpan()->join($right->getSpan()),
+                    ),
+                UnsignedIntegerValue::class => $right_value instanceof UnsignedIntegerValue
+                    ? new UnsignedIntegerValue(bcdiv((string) $left_value->value, (string) $right_value->value))
+                    : throw new NoSuchOverloadException(
+                        Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
+                        $left->getSpan()->join($right->getSpan()),
+                    ),
+                FloatValue::class => $right_value instanceof FloatValue
+                    ? new FloatValue($left_value->value / $right_value->value)
+                    : throw new NoSuchOverloadException(
+                        Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
+                        $left->getSpan()->join($right->getSpan()),
+                    ),
+                default => throw new NoSuchOverloadException(
+                    Str\format('Operator `/` is not supported for type `%s`', $left_value->getType()),
+                    $left->getSpan(),
                 ),
-            UnsignedIntegerValue::class => $right_value instanceof UnsignedIntegerValue
-                ? new UnsignedIntegerValue(bcdiv((string) $left_value->value, (string) $right_value->value))
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            FloatValue::class => $right_value instanceof FloatValue
-                ? new FloatValue($left_value->value / $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            default => throw new NoSuchOverloadException(
-                Str\format('Operator `/` is not supported for type `%s`', $left_value->getType()),
-                $left->getSpan(),
-            ),
-        };
+            };
+        } catch (Math\Exception\DivisionByZeroException|DivisionByZeroError $exception) {
+            throw new EvaluationException(
+                'Failed to evaluate division: division by zero',
+                $left->getSpan()->join($right->getSpan()),
+                $exception,
+            );
+        }
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryModulo(Expression $left, Expression $right): Value
     {
         $left_value = $this->run($left);
         $right_value = $this->run($right);
 
-        return match ($left_value::class) {
-            IntegerValue::class => $right_value instanceof IntegerValue
-                ? new IntegerValue($left_value->value % $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot apply modulo to `%s` and `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
+        try {
+            return match ($left_value::class) {
+                IntegerValue::class => $right_value instanceof IntegerValue
+                    ? new IntegerValue($left_value->value % $right_value->value)
+                    : throw new NoSuchOverloadException(
+                        Str\format(
+                            'Cannot apply modulo to `%s` and `%s`',
+                            $left_value->getType(),
+                            $right_value->getType(),
+                        ),
+                        $left->getSpan()->join($right->getSpan()),
+                    ),
+                UnsignedIntegerValue::class => $right_value instanceof UnsignedIntegerValue
+                    ? new UnsignedIntegerValue(bcmod((string) $left_value->value, (string) $right_value->value))
+                    : throw new NoSuchOverloadException(
+                        Str\format(
+                            'Cannot apply modulo to `%s` and `%s`',
+                            $left_value->getType(),
+                            $right_value->getType(),
+                        ),
+                        $left->getSpan()->join($right->getSpan()),
+                    ),
+                default => throw new NoSuchOverloadException(
+                    Str\format('Operator `%%` is not supported for type `%s`', $left_value->getType()),
+                    $left->getSpan(),
                 ),
-            UnsignedIntegerValue::class => $right_value instanceof UnsignedIntegerValue
-                ? new UnsignedIntegerValue(bcmod((string) $left_value->value, (string) $right_value->value))
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot apply modulo to `%s` and `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            default => throw new NoSuchOverloadException(
-                Str\format('Operator `%%` is not supported for type `%s`', $left_value->getType()),
-                $left->getSpan(),
-            ),
-        };
+            };
+        } catch (DivisionByZeroError $exception) {
+            throw new EvaluationException(
+                'Failed to evaluate modulo: division by zero',
+                $left->getSpan()->join($right->getSpan()),
+                $exception,
+            );
+        }
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryAnd(Expression $left, Expression $right): Value
     {
@@ -651,7 +676,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function binaryOr(Expression $left, Expression $right): Value
     {
@@ -688,7 +713,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function conditional(ConditionalExpression $expression): Value
     {
@@ -704,7 +729,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function memberAccess(MemberAccessExpression $expression): Value
     {
@@ -744,7 +769,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function index(IndexExpression $expression): Value
     {
@@ -823,7 +848,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function identifier(IdentifierExpression $expression): Value
     {
@@ -839,7 +864,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      *
      * @mago-expect analysis:possibly-static-access-on-interface
      */
@@ -890,7 +915,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function call(CallExpression $expression): Value
     {
@@ -933,7 +958,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function macro(CallExpression $expression): null|Value
     {
@@ -953,7 +978,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function hasMacro(CallExpression $expression): null|Value
     {
@@ -989,7 +1014,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function allMacro(CallExpression $expression): null|Value
     {
@@ -1048,7 +1073,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function existsMacro(CallExpression $expression): null|Value
     {
@@ -1110,7 +1135,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function existsOneMacro(CallExpression $expression): null|Value
     {
@@ -1171,7 +1196,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function mapMacro(CallExpression $expression): null|Value
     {
@@ -1245,7 +1270,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     }
 
     /**
-     * @throws RuntimeException
+     * @throws EvaluationException
      */
     private function filterMacro(CallExpression $expression): null|Value
     {

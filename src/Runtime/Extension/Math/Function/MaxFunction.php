@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\Math\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\FloatValue;
 use Cel\Runtime\Value\IntegerValue;
@@ -50,7 +50,7 @@ final readonly class MaxFunction implements FunctionInterface
                 $numbers = [];
                 foreach ($list->value as $item) {
                     if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
-                        throw new RuntimeException(
+                        throw new EvaluationException(
                             Str\format('max() only supports lists of integers and floats, got `%s`', $item->getType()),
                             $call->getSpan(),
                         );
@@ -60,7 +60,7 @@ final readonly class MaxFunction implements FunctionInterface
                 }
 
                 if ([] === $numbers) {
-                    throw new RuntimeException('max() requires a non-empty list', $call->getSpan());
+                    throw new EvaluationException('max() requires a non-empty list', $call->getSpan());
                 }
 
                 $result = Math\max($numbers);

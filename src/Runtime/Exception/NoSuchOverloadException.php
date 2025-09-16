@@ -15,7 +15,7 @@ use function array_pop;
 /**
  * Exception thrown when a function is called with an invalid set of argument types.
  */
-final class NoSuchOverloadException extends RuntimeException
+final class NoSuchOverloadException extends EvaluationException
 {
     /**
      * @param CallExpression $expression The call expression that caused the error.

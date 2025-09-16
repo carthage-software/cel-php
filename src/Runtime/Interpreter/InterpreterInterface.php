@@ -21,7 +21,7 @@ interface InterpreterInterface
      *
      * @return Value The result of the evaluation.
      *
-     * @throws Exception\RuntimeException on runtime errors.
+     * @throws Exception\EvaluationException on runtime errors.
      */
     public function run(Expression $expression): Value;
 

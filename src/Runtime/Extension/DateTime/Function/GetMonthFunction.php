@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\DateTime\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
@@ -65,7 +65,7 @@ final readonly class GetMonthFunction implements FunctionInterface
 
                 $timezone = Timezone::tryFrom($timezoneArg->value);
                 if (null === $timezone) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format('getMonth: timezone `%s` is not valid', $timezoneArg->value),
                         $call->getSpan(),
                     );

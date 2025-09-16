@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\Math\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
@@ -50,7 +50,7 @@ final readonly class ToBaseFunction implements FunctionInterface
                 $toBase = $arguments[1];
 
                 if ($number->value < 0) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format(
                             'toBase: number %d is negative, only non-negative integers are supported',
                             $number->value,
@@ -60,7 +60,7 @@ final readonly class ToBaseFunction implements FunctionInterface
                 }
 
                 if ($toBase->value > 36 || $toBase->value < 2) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format('toBase: base %d is not in the range 2-36', $toBase->value),
                         $call->getSpan(),
                     );

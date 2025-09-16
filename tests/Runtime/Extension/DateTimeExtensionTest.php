@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Runtime\Extension;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Exception\TypeConversionException;
 use Cel\Runtime\Value\DurationValue;
 use Cel\Runtime\Value\IntegerValue;
@@ -241,7 +241,7 @@ final class DateTimeExtensionTest extends RuntimeTestCase
         yield 'DateTime error: invalid timezone' => [
             'getFullYear(timestamp("2025-09-13T10:20:30Z"), "Mars/Olympus_Mons")',
             [],
-            new RuntimeException('getFullYear: timezone `Mars/Olympus_Mons` is not valid', new Span(0, 71)),
+            new EvaluationException('getFullYear: timezone `Mars/Olympus_Mons` is not valid', new Span(0, 71)),
         ];
     }
 

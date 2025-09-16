@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\DateTime\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
@@ -50,7 +50,7 @@ final readonly class GetDayOfYearFunction implements FunctionInterface
                 if ($timezoneArg !== null) {
                     $tz = Timezone::tryFrom($timezoneArg->value);
                     if ($tz === null) {
-                        throw new RuntimeException(
+                        throw new EvaluationException(
                             Str\format('getDayOfYear: timezone `%s` is not valid', $timezoneArg->value),
                             $call->getSpan(),
                         );

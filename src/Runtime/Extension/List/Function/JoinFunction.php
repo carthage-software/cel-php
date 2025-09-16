@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\List\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\ListValue;
 use Cel\Runtime\Value\StringValue;
@@ -49,7 +49,7 @@ final readonly class JoinFunction implements FunctionInterface
                 $strings = [];
                 foreach ($list->value as $item) {
                     if (!$item instanceof StringValue) {
-                        throw new RuntimeException('join: expects a list of strings', $call->getSpan());
+                        throw new EvaluationException('join: expects a list of strings', $call->getSpan());
                     }
                     $strings[] = $item->value;
                 }
@@ -71,7 +71,7 @@ final readonly class JoinFunction implements FunctionInterface
                 $strings = [];
                 foreach ($list->value as $item) {
                     if (!$item instanceof StringValue) {
-                        throw new RuntimeException('join: expects a list of strings', $call->getSpan());
+                        throw new EvaluationException('join: expects a list of strings', $call->getSpan());
                     }
 
                     $strings[] = $item->value;

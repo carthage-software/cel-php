@@ -94,7 +94,7 @@ try {
 
 ### Runtime Errors
 
-Runtime errors occur during evaluation, such as a missing variable, a function call with incorrect argument types, or an unsupported operation. These errors result in a `Cel\Runtime\Exception\RuntimeException`.
+Runtime errors occur during evaluation, such as a missing variable, a function call with incorrect argument types, or an unsupported operation. These errors result in a `Cel\Runtime\Exception\EvaluationException`.
 
 ```php
 <?php
@@ -102,12 +102,12 @@ Runtime errors occur during evaluation, such as a missing variable, a function c
 require 'vendor/autoload.php';
 
 use function Cel\run;
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 
 try {
     // "name" is not defined in the environment
     run('user.name == "Alice"');
-} catch (RuntimeException $e) {
-    echo "Runtime Error: " . $e->getMessage();
+} catch (EvaluationException $e) {
+    echo "EvaluationException: " . $e->getMessage();
 }
 ```

@@ -7,6 +7,6 @@ namespace Cel\Runtime\Exception;
 /**
  * Thrown when a macro call is invalid.
  */
-final class InvalidMacroCallException extends RuntimeException
+final class InvalidMacroCallException extends EvaluationException
 {
 }

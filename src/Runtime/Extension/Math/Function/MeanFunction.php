@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\Math\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\FloatValue;
 use Cel\Runtime\Value\IntegerValue;
@@ -49,7 +49,7 @@ final readonly class MeanFunction implements FunctionInterface
                 $numbers = [];
                 foreach ($list->value as $item) {
                     if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
-                        throw new RuntimeException(
+                        throw new EvaluationException(
                             Str\format('mean() only supports lists of integers and floats, got `%s`', $item->getType()),
                             $call->getSpan(),
                         );
@@ -59,7 +59,7 @@ final readonly class MeanFunction implements FunctionInterface
 
                 $mean = Math\mean($numbers);
                 if (null === $mean) {
-                    throw new RuntimeException('mean() requires a non-empty list', $call->getSpan());
+                    throw new EvaluationException('mean() requires a non-empty list', $call->getSpan());
                 }
 
                 return new FloatValue($mean);

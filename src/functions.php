@@ -19,7 +19,7 @@ use Psl\Dict;
  *
  * @throws Parser\Exception\ExceptionInterface on parse errors.
  * @throws Runtime\Exception\IncompatibleValueTypeException If a provided variable is of an unsupported type.
- * @throws Runtime\Exception\RuntimeException on runtime errors.
+ * @throws Runtime\Exception\EvaluationException on runtime errors.
  */
 function run(string $expression, array $variables = [], Configuration $configuration = new Configuration()): Value
 {

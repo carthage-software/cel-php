@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\Math\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
@@ -50,11 +50,14 @@ final readonly class FromBaseFunction implements FunctionInterface
                 $fromBase = $arguments[1];
 
                 if ($number->value === '') {
-                    throw new RuntimeException(Str\format('fromBase: cannot convert empty string'), $call->getSpan());
+                    throw new EvaluationException(
+                        Str\format('fromBase: cannot convert empty string'),
+                        $call->getSpan(),
+                    );
                 }
 
                 if ($fromBase->value > 36 || $fromBase->value < 2) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format('fromBase: base %d is not in the range 2-36', $fromBase->value),
                         $call->getSpan(),
                     );

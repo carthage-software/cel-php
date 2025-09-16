@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace Cel\Runtime\Exception;
 
 use Cel\Span\Span;
+use RuntimeException;
+use Throwable;
 
 /**
  * @consistent-constructor
  */
-class RuntimeException extends \RuntimeException implements ExceptionInterface
+class EvaluationException extends RuntimeException implements ExceptionInterface
 {
     public function __construct(
         string $message,
         public readonly Span $span,
+        null|Throwable $previous = null,
     ) {
-        parent::__construct($message);
+        parent::__construct($message, previous: $previous);
     }
 
     /**

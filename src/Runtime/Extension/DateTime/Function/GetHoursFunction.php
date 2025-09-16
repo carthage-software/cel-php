@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\DateTime\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\DurationValue;
 use Cel\Runtime\Value\IntegerValue;
@@ -77,7 +77,7 @@ final readonly class GetHoursFunction implements FunctionInterface
 
                 $timezone = Timezone::tryFrom($timezoneArg->value);
                 if ($timezone === null) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format('getHours: timezone `%s` is not valid', $timezoneArg->value),
                         $call->getSpan(),
                     );

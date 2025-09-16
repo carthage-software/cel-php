@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\Math\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\FloatValue;
 use Cel\Runtime\Value\IntegerValue;
@@ -49,7 +49,7 @@ final readonly class MedianFunction implements FunctionInterface
                 $numbers = [];
                 foreach ($list->value as $item) {
                     if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
-                        throw new RuntimeException(
+                        throw new EvaluationException(
                             Str\format(
                                 'median() only supports lists of integers and floats, got `%s`',
                                 $item->getType(),
@@ -61,7 +61,7 @@ final readonly class MedianFunction implements FunctionInterface
                 }
 
                 if ([] === $numbers) {
-                    throw new RuntimeException('median() requires a non-empty list', $call->getSpan());
+                    throw new EvaluationException('median() requires a non-empty list', $call->getSpan());
                 }
 
                 return new FloatValue(Math\median($numbers));

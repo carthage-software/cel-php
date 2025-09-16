@@ -26,15 +26,15 @@ try {
 
     IO\write_line('Result: %s(%s)', $result->getType(), var_export($result->getNativeValue(), true));
 } catch (Cel\Parser\Exception\ExceptionInterface $exception) {
-    IO\write_error_line('Parse error: %s', $exception->getMessage());
+    IO\write_error_line('Failed to parse expression: %s', $exception->getMessage());
 
     exit(1);
 } catch (Cel\Runtime\Exception\IncompatibleValueTypeException $e) {
-    IO\write_error_line('A value could not be converted: %s', $e->getMessage());
+    IO\write_error_line('An incompatible value type was provided: %s', $e->getMessage());
 
     exit(1);
-} catch (Cel\Runtime\Exception\RuntimeException $e) {
-    IO\write_error_line('Evaluation error: %s', $e->getMessage());
+} catch (Cel\Runtime\Exception\EvaluationException $e) {
+    IO\write_error_line('Failed to evaluate expression: %s', $e->getMessage());
 
     exit(1);
 }

@@ -26,7 +26,7 @@ interface RuntimeInterface
      *
      * @return RuntimeReceipt The result of the evaluation, including the value and any relevant metadata.
      *
-     * @throws Exception\RuntimeException on runtime errors.
+     * @throws Exception\EvaluationException on runtime errors.
      */
     public function run(Expression $expression, EnvironmentInterface $environment): RuntimeReceipt;
 }

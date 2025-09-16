@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Extension\String\Function;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Function\FunctionInterface;
 use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\IntegerValue;
@@ -74,7 +74,7 @@ final readonly class SplitFunction implements FunctionInterface
                 $limit = $arguments[2];
 
                 if ($limit->value < 1) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format(
                             'split: limit %d is less than 1, only positive integers are supported',
                             $limit->value,
@@ -118,7 +118,7 @@ final readonly class SplitFunction implements FunctionInterface
                 $limit = $arguments[2];
 
                 if ($limit->value < 1) {
-                    throw new RuntimeException(
+                    throw new EvaluationException(
                         Str\format(
                             'split: limit %d is less than 1, only positive integers are supported',
                             $limit->value,

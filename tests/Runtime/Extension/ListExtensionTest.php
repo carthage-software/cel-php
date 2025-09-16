@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Runtime\Extension;
 
-use Cel\Runtime\Exception\RuntimeException;
+use Cel\Runtime\Exception\EvaluationException;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\ListValue;
@@ -17,7 +17,7 @@ use Override;
 final class ListExtensionTest extends RuntimeTestCase
 {
     /**
-     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|RuntimeException}>
+     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|EvaluationException}>
      */
     #[Override]
     public static function provideEvaluationCases(): iterable
@@ -52,12 +52,12 @@ final class ListExtensionTest extends RuntimeTestCase
         yield 'Lists chunk: zero size error' => [
             'chunk([1, 2, 3], 0)',
             [],
-            new RuntimeException('Chunk size must be a positive integer', new Span(0, 15)),
+            new EvaluationException('Chunk size must be a positive integer', new Span(0, 15)),
         ];
         yield 'Lists chunk: negative size error' => [
             'chunk([1, 2, 3], -1)',
             [],
-            new RuntimeException('Chunk size must be a positive integer', new Span(0, 16)),
+            new EvaluationException('Chunk size must be a positive integer', new Span(0, 16)),
         ];
 
         yield 'Lists contains: found' => ['contains([1, 2, 3], 2)', [], new BooleanValue(true)];
@@ -85,7 +85,7 @@ final class ListExtensionTest extends RuntimeTestCase
         yield 'Lists sort: mixed types error' => [
             'sort([1, "a"])',
             [],
-            new RuntimeException('Cannot compare values of type `int` and `string`', new Span(0, 10)),
+            new EvaluationException('Cannot compare values of type `int` and `string`', new Span(0, 10)),
         ];
 
         yield 'Lists reverse: integers' => [
@@ -107,7 +107,7 @@ final class ListExtensionTest extends RuntimeTestCase
         yield 'Lists join: non-string list error' => [
             'join([1, 2, 3])',
             [],
-            new RuntimeException('join: expects a list of strings', new Span(0, 17)),
+            new EvaluationException('join: expects a list of strings', new Span(0, 17)),
         ];
     }
 

@@ -7,6 +7,6 @@ namespace Cel\Runtime\Exception;
 /**
  * Thrown when a map key is of an unexpected type.
  */
-final class UnexpectedMapKeyTypeException extends RuntimeException
+final class UnexpectedMapKeyTypeException extends EvaluationException
 {
 }
