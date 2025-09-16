@@ -13,7 +13,8 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Cel\\Tests\\": "tests/"
+      "Cel\\Tests\\": "tests/",
+      "Cel\\Benchmarks\\": "benchmarks/"
     }
   },
   "authors": [
@@ -32,7 +33,9 @@
     "carthage-software/mago": "^1.0.0-beta.15",
     "phpunit/phpunit": "^12.3",
     "php-coveralls/php-coveralls": "^2.8",
-    "infection/infection": "^0.31.2"
+    "infection/infection": "^0.31.2",
+    "phpbench/phpbench": "^1.4",
+    "symfony/expression-language": "^7.3"
   },
   "config": {
     "allow-plugins": {

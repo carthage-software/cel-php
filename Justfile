@@ -20,6 +20,9 @@ analyze:
 typos:
     typos -c config/typos.toml
 
+bench:
+    php -dmemory_limit=-1 vendor/bin/phpbench run --config=config/phpbench.json
+
 test:
     XDEBUG_MODE=coverage php -dmemory_limit=-1 vendor/bin/phpunit -c config/phpunit.xml.dist
 
