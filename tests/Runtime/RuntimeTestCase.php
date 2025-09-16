@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Runtime;
 
-use Cel\Parser\Parser;
+use Cel\CommonExpressionLanguage;
 use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\Environment;
 use Cel\Runtime\Exception\EvaluationException;
@@ -27,17 +27,12 @@ abstract class RuntimeTestCase extends TestCase
         array $variables = [],
         null|Configuration $configuration = null,
     ): RuntimeReceipt {
-        $parser = new Parser();
-        $ast = $parser->parseString($code);
+        $cel = new CommonExpressionLanguage(runtime: new Runtime(configuration: $configuration ?? new Configuration()));
 
-        $environment = new Environment();
-        foreach ($variables as $name => $value) { // @mago-expect analysis:mixed-assignment
-            $environment->addVariable($name, Value::from($value));
-        }
+        $expression = $cel->parseString($code);
+        $expression = $cel->optimize($expression);
 
-        $runtime = new Runtime($configuration ?? new Configuration());
-
-        return $runtime->run($ast, $environment);
+        return $cel->run($expression, Environment::fromArray($variables));
     }
 
     /**

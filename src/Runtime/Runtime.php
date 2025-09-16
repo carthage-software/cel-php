@@ -48,6 +48,15 @@ final readonly class Runtime implements RuntimeInterface
      * @inheritDoc
      */
     #[Override]
+    public static function default(): static
+    {
+        return new self();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
     public function register(ExtensionInterface $extension): void
     {
         $this->registry->register($extension);

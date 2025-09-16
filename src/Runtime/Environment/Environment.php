@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Cel\Runtime\Environment;
 
+use Cel\Runtime\Exception\IncompatibleValueTypeException;
 use Cel\Runtime\Value\Value;
 use Override;
+use Psl\Dict;
 use Psl\Iter;
 
 /**
@@ -19,6 +21,24 @@ final class Environment implements EnvironmentInterface
     public function __construct(
         private array $variables = [],
     ) {}
+
+    /**
+     * Create a new environment from an associative array of variables.
+     *
+     * The values will be converted to `Value` instances.
+     *
+     * @param array<string, mixed> $variables Associative array of variable names to values.
+     *
+     * @return self New environment instance.
+     *
+     * @throws IncompatibleValueTypeException If the value type is not supported.
+     */
+    public static function fromArray(array $variables): self
+    {
+        $variables = Dict\map($variables, Value::from(...));
+
+        return new self($variables);
+    }
 
     #[Override]
     public function addVariable(string $name, Value $value): void

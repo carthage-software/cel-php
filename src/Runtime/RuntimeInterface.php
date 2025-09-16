@@ -8,8 +8,9 @@ use Cel\Runtime\Environment\EnvironmentInterface;
 use Cel\Runtime\Exception\ConflictingFunctionSignatureException;
 use Cel\Runtime\Extension\ExtensionInterface;
 use Cel\Syntax\Expression;
+use Psl\Default\DefaultInterface;
 
-interface RuntimeInterface
+interface RuntimeInterface extends DefaultInterface
 {
     /**
      * Registers an extension with the runtime.

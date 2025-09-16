@@ -13,7 +13,7 @@ const EXPRESSION = <<<CEL
 CEL;
 
 try {
-    $result = Cel\run(EXPRESSION, [
+    $result = Cel\evaluate(EXPRESSION, [
         'account' => [
             'balance' => 500,
             'overdraftProtection' => true,

@@ -26,7 +26,7 @@ final class ConditionalExpressionTest extends TestCase
         static::assertSame($cond, $expr->condition);
         static::assertSame($q, $expr->question);
         static::assertSame($then, $expr->then);
-        static::assertSame($c, $expr->color);
+        static::assertSame($c, $expr->colon);
         static::assertSame($else, $expr->else);
         static::assertSame(ExpressionKind::Conditional, $expr->getKind());
         static::assertSame([$cond, $then, $else], $expr->getChildren());

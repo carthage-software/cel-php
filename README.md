@@ -39,8 +39,23 @@ const EXPRESSION = <<<CEL
         && account.overdraftLimit >= transaction.withdrawal - account.balance)
 CEL;
 
+
+$configuration = new Cel\Runtime\Configuration(
+    // You can customize the runtime configuration here
+);
+
+$runtime = new Cel\Runtime\Runtime(configuration: $configuration);
+$cel = new Cel\CommonExpressionLanguage(runtime: $runtime);
+
 try {
-    $result = Cel\run(EXPRESSION, [
+    // Parse the expression
+    $expression = $cel->parseString(EXPRESSION);
+    
+    // Perform optimizations on the expression, e.g. short-circuiting
+    $expression = $cel->optimize($expression); 
+    
+    // Evaluate the expression with a given environment
+    $result = $cel->run($expression, Cel\Runtime\Environment\Environment::fromArray([
         'account' => [
             'balance' => 500,
             'overdraftProtection' => true,
@@ -49,8 +64,8 @@ try {
         'transaction' => [
             'withdrawal' => 700,
         ],
-    ]);
-    
+    ]));
+
     IO\write_line('Result: %s(%s)', $result->getType(), var_export($result->getNativeValue(), true));
 } catch (Cel\Parser\Exception\ExceptionInterface $exception) {
     // Parsing failed...

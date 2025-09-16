@@ -585,7 +585,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
                     $left->getSpan(),
                 ),
             };
-        } catch (Math\Exception\DivisionByZeroException|DivisionByZeroError $exception) {
+        } catch (Math\Exception\DivisionByZeroException|DivisionByZeroError $exception) { // @mago-expect analysis:avoid-catching-error
             throw new EvaluationException(
                 'Failed to evaluate division: division by zero',
                 $left->getSpan()->join($right->getSpan()),
@@ -629,7 +629,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
                     $left->getSpan(),
                 ),
             };
-        } catch (DivisionByZeroError $exception) {
+        } catch (DivisionByZeroError $exception) { // @mago-expect analysis:avoid-catching-error
             throw new EvaluationException(
                 'Failed to evaluate modulo: division by zero',
                 $left->getSpan()->join($right->getSpan()),

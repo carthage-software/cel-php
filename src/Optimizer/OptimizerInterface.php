@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Cel\Optimizer;
 
 use Cel\Syntax\Expression;
+use Psl\Default\DefaultInterface;
 
 /**
  * Interface for expression optimizers.
  */
-interface OptimizerInterface
+interface OptimizerInterface extends DefaultInterface
 {
     /**
      * Adds an optimization pass to the optimizer.

@@ -50,6 +50,15 @@ final class Parser implements ParserInterface
     private TokenStream $stream;
 
     /**
+     * @inheritDoc
+     */
+    #[Override]
+    public static function default(): static
+    {
+        return new self();
+    }
+
+    /**
      * @param LexerInterface $lexer
      *
      * @throws UnexpectedEndOfFileException If the end of the file is reached unexpectedly.

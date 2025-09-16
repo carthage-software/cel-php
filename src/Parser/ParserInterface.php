@@ -7,12 +7,13 @@ use Cel\Lexer\LexerInterface;
 use Cel\Parser\Exception\UnexpectedEndOfFileException;
 use Cel\Parser\Exception\UnexpectedTokenException;
 use Cel\Syntax\Expression;
+use Psl\Default\DefaultInterface;
 
 /**
  * Defines the contract for a parser, which consumes a stream of tokens from a lexer
  * and produces a syntax tree.
  */
-interface ParserInterface
+interface ParserInterface extends DefaultInterface
 {
     /**
      * Parses the string and produces a syntax tree.

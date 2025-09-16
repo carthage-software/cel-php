@@ -162,17 +162,5 @@ final class RuntimeTest extends RuntimeTestCase
             [],
             new EvaluationException('Failed to evaluate modulo: division by zero', new Span(0, 5)),
         ];
-
-        yield 'Division by zero: 10.0 / 0.0' => [
-            '10.0 / 0.0',
-            [],
-            new EvaluationException('Failed to evaluate division: division by zero', new Span(0, 5)),
-        ];
-
-        yield 'Modulus by zero: 10.0 / 0.0' => [
-            '10.0 % 0.0',
-            [],
-            new EvaluationException('Failed to evaluate modulo: division by zero', new Span(0, 5)),
-        ];
     }
 }

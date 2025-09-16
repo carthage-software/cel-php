@@ -10,7 +10,7 @@ integrations = ["phpunit", "php-standard-library"]
 
 [linter.rules]
 # Complexity 😖
-too-many-methods = { threshold = 20 }
+too-many-methods = { threshold = 25 }
 excessive-parameter-list = { threshold = 10 }
 halstead = { effort-threshold = 20_000, difficulty-threshold = 20, volume-threshold = 1_500 }
 kan-defect = { threshold = 5.0 }

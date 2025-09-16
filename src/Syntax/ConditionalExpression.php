@@ -13,7 +13,7 @@ final readonly class ConditionalExpression extends Expression
         public Expression $condition,
         public Span $question,
         public Expression $then,
-        public Span $color,
+        public Span $colon,
         public Expression $else,
     ) {}
 
