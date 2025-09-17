@@ -243,6 +243,20 @@ final class DateTimeExtensionTest extends RuntimeTestCase
             [],
             new EvaluationException('getFullYear: timezone `Mars/Olympus_Mons` is not valid', new Span(0, 71)),
         ];
+
+        /// Timestamp from seconds
+        yield 'DateTime timestamp(): from integer seconds' => [
+            'timestamp(1757766605)',
+            [],
+            new TimestampValue(Timestamp::fromParts(1757766605)),
+        ];
+
+        /// Timestamp from float seconds
+        yield 'DateTime timestamp(): from float seconds' => [
+            'timestamp(1757766605.123456)',
+            [],
+            new TimestampValue(Timestamp::fromParts(1757766605, 123456001)),
+        ];
     }
 
     public function testNowFunctionReturnsCurrentTimestamp(): void
