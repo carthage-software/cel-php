@@ -139,6 +139,54 @@ final class RuntimeTest extends RuntimeTestCase
             Configuration::forAllowedMessages([CommentMessage::class]),
         ];
 
+        yield 'Using Message Alias' => [
+            'my_package.UserMessage { name: "azjezz", email: "azjezz@carthage.software" }',
+            [],
+            new MessageValue(new UserMessage('azjezz', 'azjezz@carthage.software'), [
+                'name' => new StringValue('azjezz'),
+                'email' => new StringValue('azjezz@carthage.software'),
+            ]),
+            Configuration::forAllowedMessages([UserMessage::class], ['my_package.UserMessage' => UserMessage::class]),
+        ];
+
+        yield 'Enforced Message Alias Usage' => [
+            'my_package.UserMessage { name: "azjezz", email: "azjezz@carthage.software" }',
+            [],
+            new MessageValue(new UserMessage('azjezz', 'azjezz@carthage.software'), [
+                'name' => new StringValue('azjezz'),
+                'email' => new StringValue('azjezz@carthage.software'),
+            ]),
+            Configuration::forAllowedMessages(
+                [UserMessage::class],
+                ['my_package.UserMessage' => UserMessage::class],
+                true,
+            ),
+        ];
+
+        yield 'Using Message Without Alias' => [
+            'cel.tests.fixture.UserMessage { name: "azjezz", email: "azjezz@carthage.software" }',
+            [],
+            new MessageValue(new UserMessage('azjezz', 'azjezz@carthage.software'), [
+                'name' => new StringValue('azjezz'),
+                'email' => new StringValue('azjezz@carthage.software'),
+            ]),
+            Configuration::forAllowedMessages([UserMessage::class], ['my_package.UserMessage' => UserMessage::class]),
+        ];
+
+        yield 'Forbid Message FQCN Without Alias' => [
+            'cel.tests.fixture.UserMessage { name: "azjezz", email: "azjezz@carthage.software" }',
+            [],
+            new NoSuchTypeException(
+                'Message type `cel.tests.fixture.UserMessage` does not exist or is not allowed per configuration.',
+                Span::zero(),
+            ),
+            Configuration::forAllowedMessages(
+                [UserMessage::class],
+                ['my_package.UserMessage' => UserMessage::class],
+                true,
+            ),
+        ];
+
         yield 'Division by zero: 10 / 0' => [
             '10 / 0',
             [],

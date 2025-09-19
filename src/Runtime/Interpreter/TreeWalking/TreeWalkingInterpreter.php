@@ -885,10 +885,33 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         $foundClassname = null;
-        foreach ($this->configuration->allowedMessageClasses as $allowedClassname) {
-            if (Byte\compare_ci($classname, $allowedClassname) === 0) {
-                $foundClassname = $allowedClassname;
+        $usingAlias = false;
+        foreach ($this->configuration->messageClassAliases as $typeAlias => $targetClassname) {
+            if (Byte\compare_ci($typename, $typeAlias) === 0) {
+                $foundClassname = $targetClassname;
+
                 break;
+            }
+        }
+
+        if ($foundClassname === null) {
+            foreach ($this->configuration->allowedMessageClasses as $allowedClassname) {
+                if (Byte\compare_ci($classname, $allowedClassname) === 0) {
+                    $foundClassname = $allowedClassname;
+                    break;
+                }
+            }
+
+            if (
+                $foundClassname !== null
+                && $this->configuration->enforceMessageClassAliases
+                && Iter\contains_key($this->configuration->messageClassesToAliases, $foundClassname)
+            ) {
+                // Pretend the class does not exist if using an alias is enforced
+                throw new NoSuchTypeException(
+                    Str\format('Message type `%s` does not exist or is not allowed per configuration.', $typename),
+                    $expression->getSpan(),
+                );
             }
         }
 

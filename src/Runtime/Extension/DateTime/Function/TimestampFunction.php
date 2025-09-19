@@ -10,6 +10,7 @@ use Cel\Runtime\Value\FloatValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\TimestampValue;
+use Cel\Runtime\Value\UnsignedIntegerValue;
 use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;
 use Cel\Syntax\Member\CallExpression;
@@ -19,8 +20,12 @@ use Psl\DateTime\Exception\RuntimeException;
 use Psl\DateTime\FormatPattern;
 use Psl\DateTime\Timestamp;
 use Psl\DateTime\Timezone;
+use Psl\Math;
 use Psl\Regex;
 use Psl\Str;
+
+use function bccomp;
+use function is_string;
 
 final readonly class TimestampFunction implements FunctionInterface
 {
@@ -41,14 +46,14 @@ final readonly class TimestampFunction implements FunctionInterface
     #[Override]
     public function getOverloads(): iterable
     {
-        yield [ValueKind::Integer] => static function (CallExpression $expr, array $arguments): TimestampValue {
+        yield [ValueKind::Integer] => static function (CallExpression $_expr, array $arguments): TimestampValue {
             /** @var IntegerValue $seconds */
             $seconds = $arguments[0];
 
             return new TimestampValue(Timestamp::fromParts($seconds->value));
         };
 
-        yield [ValueKind::Float] => static function (CallExpression $expr, array $arguments): TimestampValue {
+        yield [ValueKind::Float] => static function (CallExpression $_expr, array $arguments): TimestampValue {
             /** @var FloatValue $seconds */
             $seconds = $arguments[0];
 
