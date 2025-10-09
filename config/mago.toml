@@ -24,6 +24,8 @@ ambiguous-function-call = { enabled = true }
 # Noisy Rules (disabled)
 literal-named-argument = { enabled = false }
 no-boolean-flag-parameter = { enabled = false }
+# Enable disabled-by-default rules
+no-redundant-use = { enabled = true }
 
 [analyzer]
 analyze-dead-code = true

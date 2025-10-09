@@ -30,7 +30,7 @@
     "azjezz/psl": "~3.2 || ~4.0"
   },
   "require-dev": {
-    "carthage-software/mago": "^1.0.0-beta.15",
+    "carthage-software/mago": "^1.0.0-beta.27",
     "phpunit/phpunit": "^12.3",
     "php-coveralls/php-coveralls": "^2.8",
     "infection/infection": "^0.31.2",
