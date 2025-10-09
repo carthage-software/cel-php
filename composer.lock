@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "azjezz/psl",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azjezz/psl.git",
-                "reference": "d8ec6d06224d101e84e33259edabd76197fbe797"
+                "reference": "a06f6c7effa31552082710d90bdf07ec8f55fafe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azjezz/psl/zipball/d8ec6d06224d101e84e33259edabd76197fbe797",
-                "reference": "d8ec6d06224d101e84e33259edabd76197fbe797",
+                "url": "https://api.github.com/repos/azjezz/psl/zipball/a06f6c7effa31552082710d90bdf07ec8f55fafe",
+                "reference": "a06f6c7effa31552082710d90bdf07ec8f55fafe",
                 "shasum": ""
             },
             "require": {
@@ -30,7 +30,7 @@
                 "revolt/event-loop": "^1.0.7"
             },
             "require-dev": {
-                "carthage-software/mago": "^1.0.0-beta.15",
+                "carthage-software/mago": "^1.0.0-beta.27",
                 "infection/infection": "^0.31.2",
                 "php-coveralls/php-coveralls": "^2.7.0",
                 "phpbench/phpbench": "^1.4.0",
@@ -68,7 +68,7 @@
             "description": "PHP Standard Library",
             "support": {
                 "issues": "https://github.com/azjezz/psl/issues",
-                "source": "https://github.com/azjezz/psl/tree/4.0.0"
+                "source": "https://github.com/azjezz/psl/tree/4.0.1"
             },
             "funding": [
                 {
@@ -76,7 +76,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-15T18:04:07+00:00"
+            "time": "2025-10-09T11:33:21+00:00"
         },
         {
             "name": "revolt/event-loop",
