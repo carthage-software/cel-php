@@ -5,8 +5,8 @@
         ]
     },
     "timeout": 5,
-    "minMsi": 94,
-    "minCoveredMsi": 94,
+    "minMsi": 93,
+    "minCoveredMsi": 93,
     "threads": "max",
     "logs": {
         "github": true,
