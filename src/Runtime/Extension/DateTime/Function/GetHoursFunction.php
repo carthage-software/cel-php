@@ -76,7 +76,7 @@ final readonly class GetHoursFunction implements FunctionInterface
                 $timezoneArg = $arguments[1];
 
                 $timezone = Timezone::tryFrom($timezoneArg->value);
-                if ($timezone === null) {
+                if (null === $timezone) {
                     throw new EvaluationException(
                         Str\format('getHours: timezone `%s` is not valid', $timezoneArg->value),
                         $call->getSpan(),

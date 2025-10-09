@@ -52,7 +52,7 @@ final readonly class StartsWithFunction implements FunctionInterface
                 /** @var StringValue $prefix */
                 $prefix = $arguments[1];
 
-                if ($prefix->value === '') {
+                if ('' === $prefix->value) {
                     return new BooleanValue(true);
                 }
 
@@ -70,7 +70,7 @@ final readonly class StartsWithFunction implements FunctionInterface
                 /** @var BytesValue $prefix */
                 $prefix = $arguments[1];
 
-                if ($prefix->value === '') {
+                if ('' === $prefix->value) {
                     return new BooleanValue(true);
                 }
 

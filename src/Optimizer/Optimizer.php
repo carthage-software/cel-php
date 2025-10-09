@@ -177,7 +177,7 @@ final class Optimizer implements OptimizerInterface
 
         foreach ($this->optimizations as $optimization) {
             $optimized = $optimization->apply($expression);
-            if ($optimized !== null && $optimized !== $expression) { // Guard against no-op optimizations that return the same instance
+            if (null !== $optimized && $optimized !== $expression) { // Guard against no-op optimizations that return the same instance
                 return $this->optimize($optimized);
             }
         }

@@ -23,7 +23,7 @@ final class LexerTest extends TestCase
         $reconstructed = '';
         while (true) {
             $token = $lexer->advance();
-            if ($token === null) {
+            if (null === $token) {
                 break;
             }
 
@@ -43,7 +43,7 @@ final class LexerTest extends TestCase
         $tokens = [];
         while (true) {
             $token = $lexer->advance();
-            if ($token === null) {
+            if (null === $token) {
                 break;
             }
 
@@ -285,7 +285,7 @@ final class LexerTest extends TestCase
         $reconstructed = '';
         while (true) {
             $token = $lexer->advance();
-            if ($token === null) {
+            if (null === $token) {
                 break;
             }
 

@@ -41,7 +41,7 @@ final readonly class MapValue extends Value
         foreach ($this->value as $key => $value) {
             $otherValue = $other->get($key);
 
-            if ($otherValue === null || !$value->isEqual($otherValue)) {
+            if (null === $otherValue || !$value->isEqual($otherValue)) {
                 return false;
             }
         }

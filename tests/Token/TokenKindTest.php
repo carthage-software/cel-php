@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Token;
 
-use Cel\Token\Associativity;
 use Cel\Token\Precedence;
 use Cel\Token\TokenKind;
 use PHPUnit\Framework\Attributes\DataProvider;

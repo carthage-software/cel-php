@@ -51,7 +51,7 @@ final readonly class Utils
     public static function isAtNumberLiteral(InputInterface $input): bool
     {
         $char = $input->peek(0, 1);
-        if ($char === '-' || $char === '.') {
+        if ('-' === $char || '.' === $char) {
             return ctype_digit($input->peek(1, 1));
         }
 
@@ -62,20 +62,20 @@ final readonly class Utils
     {
         $c1 = Byte\lowercase($input->peek(0, 1));
 
-        if ($c1 === '\'' || $c1 === '"') {
+        if ('\'' === $c1 || '"' === $c1) {
             return true;
         }
 
-        if ($c1 === 'r' || $c1 === 'b') {
+        if ('r' === $c1 || 'b' === $c1) {
             $c2 = Byte\lowercase($input->peek(1, 1));
-            if ($c2 === '\'' || $c2 === '"') {
+            if ('\'' === $c2 || '"' === $c2) {
                 return true;
             }
 
-            if ($c1 === 'r' && $c2 === 'b' || $c1 === 'b' && $c2 === 'r') {
+            if ('r' === $c1 && 'b' === $c2 || 'b' === $c1 && 'r' === $c2) {
                 $c3 = $input->peek(2, 1);
 
-                return $c3 === '\'' || $c3 === '"';
+                return '\'' === $c3 || '"' === $c3;
             }
         }
 
@@ -86,7 +86,7 @@ final readonly class Utils
     {
         $char = $input->peek(0, 1);
 
-        return ctype_alpha($char) || $char === '_';
+        return ctype_alpha($char) || '_' === $char;
     }
 
     /**
@@ -120,7 +120,7 @@ final readonly class Utils
 
         // Check for uint suffix, but only if not a float
         $suffix = Byte\lowercase($input->peek($length, 1));
-        if (!$isFloat && $suffix === 'u') {
+        if (!$isFloat && 'u' === $suffix) {
             $length++;
             $kind = TokenKind::LiteralUInt;
         }
@@ -141,7 +141,7 @@ final readonly class Utils
             $prefix = $char;
         }
 
-        $scan_offset = $prefix !== null ? 1 : 0;
+        $scan_offset = null !== $prefix ? 1 : 0;
         $quote = $input->peek($scan_offset, 1);
         $is_triple = $input->peek($scan_offset + 1, 2) === $quote . $quote;
         $terminator = $is_triple ? Str\repeat($quote, 3) : $quote;
@@ -164,7 +164,7 @@ final readonly class Utils
         $length = 1;
         while (true) {
             $char = $input->peek($length, 1);
-            if ($char === '' || !ctype_alnum($char) && $char !== '_') {
+            if ('' === $char || !ctype_alnum($char) && '_' !== $char) {
                 break;
             }
 
@@ -190,7 +190,7 @@ final readonly class Utils
         $peeked = $input->peek($scan_offset, 1);
 
         // Base case: Unterminated string
-        if ($peeked === '') {
+        if ('' === $peeked) {
             return $scan_offset;
         }
 
@@ -200,7 +200,7 @@ final readonly class Utils
         }
 
         // Recursive step
-        if ($peeked === '\\' && !$is_raw) {
+        if ('\\' === $peeked && !$is_raw) {
             // If the next character after the backslash is the end of the input, it's a dangling backslash.
             if ($input->peek($scan_offset + 1, 1) === '') {
                 return $scan_offset + 1;
@@ -241,11 +241,11 @@ final readonly class Utils
         if ($length > $start_length || $is_float) {
             // Handle exponent part
             $peeked_e = $input->peek($length, 1);
-            if ($peeked_e === 'e' || $peeked_e === 'E') {
+            if ('e' === $peeked_e || 'E' === $peeked_e) {
                 $is_float = true;
                 $length++;
                 $peeked_sign = $input->peek($length, 1);
-                if ($peeked_sign === '+' || $peeked_sign === '-') {
+                if ('+' === $peeked_sign || '-' === $peeked_sign) {
                     $length++;
                 }
 
@@ -268,11 +268,11 @@ final readonly class Utils
         $fn = match ($prefix) {
             'x' => ctype_xdigit(...),
             'o' => fn(string $char): bool => $char >= '0' && $char <= '7',
-            'b' => fn(string $char): bool => $char === '0' || $char === '1',
+            'b' => fn(string $char): bool => '0' === $char || '1' === $char,
             default => null,
         };
 
-        if ($fn === null) {
+        if (null === $fn) {
             return 0;
         }
 

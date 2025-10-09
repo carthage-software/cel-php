@@ -52,7 +52,7 @@ final readonly class LastIndexOfFunction implements FunctionInterface
                 /** @var StringValue $needle */
                 $needle = $arguments[1];
 
-                if ($needle->value === '') {
+                if ('' === $needle->value) {
                     return new IntegerValue(Str\length($haystack->value));
                 }
 
@@ -74,7 +74,7 @@ final readonly class LastIndexOfFunction implements FunctionInterface
                 /** @var IntegerValue $offset */
                 $offset = $arguments[2];
 
-                if ($needle->value === '') {
+                if ('' === $needle->value) {
                     return new IntegerValue($offset->value);
                 }
 
@@ -94,7 +94,7 @@ final readonly class LastIndexOfFunction implements FunctionInterface
                 /** @var BytesValue $needle */
                 $needle = $arguments[1];
 
-                if ($needle->value === '') {
+                if ('' === $needle->value) {
                     return new IntegerValue(Str\length($haystack->value));
                 }
 
@@ -116,7 +116,7 @@ final readonly class LastIndexOfFunction implements FunctionInterface
                 /** @var IntegerValue $offset */
                 $offset = $arguments[2];
 
-                if ($needle->value === '') {
+                if ('' === $needle->value) {
                     return new IntegerValue($offset->value);
                 }
 

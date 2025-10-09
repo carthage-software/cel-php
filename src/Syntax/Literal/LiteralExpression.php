@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cel\Syntax\Literal;
 
 use Cel\Syntax\Expression;

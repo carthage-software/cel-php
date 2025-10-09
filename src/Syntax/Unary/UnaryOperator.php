@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cel\Syntax\Unary;
 
 use Cel\Span\Span;

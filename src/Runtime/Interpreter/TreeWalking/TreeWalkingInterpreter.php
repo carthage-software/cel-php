@@ -15,7 +15,6 @@ use Cel\Runtime\Exception\NoSuchKeyException;
 use Cel\Runtime\Exception\NoSuchOverloadException;
 use Cel\Runtime\Exception\NoSuchTypeException;
 use Cel\Runtime\Exception\NoSuchVariableException;
-use Cel\Runtime\Exception\OverflowException;
 use Cel\Runtime\Exception\UnexpectedMapKeyTypeException;
 use Cel\Runtime\Exception\UnsupportedOperationException;
 use Cel\Runtime\Interpreter\InterpreterInterface;
@@ -53,23 +52,12 @@ use Cel\Syntax\Member\IndexExpression;
 use Cel\Syntax\Member\MemberAccessExpression;
 use Cel\Syntax\ParenthesizedExpression;
 use Cel\Syntax\Unary\UnaryExpression;
-use Cel\Syntax\Unary\UnaryOperatorKind;
-use Closure;
-use DivisionByZeroError;
 use Override;
 use Psl\Iter;
-use Psl\Math;
 use Psl\Str;
 use Psl\Str\Byte;
 use Psl\Vec;
 use Throwable;
-
-use function bcadd;
-use function bccomp;
-use function bcdiv;
-use function bcmod;
-use function bcmul;
-use function bcsub;
 
 /**
  * A tree-walking interpreter that evaluates expressions by recursively
@@ -237,7 +225,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         $operand = $this->run($expression->operand);
 
         $handler = $this->registry->getUnaryOperator($expression->operator->kind, $operand->getKind());
-        if ($handler === null) {
+        if (null === $handler) {
             throw new NoSuchOverloadException(
                 Str\format(
                     'No such overload for %s`%s`',
@@ -283,7 +271,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
 
             // Try to get handler from registry
             $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
-            if ($handler !== null) {
+            if (null !== $handler) {
                 return $handler($left, $right, $expression->left, $expression->right);
             }
 
@@ -322,7 +310,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
 
             // Try to get handler from registry
             $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
-            if ($handler !== null) {
+            if (null !== $handler) {
                 return $handler($left, $right, $expression->left, $expression->right);
             }
 
@@ -343,7 +331,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         $right = $this->run($expression->right);
 
         $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
-        if ($handler === null) {
+        if (null === $handler) {
             throw new NoSuchOverloadException(
                 Str\format(
                     'No such overload for `%s` %s `%s`',
@@ -540,7 +528,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             }
         }
 
-        if ($foundClassname === null) {
+        if (null === $foundClassname) {
             foreach ($this->configuration->allowedMessageClasses as $allowedClassname) {
                 if (Byte\compare_ci($classname, $allowedClassname) === 0) {
                     $foundClassname = $allowedClassname;
@@ -549,7 +537,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             }
 
             if (
-                $foundClassname !== null
+                null !== $foundClassname
                 && $this->configuration->enforceMessageClassAliases
                 && Iter\contains_key($this->configuration->messageClassesToAliases, $foundClassname)
             ) {
@@ -594,7 +582,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         }
 
         $arguments = [];
-        if ($expression->target !== null) {
+        if (null !== $expression->target) {
             $arguments[] = $this->run($expression->target);
         }
 
@@ -712,7 +700,6 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             );
         }
 
-        /** @var list<Value> $items */
         $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
 
         $environment = $this->environment->fork();
@@ -771,7 +758,6 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             );
         }
 
-        /** @var list<Value> $items */
         $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
 
         $environment = $this->environment->fork();
@@ -833,7 +819,6 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             );
         }
 
-        /** @var list<Value> $items */
         $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
 
         $environment = $this->environment->fork();
@@ -861,7 +846,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             $this->environment = $environment;
         }
 
-        return new BooleanValue($true_count === 1);
+        return new BooleanValue(1 === $true_count);
     }
 
     /**
@@ -878,7 +863,6 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             return null;
         }
 
-        /** @var Expression $name */
         $name = $expression->arguments->elements[0];
         if (!$name instanceof IdentifierExpression) {
             throw new InvalidMacroCallException(
@@ -900,12 +884,11 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         $results = [];
 
         try {
-            $filterCallback = $argCount === 3 ? $expression->arguments->elements[1] : null;
-            $transformCallback = $argCount === 3
+            $filterCallback = 3 === $argCount ? $expression->arguments->elements[1] : null;
+            $transformCallback = 3 === $argCount
                 ? $expression->arguments->elements[2]
                 : $expression->arguments->elements[1];
 
-            /** @var list<Value> $items */
             $items = $target instanceof ListValue
                 ? $target->value
                 : Vec\map(Vec\keys($target->value), Value::from(...));
@@ -913,7 +896,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             foreach ($items as $item) {
                 $this->environment->addVariable($variableName, $item);
 
-                if ($filterCallback !== null) {
+                if (null !== $filterCallback) {
                     $filterResult = $this->run($filterCallback);
                     if (!$filterResult instanceof BooleanValue) {
                         throw new InvalidMacroCallException(
@@ -973,7 +956,6 @@ final class TreeWalkingInterpreter implements InterpreterInterface
         $results = [];
 
         try {
-            /** @var list<Value> $items */
             $items = $target instanceof ListValue
                 ? $target->value
                 : Vec\map(Vec\keys($target->value), Value::from(...));

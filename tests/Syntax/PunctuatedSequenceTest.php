@@ -84,7 +84,7 @@ final class PunctuatedSequenceTest extends TestCase
     public function testGetSpan(null|Span $expected, PunctuatedSequence $sequence): void
     {
         $span = $sequence->getSpan();
-        if ($expected === null) {
+        if (null === $expected) {
             static::assertNull($span);
             return;
         }

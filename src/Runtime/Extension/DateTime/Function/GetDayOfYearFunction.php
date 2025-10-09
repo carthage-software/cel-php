@@ -47,9 +47,9 @@ final readonly class GetDayOfYearFunction implements FunctionInterface
                 $timezoneArg = $arguments[1] ?? null;
 
                 $timezone = Timezone::UTC;
-                if ($timezoneArg !== null) {
+                if (null !== $timezoneArg) {
                     $tz = Timezone::tryFrom($timezoneArg->value);
-                    if ($tz === null) {
+                    if (null === $tz) {
                         throw new EvaluationException(
                             Str\format('getDayOfYear: timezone `%s` is not valid', $timezoneArg->value),
                             $call->getSpan(),

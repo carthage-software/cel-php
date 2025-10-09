@@ -40,7 +40,7 @@ final readonly class ListValue extends Value
 
         foreach ($this->value as $index => $item) {
             $otherItem = $other->value[$index] ?? null;
-            if ($otherItem === null || !$item->isEqual($otherItem)) {
+            if (null === $otherItem || !$item->isEqual($otherItem)) {
                 return false;
             }
         }

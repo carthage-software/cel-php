@@ -69,7 +69,7 @@ final readonly class Lexer implements LexerInterface
         }
 
         // Handle comments
-        if ($char === '/' && $this->input->peek(1, 1) === '/') {
+        if ('/' === $char && $this->input->peek(1, 1) === '/') {
             $value = $this->input->consumeUntil("\n");
             if (!$this->hasReachedEnd()) {
                 $value .= $this->input->consume(1); // consume the newline as well
@@ -86,31 +86,31 @@ final readonly class Lexer implements LexerInterface
             Utils::isAtStringLiteral($this->input) => Utils::readStringLiteral($this->input),
             Utils::isAtIdentifier($this->input) => Utils::readIdentifier($this->input),
             // Multi-character operators
-            $char === '&' && $this->input->peek(1, 1) === '&' => $this->consumeFixed(TokenKind::DoubleAmpersand, 2),
-            $char === '|' && $this->input->peek(1, 1) === '|' => $this->consumeFixed(TokenKind::DoublePipe, 2),
-            $char === '=' && $this->input->peek(1, 1) === '=' => $this->consumeFixed(TokenKind::Equal, 2),
-            $char === '!' && $this->input->peek(1, 1) === '=' => $this->consumeFixed(TokenKind::NotEqual, 2),
-            $char === '<' && $this->input->peek(1, 1) === '=' => $this->consumeFixed(TokenKind::LessOrEqual, 2),
-            $char === '>' && $this->input->peek(1, 1) === '=' => $this->consumeFixed(TokenKind::GreaterOrEqual, 2),
+            '&' === $char && $this->input->peek(1, 1) === '&' => $this->consumeFixed(TokenKind::DoubleAmpersand, 2),
+            '|' === $char && $this->input->peek(1, 1) === '|' => $this->consumeFixed(TokenKind::DoublePipe, 2),
+            '=' === $char && $this->input->peek(1, 1) === '=' => $this->consumeFixed(TokenKind::Equal, 2),
+            '!' === $char && $this->input->peek(1, 1) === '=' => $this->consumeFixed(TokenKind::NotEqual, 2),
+            '<' === $char && $this->input->peek(1, 1) === '=' => $this->consumeFixed(TokenKind::LessOrEqual, 2),
+            '>' === $char && $this->input->peek(1, 1) === '=' => $this->consumeFixed(TokenKind::GreaterOrEqual, 2),
             // Single-character operators and delimiters
-            $char === '(' => $this->consumeFixed(TokenKind::LeftParenthesis, 1),
-            $char === ')' => $this->consumeFixed(TokenKind::RightParenthesis, 1),
-            $char === '[' => $this->consumeFixed(TokenKind::LeftBracket, 1),
-            $char === ']' => $this->consumeFixed(TokenKind::RightBracket, 1),
-            $char === '{' => $this->consumeFixed(TokenKind::LeftBrace, 1),
-            $char === '}' => $this->consumeFixed(TokenKind::RightBrace, 1),
-            $char === '.' => $this->consumeFixed(TokenKind::Dot, 1),
-            $char === ',' => $this->consumeFixed(TokenKind::Comma, 1),
-            $char === ':' => $this->consumeFixed(TokenKind::Colon, 1),
-            $char === '?' => $this->consumeFixed(TokenKind::Question, 1),
-            $char === '+' => $this->consumeFixed(TokenKind::Plus, 1),
-            $char === '-' => $this->consumeFixed(TokenKind::Minus, 1),
-            $char === '*' => $this->consumeFixed(TokenKind::Asterisk, 1),
-            $char === '/' => $this->consumeFixed(TokenKind::Slash, 1),
-            $char === '%' => $this->consumeFixed(TokenKind::Percent, 1),
-            $char === '!' => $this->consumeFixed(TokenKind::Bang, 1),
-            $char === '<' => $this->consumeFixed(TokenKind::Less, 1),
-            $char === '>' => $this->consumeFixed(TokenKind::Greater, 1),
+            '(' === $char => $this->consumeFixed(TokenKind::LeftParenthesis, 1),
+            ')' === $char => $this->consumeFixed(TokenKind::RightParenthesis, 1),
+            '[' === $char => $this->consumeFixed(TokenKind::LeftBracket, 1),
+            ']' === $char => $this->consumeFixed(TokenKind::RightBracket, 1),
+            '{' === $char => $this->consumeFixed(TokenKind::LeftBrace, 1),
+            '}' === $char => $this->consumeFixed(TokenKind::RightBrace, 1),
+            '.' === $char => $this->consumeFixed(TokenKind::Dot, 1),
+            ',' === $char => $this->consumeFixed(TokenKind::Comma, 1),
+            ':' === $char => $this->consumeFixed(TokenKind::Colon, 1),
+            '?' === $char => $this->consumeFixed(TokenKind::Question, 1),
+            '+' === $char => $this->consumeFixed(TokenKind::Plus, 1),
+            '-' === $char => $this->consumeFixed(TokenKind::Minus, 1),
+            '*' === $char => $this->consumeFixed(TokenKind::Asterisk, 1),
+            '/' === $char => $this->consumeFixed(TokenKind::Slash, 1),
+            '%' === $char => $this->consumeFixed(TokenKind::Percent, 1),
+            '!' === $char => $this->consumeFixed(TokenKind::Bang, 1),
+            '<' === $char => $this->consumeFixed(TokenKind::Less, 1),
+            '>' === $char => $this->consumeFixed(TokenKind::Greater, 1),
             // Default case for unrecognized characters
             default => $this->consumeFixed(TokenKind::Unrecognized, 1),
         };

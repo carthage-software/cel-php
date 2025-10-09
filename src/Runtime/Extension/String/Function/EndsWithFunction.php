@@ -52,7 +52,7 @@ final readonly class EndsWithFunction implements FunctionInterface
                 /** @var StringValue $suffix */
                 $suffix = $arguments[1];
 
-                if ($suffix->value === '') {
+                if ('' === $suffix->value) {
                     return new BooleanValue(true);
                 }
 
@@ -70,7 +70,7 @@ final readonly class EndsWithFunction implements FunctionInterface
                 /** @var BytesValue $suffix */
                 $suffix = $arguments[1];
 
-                if ($suffix->value === '') {
+                if ('' === $suffix->value) {
                     return new BooleanValue(true);
                 }
 

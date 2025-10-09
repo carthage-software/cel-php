@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Cel\Runtime\Interpreter;
 
 use Cel\Runtime\Environment\EnvironmentInterface;

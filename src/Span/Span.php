@@ -38,7 +38,7 @@ final readonly class Span implements Stringable
      */
     public function isZero(): bool
     {
-        return $this->start === 0 && $this->end === 0;
+        return 0 === $this->start && 0 === $this->end;
     }
 
     /**

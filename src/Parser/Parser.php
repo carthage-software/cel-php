@@ -292,7 +292,7 @@ final class Parser implements ParserInterface
                 );
             }
 
-            if ($leadingDot !== null) {
+            if (null !== $leadingDot) {
                 // A leading dot must be followed by a message literal or a function call.
                 // If it\'s just an identifier, it\'s a syntax error.
                 throw new UnexpectedTokenException($identToken);
@@ -301,7 +301,7 @@ final class Parser implements ParserInterface
             return new IdentifierExpression(new IdentifierNode($identToken->value, $identToken->span));
         }
 
-        if ($leadingDot !== null) {
+        if (null !== $leadingDot) {
             throw new UnexpectedTokenException($this->stream->peek());
         }
 

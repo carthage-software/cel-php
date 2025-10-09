@@ -41,7 +41,7 @@ final readonly class MessageValue extends Value
         foreach ($this->fields as $field => $value) {
             $otherValue = $other->getField($field);
 
-            if ($otherValue === null || !$value->isEqual($otherValue)) {
+            if (null === $otherValue || !$value->isEqual($otherValue)) {
                 return false;
             }
         }

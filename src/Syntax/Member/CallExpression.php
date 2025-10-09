@@ -55,11 +55,11 @@ final readonly class CallExpression extends Expression
     #[Override]
     public function getSpan(): Span
     {
-        if ($this->target !== null) {
+        if (null !== $this->target) {
             return $this->target->getSpan()->join($this->closingParenthesis);
         }
 
-        if ($this->targetSeparator !== null) {
+        if (null !== $this->targetSeparator) {
             return $this->targetSeparator->join($this->closingParenthesis);
         }
 

@@ -10,7 +10,6 @@ use Cel\Runtime\Value\FloatValue;
 use Cel\Runtime\Value\IntegerValue;
 use Cel\Runtime\Value\StringValue;
 use Cel\Runtime\Value\TimestampValue;
-use Cel\Runtime\Value\UnsignedIntegerValue;
 use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;
 use Cel\Syntax\Member\CallExpression;
@@ -20,12 +19,8 @@ use Psl\DateTime\Exception\RuntimeException;
 use Psl\DateTime\FormatPattern;
 use Psl\DateTime\Timestamp;
 use Psl\DateTime\Timezone;
-use Psl\Math;
 use Psl\Regex;
 use Psl\Str;
-
-use function bccomp;
-use function is_string;
 
 final readonly class TimestampFunction implements FunctionInterface
 {
@@ -75,7 +70,7 @@ final readonly class TimestampFunction implements FunctionInterface
 
                 try {
                     $parts = Regex\first_match($timestampString, self::RFC3339_PATTERN);
-                    if ($parts === null) {
+                    if (null === $parts) {
                         throw new TypeConversionException(
                             Str\format('Failed to parse timestamp string "%s".', $timestampString),
                             $call->getSpan(),

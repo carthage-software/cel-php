@@ -14,7 +14,6 @@ use Cel\Runtime\Value\UnsignedIntegerValue;
 use Cel\Runtime\Value\Value;
 use Cel\Runtime\Value\ValueKind;
 use Cel\Syntax\Binary\BinaryOperatorKind;
-use Cel\Syntax\Expression;
 use Override;
 
 use function bcadd;

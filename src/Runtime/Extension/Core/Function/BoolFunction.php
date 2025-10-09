@@ -68,7 +68,7 @@ final readonly class BoolFunction implements FunctionInterface
                 /** @var IntegerValue $value */
                 $value = $arguments[0];
 
-                return new BooleanValue($value->value !== 0);
+                return new BooleanValue(0 !== $value->value);
             };
 
         yield [ValueKind::UnsignedInteger] =>
@@ -80,7 +80,7 @@ final readonly class BoolFunction implements FunctionInterface
                 /** @var UnsignedIntegerValue $value */
                 $value = $arguments[0];
 
-                return new BooleanValue($value->value !== '0' && $value->value !== 0);
+                return new BooleanValue('0' !== $value->value && 0 !== $value->value);
             };
 
         yield [ValueKind::Float] =>
@@ -92,7 +92,7 @@ final readonly class BoolFunction implements FunctionInterface
                 /** @var FloatValue $value */
                 $value = $arguments[0];
 
-                return new BooleanValue($value->value !== 0.0);
+                return new BooleanValue(0.0 !== $value->value);
             };
 
         yield [ValueKind::String] =>
@@ -105,11 +105,11 @@ final readonly class BoolFunction implements FunctionInterface
                 $value = $arguments[0];
                 $lowerValue = Str\lowercase($value->value);
 
-                if ($lowerValue === 'true') {
+                if ('true' === $lowerValue) {
                     return new BooleanValue(true);
                 }
 
-                if ($lowerValue === 'false') {
+                if ('false' === $lowerValue) {
                     return new BooleanValue(false);
                 }
 
@@ -129,11 +129,11 @@ final readonly class BoolFunction implements FunctionInterface
                 $value = $arguments[0];
                 $lowerValue = Str\Byte\lowercase($value->value);
 
-                if ($lowerValue === 'true') {
+                if ('true' === $lowerValue) {
                     return new BooleanValue(true);
                 }
 
-                if ($lowerValue === 'false') {
+                if ('false' === $lowerValue) {
                     return new BooleanValue(false);
                 }
 

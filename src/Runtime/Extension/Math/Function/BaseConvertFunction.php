@@ -51,7 +51,7 @@ final readonly class BaseConvertFunction implements FunctionInterface
                 /** @var IntegerValue $toBase */
                 $toBase = $arguments[2];
 
-                if ($number->value === '') {
+                if ('' === $number->value) {
                     throw new EvaluationException(
                         Str\format('baseConvert: cannot convert empty string'),
                         $call->getSpan(),

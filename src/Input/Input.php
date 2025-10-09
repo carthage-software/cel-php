@@ -46,7 +46,7 @@ final class Input implements InputInterface
     #[Override]
     public function isEmpty(): bool
     {
-        return $this->length === 0;
+        return 0 === $this->length;
     }
 
     /**
@@ -132,7 +132,7 @@ final class Input implements InputInterface
     {
         $function = $ignoreCase ? Byte\search_ci(...) : Byte\search(...);
         $position = $function($this->bytes, $search, $this->cursor);
-        if ($position === null) {
+        if (null === $position) {
             return $this->consumeRemaining();
         }
 
@@ -151,7 +151,7 @@ final class Input implements InputInterface
     public function consumeThrough(string $search): string
     {
         $position = Byte\search($this->bytes, $search, $this->cursor);
-        if ($position === null) {
+        if (null === $position) {
             return $this->consumeRemaining();
         }
 

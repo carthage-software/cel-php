@@ -50,7 +50,6 @@ final class NoSuchOverloadException extends EvaluationException
             return '`' . Str\join($formatted, '') . '`';
         }
 
-        /** @var string $last */
         $last = array_pop($formatted);
 
         return Str\format('`%s`, or `%s`', Str\join($formatted, '`, `'), $last);

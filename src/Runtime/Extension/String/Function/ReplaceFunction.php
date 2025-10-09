@@ -53,10 +53,10 @@ final readonly class ReplaceFunction implements FunctionInterface
                 /** @var StringValue $replacement */
                 $replacement = $arguments[2];
 
-                if ($needle->value === '') {
+                if ('' === $needle->value) {
                     // If the needle is an empty string, we insert the replacement between every character.
                     $result = Str\join(Str\chunk($haystack->value), $replacement->value) . $replacement->value;
-                    if ($haystack->value !== '') {
+                    if ('' !== $haystack->value) {
                         $result = $replacement->value . $result;
                     }
 
@@ -79,10 +79,10 @@ final readonly class ReplaceFunction implements FunctionInterface
                 /** @var BytesValue $replacement */
                 $replacement = $arguments[2];
 
-                if ($needle->value === '') {
+                if ('' === $needle->value) {
                     // If the needle is an empty string, we insert the replacement between every character.
                     $result = Str\join(Byte\chunk($haystack->value), $replacement->value) . $replacement->value;
-                    if ($haystack->value !== '') {
+                    if ('' !== $haystack->value) {
                         $result = $replacement->value . $result;
                     }
 

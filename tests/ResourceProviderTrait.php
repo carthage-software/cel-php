@@ -25,12 +25,12 @@ trait ResourceProviderTrait
     {
         $resources = __DIR__ . '/__resources__/';
         foreach (scandir($resources) as $file) {
-            if ($file === '.' || $file === '..') {
+            if ('.' === $file || '..' === $file) {
                 continue;
             }
 
             $content = file_get_contents($resources . $file);
-            if ($content === false) {
+            if (false === $content) {
                 throw new RuntimeException("Failed to read file: {$file}");
             }
 

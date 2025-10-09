@@ -85,14 +85,14 @@ final class FunctionRegistry
         $name = $expression->function->name;
         $candidates = $this->overloads[$name] ?? [];
 
-        if ($candidates === []) {
+        if ([] === $candidates) {
             return null;
         }
 
         $providedArgumentKinds = Vec\map($arguments, static fn(Value $v): ValueKind => $v->getKind());
         $signatureHash = self::hashSignature($providedArgumentKinds);
         $function = $candidates[$signatureHash] ?? null;
-        if ($function === null) {
+        if (null === $function) {
             return null;
         }
 
@@ -107,7 +107,7 @@ final class FunctionRegistry
         $name = $expression->function->name;
         $candidates = $this->overloads[$name] ?? null;
 
-        if ($candidates === null) {
+        if (null === $candidates) {
             return null;
         }
 
@@ -121,7 +121,7 @@ final class FunctionRegistry
             static fn(array $overload): array => $overload['signature'],
         );
 
-        if ($signatures === []) {
+        if ([] === $signatures) {
             return null;
         }
 
@@ -133,7 +133,7 @@ final class FunctionRegistry
      */
     private static function hashSignature(array $signature): string
     {
-        if ($signature === []) {
+        if ([] === $signature) {
             return '<no-args>';
         }
 

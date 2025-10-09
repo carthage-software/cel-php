@@ -49,7 +49,7 @@ final readonly class FromBaseFunction implements FunctionInterface
                 /** @var IntegerValue $fromBase */
                 $fromBase = $arguments[1];
 
-                if ($number->value === '') {
+                if ('' === $number->value) {
                     throw new EvaluationException(
                         Str\format('fromBase: cannot convert empty string'),
                         $call->getSpan(),

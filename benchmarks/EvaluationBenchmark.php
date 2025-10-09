@@ -149,7 +149,7 @@ final class EvaluationBenchmark
         $symfony = new SymfonyExpressionLanguage(new NullAdapter());
         $symfony->addFunction(ExpressionFunction::fromPhp('mb_strtoupper', 'toUpper'));
 
-        if ($expression === null) {
+        if (null === $expression) {
             $expression = $symfony->parse(self::SEL_EXPRESSION, Vec\keys(self::ENVIRONMENT));
         }
 

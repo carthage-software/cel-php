@@ -95,7 +95,7 @@ final class TokenStream implements HasCursorInterface
     {
         $token = $this->lookahead(0);
 
-        return $token !== null && $token->kind === $kind;
+        return null !== $token && $token->kind === $kind;
     }
 
     /**
@@ -106,7 +106,7 @@ final class TokenStream implements HasCursorInterface
     public function peek(): Token
     {
         $token = $this->lookahead(0);
-        if ($token === null) {
+        if (null === $token) {
             throw new UnexpectedEndOfFileException($this->cursorPosition(), []);
         }
 
@@ -132,7 +132,7 @@ final class TokenStream implements HasCursorInterface
     {
         while (Iter\count($this->buffer) < $n) {
             $token = $this->lexer->advance();
-            if ($token === null) {
+            if (null === $token) {
                 // Lexer has reached the end.
                 return;
             }
