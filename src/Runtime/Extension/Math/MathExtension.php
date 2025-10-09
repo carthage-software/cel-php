@@ -27,4 +27,22 @@ final readonly class MathExtension implements ExtensionInterface
             new Function\ToBaseFunction(),
         ];
     }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getBinaryOperatorOverloads(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getUnaryOperatorOverloads(): array
+    {
+        return [];
+    }
 }

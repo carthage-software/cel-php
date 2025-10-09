@@ -8,4 +8,12 @@ enum UnaryOperatorKind
 {
     case Negate;
     case Not;
+
+    public function getSymbol(): string
+    {
+        return match ($this) {
+            self::Negate => '-',
+            self::Not => '!',
+        };
+    }
 }

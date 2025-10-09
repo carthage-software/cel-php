@@ -73,7 +73,39 @@ final class RuntimeTest extends RuntimeTestCase
             [
                 'user' => ['login_attempts' => 5],
             ],
-            new NoSuchOverloadException('Cannot add `int` and `string`', new Span(0, 25)),
+            new NoSuchOverloadException('No such overload for `int` + `string`', new Span(0, 25)),
+        ];
+
+        yield 'Error: Invalid unary negation on string' => [
+            '-user.name',
+            [
+                'user' => ['name' => 'Alice'],
+            ],
+            new NoSuchOverloadException('No such overload for -`string`', new Span(0, 10)),
+        ];
+
+        yield 'Error: Invalid unary negation on boolean' => [
+            '-user.active',
+            [
+                'user' => ['active' => true],
+            ],
+            new NoSuchOverloadException('No such overload for -`bool`', new Span(0, 12)),
+        ];
+
+        yield 'Error: Invalid logical not on integer' => [
+            '!user.age',
+            [
+                'user' => ['age' => 25],
+            ],
+            new NoSuchOverloadException('No such overload for !`int`', new Span(0, 9)),
+        ];
+
+        yield 'Error: Invalid logical not on string' => [
+            '!user.name',
+            [
+                'user' => ['name' => 'Bob'],
+            ],
+            new NoSuchOverloadException('No such overload for !`string`', new Span(0, 10)),
         ];
 
         yield 'Error: Unsigned integer overflow' => [

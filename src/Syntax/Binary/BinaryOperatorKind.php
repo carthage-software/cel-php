@@ -67,4 +67,24 @@ enum BinaryOperatorKind
             default => false,
         };
     }
+
+    public function getSymbol(): string
+    {
+        return match ($this) {
+            self::LessThan => '<',
+            self::LessThanOrEqual => '<=',
+            self::GreaterThan => '>',
+            self::GreaterThanOrEqual => '>=',
+            self::Equal => '==',
+            self::NotEqual => '!=',
+            self::In => 'in',
+            self::Plus => '+',
+            self::Minus => '-',
+            self::Multiply => '*',
+            self::Divide => '/',
+            self::Modulo => '%',
+            self::And => '&&',
+            self::Or => '||',
+        };
+    }
 }

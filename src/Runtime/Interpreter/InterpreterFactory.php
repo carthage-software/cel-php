@@ -6,8 +6,8 @@ namespace Cel\Runtime\Interpreter;
 
 use Cel\Runtime\Configuration;
 use Cel\Runtime\Environment\EnvironmentInterface;
-use Cel\Runtime\Function\FunctionRegistry;
 use Cel\Runtime\Interpreter\TreeWalking\TreeWalkingInterpreter;
+use Cel\Runtime\OperationRegistry;
 
 final readonly class InterpreterFactory
 {
@@ -17,7 +17,7 @@ final readonly class InterpreterFactory
 
     public function create(
         Configuration $configuration,
-        FunctionRegistry $registry,
+        OperationRegistry $registry,
         EnvironmentInterface $environment,
     ): InterpreterInterface {
         return match ($this->preference) {

@@ -30,4 +30,22 @@ final readonly class DateTimeExtension implements ExtensionInterface
             new Function\GetDayOfWeekFunction(),
         ];
     }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getBinaryOperatorOverloads(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getUnaryOperatorOverloads(): array
+    {
+        return [];
+    }
 }

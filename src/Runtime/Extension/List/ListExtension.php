@@ -24,4 +24,22 @@ final readonly class ListExtension implements ExtensionInterface
             new Function\SortFunction(),
         ];
     }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getBinaryOperatorOverloads(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getUnaryOperatorOverloads(): array
+    {
+        return [];
+    }
 }

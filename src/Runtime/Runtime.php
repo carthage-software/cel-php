@@ -11,8 +11,8 @@ use Cel\Runtime\Extension\ExtensionInterface;
 use Cel\Runtime\Extension\List\ListExtension;
 use Cel\Runtime\Extension\Math\MathExtension;
 use Cel\Runtime\Extension\String\StringExtension;
-use Cel\Runtime\Function\FunctionRegistry;
 use Cel\Runtime\Interpreter\InterpreterFactory;
+use Cel\Runtime\OperationRegistry;
 use Cel\Syntax\Expression;
 use Override;
 
@@ -21,7 +21,7 @@ final readonly class Runtime implements RuntimeInterface
     public function __construct(
         private Configuration $configuration = new Configuration(),
         private InterpreterFactory $factory = new InterpreterFactory(),
-        private FunctionRegistry $registry = new FunctionRegistry(),
+        private OperationRegistry $registry = new OperationRegistry(),
     ) {
         if ($this->configuration->enableCoreExtension) {
             $this->register(new CoreExtension());

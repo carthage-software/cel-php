@@ -18,8 +18,8 @@ use Cel\Runtime\Exception\NoSuchVariableException;
 use Cel\Runtime\Exception\OverflowException;
 use Cel\Runtime\Exception\UnexpectedMapKeyTypeException;
 use Cel\Runtime\Exception\UnsupportedOperationException;
-use Cel\Runtime\Function\FunctionRegistry;
 use Cel\Runtime\Interpreter\InterpreterInterface;
+use Cel\Runtime\OperationRegistry;
 use Cel\Runtime\Value\BooleanValue;
 use Cel\Runtime\Value\BytesValue;
 use Cel\Runtime\Value\FloatValue;
@@ -75,7 +75,6 @@ use function bcsub;
  * A tree-walking interpreter that evaluates expressions by recursively
  * traversing the expression tree.
  *
- * @mago-expect lint:too-many-methods
  * @mago-expect lint:kan-defect
  * @mago-expect lint:cyclomatic-complexity
  */
@@ -85,7 +84,7 @@ final class TreeWalkingInterpreter implements InterpreterInterface
 
     public function __construct(
         private readonly Configuration $configuration,
-        private readonly FunctionRegistry $registry,
+        private readonly OperationRegistry $registry,
         private EnvironmentInterface $environment,
     ) {}
 
@@ -237,479 +236,126 @@ final class TreeWalkingInterpreter implements InterpreterInterface
     {
         $operand = $this->run($expression->operand);
 
-        if (UnaryOperatorKind::Negate === $expression->operator->kind) {
-            if ($operand instanceof IntegerValue) {
-                return new IntegerValue(-$operand->value);
-            }
-
-            if ($operand instanceof FloatValue) {
-                return new FloatValue(-$operand->value);
-            }
-
+        $handler = $this->registry->getUnaryOperator($expression->operator->kind, $operand->getKind());
+        if ($handler === null) {
             throw new NoSuchOverloadException(
-                Str\format('Cannot negate value of type `%s`', $operand->getType()),
+                Str\format(
+                    'No such overload for %s`%s`',
+                    $expression->operator->kind->getSymbol(),
+                    $operand->getType(),
+                ),
                 $expression->getSpan(),
             );
         }
 
-        if ($operand instanceof BooleanValue) {
-            return new BooleanValue(!$operand->value);
-        }
-
-        throw new NoSuchOverloadException(
-            Str\format(
-                'Cannot apply operator `%s` to value of type `%s`',
-                $expression->operator->kind->name,
-                $operand->getType(),
-            ),
-            $expression->getSpan(),
-        );
+        return $handler($operand, $expression->operand);
     }
 
     /**
      * @throws EvaluationException
+     *
+     * @mago-expect lint:halstead
      */
     private function binary(BinaryExpression $expression): Value
     {
-        return match ($expression->operator->kind) {
-            BinaryOperatorKind::LessThan => $this->binaryLessThan($expression->left, $expression->right),
-            BinaryOperatorKind::LessThanOrEqual => $this->binaryLessThanOrEqual($expression->left, $expression->right),
-            BinaryOperatorKind::GreaterThan => $this->binaryGreaterThan($expression->left, $expression->right),
-            BinaryOperatorKind::GreaterThanOrEqual => $this->binaryGreaterThanOrEqual(
-                $expression->left,
-                $expression->right,
-            ),
-            BinaryOperatorKind::Equal => $this->binaryEquals($expression->left, $expression->right),
-            BinaryOperatorKind::NotEqual => $this->binaryNotEquals($expression->left, $expression->right),
-            BinaryOperatorKind::In => $this->binaryIn($expression->left, $expression->right),
-            BinaryOperatorKind::Plus => $this->binaryPlus($expression->left, $expression->right),
-            BinaryOperatorKind::Minus => $this->binaryMinus($expression->left, $expression->right),
-            BinaryOperatorKind::Multiply => $this->binaryMultiply($expression->left, $expression->right),
-            BinaryOperatorKind::Divide => $this->binaryDivide($expression->left, $expression->right),
-            BinaryOperatorKind::Modulo => $this->binaryModulo($expression->left, $expression->right),
-            BinaryOperatorKind::And => $this->binaryAnd($expression->left, $expression->right),
-            BinaryOperatorKind::Or => $this->binaryOr($expression->left, $expression->right),
-        };
-    }
+        $operator = $expression->operator->kind;
 
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryLessThan(Expression $left, Expression $right): BooleanValue
-    {
-        return $this->compare($left, $right, '<', static fn(Value $a, Value $b): bool => $a->isLessThan($b));
-    }
+        // Handle short-circuit evaluation for AND with literal booleans
+        if ($operator === BinaryOperatorKind::And) {
+            if ($expression->left instanceof BoolLiteralExpression && !$expression->left->value) {
+                return new BooleanValue(false);
+            }
 
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryLessThanOrEqual(Expression $left, Expression $right): BooleanValue
-    {
-        return $this->compare(
-            $left,
-            $right,
-            '<=',
-            static fn(Value $a, Value $b): bool => $a->isLessThan($b) || $a->isEqual($b),
-        );
-    }
+            if ($expression->right instanceof BoolLiteralExpression && !$expression->right->value) {
+                return new BooleanValue(false);
+            }
 
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryGreaterThan(Expression $left, Expression $right): BooleanValue
-    {
-        return $this->compare($left, $right, '>', static fn(Value $a, Value $b): bool => $a->isGreaterThan($b));
-    }
+            // Evaluate left operand
+            $left = $this->run($expression->left);
 
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryGreaterThanOrEqual(Expression $left, Expression $right): BooleanValue
-    {
-        return $this->compare(
-            $left,
-            $right,
-            '>=',
-            static fn(Value $a, Value $b): bool => $a->isGreaterThan($b) || $a->isEqual($b),
-        );
-    }
+            // If left is boolean and false, short-circuit without evaluating right
+            if ($left instanceof BooleanValue && !$left->value) {
+                return new BooleanValue(false);
+            }
 
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryEquals(Expression $left, Expression $right): BooleanValue
-    {
-        return $this->compare(
-            $left,
-            $right,
-            '==',
-            static fn(Value $a, Value $b): bool => $a->isEqual($b),
-            supports_aggregates: true,
-        );
-    }
+            // Evaluate right operand
+            $right = $this->run($expression->right);
 
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryNotEquals(Expression $left, Expression $right): BooleanValue
-    {
-        return $this->compare(
-            $left,
-            $right,
-            '==',
-            static fn(Value $a, Value $b): bool => !$a->isEqual($b),
-            supports_aggregates: true,
-        );
-    }
+            // Try to get handler from registry
+            $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
+            if ($handler !== null) {
+                return $handler($left, $right, $expression->left, $expression->right);
+            }
 
-    /**
-     * @param (Closure(Value, Value): bool) $comparator
-     *
-     * @throws EvaluationException
-     */
-    private function compare(
-        Expression $left,
-        Expression $right,
-        string $operator,
-        Closure $comparator,
-        bool $supports_aggregates = false,
-    ): BooleanValue {
-        $left_value = $this->run($left);
-        if (!$supports_aggregates && $left_value->isAggregate()) {
-            throw new UnsupportedOperationException(
+            // Fallback error for AND
+            throw new NoSuchOverloadException(
                 Str\format(
-                    'Operator `%s` does not support aggregate types, got `%s`',
-                    $operator,
-                    $left_value->getType(),
+                    'No such overload for `%s` %s `%s`',
+                    $left->getType(),
+                    $operator->getSymbol(),
+                    $right->getType(),
                 ),
-                $left->getSpan(),
+                $expression->left->getSpan()->join($expression->right->getSpan()),
             );
         }
 
-        $right_value = $this->run($right);
+        // Handle short-circuit evaluation for OR with literal booleans
+        if ($operator === BinaryOperatorKind::Or) {
+            if ($expression->left instanceof BoolLiteralExpression && $expression->left->value) {
+                return new BooleanValue(true);
+            }
 
-        try {
-            return new BooleanValue($comparator($left_value, $right_value));
-        } catch (UnsupportedOperationException $exception) {
-            throw $exception->withSpan($left->getSpan()->join($right->getSpan()));
-        }
-    }
+            if ($expression->right instanceof BoolLiteralExpression && $expression->right->value) {
+                return new BooleanValue(true);
+            }
 
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryIn(Expression $left, Expression $right): Value
-    {
-        $left_value = $this->run($left);
-        $right_value = $this->run($right);
+            // Evaluate left operand
+            $left = $this->run($expression->left);
 
-        if (!$right_value instanceof ListValue) {
+            // If left is boolean and true, short-circuit without evaluating right
+            if ($left instanceof BooleanValue && $left->value) {
+                return new BooleanValue(true);
+            }
+
+            // Evaluate right operand
+            $right = $this->run($expression->right);
+
+            // Try to get handler from registry
+            $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
+            if ($handler !== null) {
+                return $handler($left, $right, $expression->left, $expression->right);
+            }
+
+            // Fallback error for OR
             throw new NoSuchOverloadException(
-                Str\format('Right operand of `in` must be a list, got `%s`', $right_value->getType()),
-                $right->getSpan(),
+                Str\format(
+                    'No such overload for `%s` %s `%s`',
+                    $left->getType(),
+                    $operator->getSymbol(),
+                    $right->getType(),
+                ),
+                $expression->left->getSpan()->join($expression->right->getSpan()),
             );
         }
 
-        return new BooleanValue(Iter\any($right_value->value, static fn(Value $item): bool => $item->isEqual(
-            $left_value,
-        )));
-    }
+        // For all other operators, evaluate both operands and use the registry
+        $left = $this->run($expression->left);
+        $right = $this->run($expression->right);
 
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryPlus(Expression $left, Expression $right): Value
-    {
-        $left_value = $this->run($left);
-        $right_value = $this->run($right);
-
-        return match ($left_value::class) {
-            IntegerValue::class => $right_value instanceof IntegerValue
-                ? new IntegerValue($left_value->value + $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot add `%s` and `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            UnsignedIntegerValue::class => $right_value instanceof UnsignedIntegerValue
-                ? new UnsignedIntegerValue(bcadd((string) $left_value->value, (string) $right_value->value))
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot add `%s` and `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            FloatValue::class => $right_value instanceof FloatValue
-                ? new FloatValue($left_value->value + $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot add `%s` and `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            StringValue::class => $right_value instanceof StringValue
-                ? new StringValue($left_value->value . $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot concatenate `%s` and `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            BytesValue::class => $right_value instanceof BytesValue
-                ? new BytesValue($left_value->value . $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot concatenate `%s` and `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            ListValue::class => $right_value instanceof ListValue
-                ? new ListValue([...$left_value->value, ...$right_value->value])
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot concatenate `%s` and `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            default => throw new NoSuchOverloadException(
-                Str\format('Operator `+` is not supported for type `%s`', $left_value->getType()),
-                $left->getSpan(),
-            ),
-        };
-    }
-
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryMinus(Expression $left, Expression $right): Value
-    {
-        $left_value = $this->run($left);
-        $right_value = $this->run($right);
-
-        return match ($left_value::class) {
-            IntegerValue::class => $right_value instanceof IntegerValue
-                ? new IntegerValue($left_value->value - $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot subtract `%s` from `%s`', $right_value->getType(), $left_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            UnsignedIntegerValue::class => (static function () use (
-                $left_value,
-                $right_value,
-                $left,
-                $right,
-            ): UnsignedIntegerValue {
-                if (!$right_value instanceof UnsignedIntegerValue) {
-                    throw new NoSuchOverloadException(
-                        Str\format('Cannot subtract `%s` from `%s`', $right_value->getType(), $left_value->getType()),
-                        $left->getSpan()->join($right->getSpan()),
-                    );
-                }
-
-                $res = bcsub((string) $left_value->value, (string) $right_value->value);
-                if (bccomp($res, '0') === -1) {
-                    throw new OverflowException(
-                        'Unsigned integer overflow on subtraction',
-                        $left->getSpan()->join($right->getSpan()),
-                    );
-                }
-
-                return new UnsignedIntegerValue($res);
-            })(),
-            FloatValue::class => $right_value instanceof FloatValue
-                ? new FloatValue($left_value->value - $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot subtract `%s` from `%s`', $right_value->getType(), $left_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            default => throw new NoSuchOverloadException(
-                Str\format('Operator `-` is not supported for type `%s`', $left_value->getType()),
-                $left->getSpan(),
-            ),
-        };
-    }
-
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryMultiply(Expression $left, Expression $right): Value
-    {
-        $left_value = $this->run($left);
-        $right_value = $this->run($right);
-
-        return match ($left_value::class) {
-            IntegerValue::class => $right_value instanceof IntegerValue
-                ? new IntegerValue($left_value->value * $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot multiply `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            UnsignedIntegerValue::class => $right_value instanceof UnsignedIntegerValue
-                ? new UnsignedIntegerValue(bcmul((string) $left_value->value, (string) $right_value->value))
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot multiply `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            FloatValue::class => $right_value instanceof FloatValue
-                ? new FloatValue($left_value->value * $right_value->value)
-                : throw new NoSuchOverloadException(
-                    Str\format('Cannot multiply `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                    $left->getSpan()->join($right->getSpan()),
-                ),
-            default => throw new NoSuchOverloadException(
-                Str\format('Operator `*` is not supported for type `%s`', $left_value->getType()),
-                $left->getSpan(),
-            ),
-        };
-    }
-
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryDivide(Expression $left, Expression $right): Value
-    {
-        $left_value = $this->run($left);
-        $right_value = $this->run($right);
-
-        try {
-            return match ($left_value::class) {
-                IntegerValue::class => $right_value instanceof IntegerValue
-                    ? new IntegerValue(Math\div($left_value->value, $right_value->value))
-                    : throw new NoSuchOverloadException(
-                        Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                        $left->getSpan()->join($right->getSpan()),
-                    ),
-                UnsignedIntegerValue::class => $right_value instanceof UnsignedIntegerValue
-                    ? new UnsignedIntegerValue(bcdiv((string) $left_value->value, (string) $right_value->value))
-                    : throw new NoSuchOverloadException(
-                        Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                        $left->getSpan()->join($right->getSpan()),
-                    ),
-                FloatValue::class => $right_value instanceof FloatValue
-                    ? new FloatValue($left_value->value / $right_value->value)
-                    : throw new NoSuchOverloadException(
-                        Str\format('Cannot divide `%s` by `%s`', $left_value->getType(), $right_value->getType()),
-                        $left->getSpan()->join($right->getSpan()),
-                    ),
-                default => throw new NoSuchOverloadException(
-                    Str\format('Operator `/` is not supported for type `%s`', $left_value->getType()),
-                    $left->getSpan(),
-                ),
-            };
-        } catch (Math\Exception\DivisionByZeroException|DivisionByZeroError $exception) { // @mago-expect analysis:avoid-catching-error
-            throw new EvaluationException(
-                'Failed to evaluate division: division by zero',
-                $left->getSpan()->join($right->getSpan()),
-                $exception,
-            );
-        }
-    }
-
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryModulo(Expression $left, Expression $right): Value
-    {
-        $left_value = $this->run($left);
-        $right_value = $this->run($right);
-
-        try {
-            return match ($left_value::class) {
-                IntegerValue::class => $right_value instanceof IntegerValue
-                    ? new IntegerValue($left_value->value % $right_value->value)
-                    : throw new NoSuchOverloadException(
-                        Str\format(
-                            'Cannot apply modulo to `%s` and `%s`',
-                            $left_value->getType(),
-                            $right_value->getType(),
-                        ),
-                        $left->getSpan()->join($right->getSpan()),
-                    ),
-                UnsignedIntegerValue::class => $right_value instanceof UnsignedIntegerValue
-                    ? new UnsignedIntegerValue(bcmod((string) $left_value->value, (string) $right_value->value))
-                    : throw new NoSuchOverloadException(
-                        Str\format(
-                            'Cannot apply modulo to `%s` and `%s`',
-                            $left_value->getType(),
-                            $right_value->getType(),
-                        ),
-                        $left->getSpan()->join($right->getSpan()),
-                    ),
-                default => throw new NoSuchOverloadException(
-                    Str\format('Operator `%%` is not supported for type `%s`', $left_value->getType()),
-                    $left->getSpan(),
-                ),
-            };
-        } catch (DivisionByZeroError $exception) { // @mago-expect analysis:avoid-catching-error
-            throw new EvaluationException(
-                'Failed to evaluate modulo: division by zero',
-                $left->getSpan()->join($right->getSpan()),
-                $exception,
-            );
-        }
-    }
-
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryAnd(Expression $left, Expression $right): Value
-    {
-        // Short-circuit evaluation for AND
-        if ($left instanceof BoolLiteralExpression && $left->value) {
-            return new BooleanValue(false);
-        }
-
-        if ($right instanceof BoolLiteralExpression && $right->value) {
-            return new BooleanValue(false);
-        }
-
-        $left_value = $this->run($left);
-        if (!$left_value instanceof BooleanValue) {
+        $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
+        if ($handler === null) {
             throw new NoSuchOverloadException(
-                Str\format('Left operand of AND must be boolean, got `%s`', $left_value->getType()),
-                $left->getSpan(),
+                Str\format(
+                    'No such overload for `%s` %s `%s`',
+                    $left->getType(),
+                    $operator->getSymbol(),
+                    $right->getType(),
+                ),
+                $expression->left->getSpan()->join($expression->right->getSpan()),
             );
         }
 
-        if (!$left_value->value) {
-            return new BooleanValue(false); // Short-circuit if left is false
-        }
-
-        $right_value = $this->run($right);
-        if (!$right_value instanceof BooleanValue) {
-            throw new NoSuchOverloadException(
-                Str\format('Right operand of AND must be boolean, got `%s`', $right_value->getType()),
-                $right->getSpan(),
-            );
-        }
-
-        return new BooleanValue($right_value->value);
-    }
-
-    /**
-     * @throws EvaluationException
-     */
-    private function binaryOr(Expression $left, Expression $right): Value
-    {
-        // Short-circuit evaluation for OR
-        if ($left instanceof BoolLiteralExpression && !$left->value) {
-            return new BooleanValue(true);
-        }
-
-        if ($right instanceof BoolLiteralExpression && !$right->value) {
-            return new BooleanValue(true);
-        }
-
-        $left_value = $this->run($left);
-        if (!$left_value instanceof BooleanValue) {
-            throw new NoSuchOverloadException(
-                Str\format('Left operand of OR must be boolean, got `%s`', $left_value->getType()),
-                $left->getSpan(),
-            );
-        }
-
-        if ($left_value->value) {
-            return new BooleanValue(true); // Short-circuit if left is true
-        }
-
-        $right_value = $this->run($right);
-        if (!$right_value instanceof BooleanValue) {
-            throw new NoSuchOverloadException(
-                Str\format('Right operand of OR must be boolean, got `%s`', $right_value->getType()),
-                $right->getSpan(),
-            );
-        }
-
-        return new BooleanValue($right_value->value);
+        return $handler($left, $right, $expression->left, $expression->right);
     }
 
     /**
@@ -956,10 +602,10 @@ final class TreeWalkingInterpreter implements InterpreterInterface
             $arguments[] = $this->run($arg);
         }
 
-        $function = $this->registry->get($expression, $arguments);
+        $function = $this->registry->getFunction($expression, $arguments);
         if (null === $function) {
             // Maybe the function exists with a different signature?
-            $available_signatures = $this->registry->getSignatures($expression);
+            $available_signatures = $this->registry->getFunctionSignatures($expression);
             if (null === $available_signatures) {
                 throw new NoSuchFunctionException(
                     Str\format('Function `%s` is not defined', $expression->function->name),

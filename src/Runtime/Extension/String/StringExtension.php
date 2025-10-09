@@ -32,4 +32,22 @@ final readonly class StringExtension implements ExtensionInterface
             new Function\TrimRightFunction(),
         ];
     }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getBinaryOperatorOverloads(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getUnaryOperatorOverloads(): array
+    {
+        return [];
+    }
 }
