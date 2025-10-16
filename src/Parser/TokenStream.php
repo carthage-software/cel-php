@@ -116,6 +116,8 @@ final class TokenStream implements HasCursorInterface
     /**
      * Peeks at the nth (0-indexed) significant token ahead without consuming it.
      *
+     * @param non-negative-int $n The number of tokens to look ahead (0 for the next token, 1 for the one after that, etc.).
+     *
      * @return null|Token The token if it exists, or null if the end of the stream is reached.
      */
     public function lookahead(int $n): null|Token
