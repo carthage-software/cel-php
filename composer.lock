@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b358eb1f998fd39fdd170f15e512680",
+    "content-hash": "e0e7901de532da774f465a9a670e5040",
     "packages": [
         {
             "name": "azjezz/psl",
@@ -154,16 +154,16 @@
     "packages-dev": [
         {
             "name": "carthage-software/mago",
-            "version": "1.0.0-beta.27",
+            "version": "1.0.0-beta.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "3bee3745cce4575e2ceaee32a6d85051b3d10e18"
+                "reference": "18c2f9af3ea02811c6d80bb42358d59b7b6e9ad0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/3bee3745cce4575e2ceaee32a6d85051b3d10e18",
-                "reference": "3bee3745cce4575e2ceaee32a6d85051b3d10e18",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/18c2f9af3ea02811c6d80bb42358d59b7b6e9ad0",
+                "reference": "18c2f9af3ea02811c6d80bb42358d59b7b6e9ad0",
                 "shasum": ""
             },
             "require": {
@@ -201,7 +201,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.0.0-beta.27"
+                "source": "https://github.com/carthage-software/mago/tree/1.0.0-beta.32"
             },
             "funding": [
                 {
@@ -209,7 +209,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-07T16:07:46+00:00"
+            "time": "2025-10-17T05:02:46+00:00"
         },
         {
             "name": "colinodell/json5",

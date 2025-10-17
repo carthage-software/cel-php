@@ -8,8 +8,6 @@ use Cel\Syntax\Expression;
 
 /**
  * @template T
- *
- * @inheritors BoolLiteralExpression|BytesLiteralExpression|FloatLiteralExpression|IntegerLiteralExpression|NullLiteralExpression|StringLiteralExpression|UnsignedIntegerLiteralExpression
  */
 abstract readonly class LiteralExpression extends Expression
 {

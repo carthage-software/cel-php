@@ -31,7 +31,6 @@ abstract class AbstractLiteralExpressionTestCase extends TestCase
             $span,
         );
 
-        static::assertInstanceOf(LiteralExpression::class, $literal);
         static::assertSame($expectedValue, $literal->getValue());
         static::assertSame($expectedRaw, $literal->getRaw());
 

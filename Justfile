@@ -11,6 +11,7 @@ lint:
     ./vendor/bin/mago --config config/mago.toml lint --sort
 
 fix:
+    ./vendor/bin/mago --config config/mago.toml analyze --fix --unsafe
     ./vendor/bin/mago --config config/mago.toml lint --fix --unsafe
     ./vendor/bin/mago --config config/mago.toml fmt
 
