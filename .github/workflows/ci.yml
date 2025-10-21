@@ -25,7 +25,7 @@ jobs:
           php-version: "8.4"
           ini-values: memory_limit=-1
           tools: composer:v2, cs2pr
-          extensions: bcmath, mbstring, intl, sodium, json
+          extensions: bcmath, mbstring, intl, sodium, json, decimal
 
       - name: "installing dependencies"
         run: |
