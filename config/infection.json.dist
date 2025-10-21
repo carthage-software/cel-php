@@ -1,0 +1,94 @@
+{
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "timeout": 5,
+    "minMsi": 80,
+    "minCoveredMsi": 80,
+    "threads": "max",
+    "logs": {
+        "github": true,
+        "stryker": {
+            "badge": "main"
+        }
+    },
+    "tmpDir": "../var",
+    "mutators": {
+        "@default": true,
+        "@function_signature": false,
+        "CastInt": false,
+        "GreaterThanOrEqualTo": {
+            "ignore": [
+                "Cel\\Input\\Input::sliceInRange"
+            ]
+        },
+        "GreaterThan": {
+            "ignore": [
+                "Cel\\Syntax\\PunctuatedSequence::getSpan"
+            ]
+        },
+        "LessThan": {
+            "ignore": [
+                "Cel\\Parser\\TokenStream::fillBuffer"
+            ]
+        },
+        "IncrementInteger": {
+            "ignore": [
+                "Cel\\Parser\\TokenStream::hasReachedEnd",
+                "Cel\\Parser\\TokenStream::consume",
+                "Cel\\Parser\\TokenStream::lookahead",
+                "Cel\\Parser\\Parser::parseLiteral"
+            ]
+        },
+        "Throw_": {
+            "ignore": [
+                "Cel\\Parser\\Parser::parsePrimary"
+            ]
+        },
+        "NotIdentical": {
+            "ignore": [
+                "Cel\\Parser\\Parser::parsePrimary"
+            ]
+        },
+        "NullSafePropertyCall": {
+            "ignore": [
+                "Cel\\Parser\\Parser::parseMessageLiteral",
+                "Cel\\Parser\\Parser::isAtMessageLiteral"
+            ]
+        },
+        "MatchArmRemoval": {
+            "ignore": [
+                "Cel\\Parser\\Parser::parseLiteral",
+                "Cel\\Parser\\Parser::parseUnary",
+                "Cel\\Parser\\Parser::tokenToBinaryOperatorKind"
+            ]
+        },
+        "UnwrapRtrim": {
+            "ignore": [
+                "Cel\\Parser\\Parser::parseLiteral"
+            ]
+        },
+        "TrueValue": {
+            "ignore": [
+                "Cel\\Parser\\Parser::parseLiteral"
+            ]
+        },
+        "ReturnRemoval": {
+            "ignore": [
+                "Cel\\Parser\\Parser::isAtMessageLiteral"
+            ]
+        },
+        "Break_": {
+            "ignore": [
+                "Cel\\Parser\\Parser::parseMember"
+            ]
+        },
+        "Increment": {
+            "ignore": [
+                "Cel\\Parser\\Parser::isAtMessageLiteral"
+            ]
+        }
+    }
+}

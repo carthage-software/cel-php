@@ -1,0 +1,37 @@
+php-version = "8.4.0"
+
+[source]
+paths = ["src/", "examples/", "benchmarks/", "tests/"]
+includes = ["vendor"]
+excludes = []
+
+[linter]
+integrations = ["phpunit", "php-standard-library"]
+
+[linter.rules]
+# Complexity 😖
+too-many-methods = { threshold = 25 }
+excessive-parameter-list = { threshold = 10 }
+halstead = { effort-threshold = 20_000, difficulty-threshold = 20, volume-threshold = 1_500 }
+kan-defect = { threshold = 5.0 }
+cyclomatic-complexity = { threshold = 80 }
+# Naming
+class-name = { psr = false }
+# Code Style
+strict-types = { enabled = true }
+no-else-clause = { enabled = false }
+ambiguous-function-call = { enabled = true }
+# Noisy Rules (disabled)
+literal-named-argument = { enabled = false }
+no-boolean-flag-parameter = { enabled = false }
+# Enable disabled-by-default rules
+no-redundant-use = { enabled = true }
+
+[analyzer]
+analyze-dead-code = true
+perform-heuristic-checks = true
+check-missing-type-hints = true
+register-super-globals = false
+no-boolean-literal-comparison = true
+strict-list-index-checks = true
+allow-possibly-undefined-array-keys = false

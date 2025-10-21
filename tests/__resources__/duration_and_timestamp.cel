@@ -1,0 +1,3 @@
+// Validate that 'expired' date is after a 'created' date plus a 'ttl' duration
+has(object.expired) &&
+timestamp(object.created) + duration(object.ttl) < timestamp(object.expired)

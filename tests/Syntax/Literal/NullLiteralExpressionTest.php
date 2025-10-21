@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cel\Tests\Syntax\Literal;
+
+use Cel\Span\Span;
+use Cel\Syntax\ExpressionKind;
+use Cel\Syntax\Literal\NullLiteralExpression;
+use Override;
+
+/**
+ * @extends AbstractLiteralExpressionTestCase<null>
+ */
+final class NullLiteralExpressionTest extends AbstractLiteralExpressionTestCase
+{
+    /**
+     * @param null $value
+     */
+    #[Override]
+    protected function createLiteral(mixed $value, string $raw, Span $span): array
+    {
+        $literal = new NullLiteralExpression($raw, $span);
+
+        return [$literal, $value, $raw, $span, ExpressionKind::NullLiteral];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    protected function getTestValue(): array
+    {
+        return [null, 'null'];
+    }
+}

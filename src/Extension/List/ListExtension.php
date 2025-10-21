@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cel\Extension\List;
+
+use Cel\Extension\ExtensionInterface;
+use Override;
+
+final readonly class ListExtension implements ExtensionInterface
+{
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getFunctions(): array
+    {
+        return [
+            new Function\ChunkFunction(),
+            new Function\ContainsFunction(),
+            new Function\FlattenFunction(),
+            new Function\JoinFunction(),
+            new Function\ReverseFunction(),
+            new Function\SortFunction(),
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getBinaryOperatorOverloads(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getUnaryOperatorOverloads(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getMessageTypes(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getValueResolvers(): array
+    {
+        return [];
+    }
+}

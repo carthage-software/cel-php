@@ -1,0 +1,19 @@
+// According the Pod Security Standards, Containers must drop `ALL` capabilities, and are only permitted to add back the `NET_BIND_SERVICE` capability.
+// https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+
+// Containers must drop `ALL` capabilities,
+object.spec.template.spec.containers.all(container,
+  has(container.securityContext) &&
+  has(container.securityContext.capabilities) &&
+  has(container.securityContext.capabilities.drop) &&
+  size(container.securityContext.capabilities.drop) >= 1 &&
+  container.securityContext.capabilities.drop.exists(c, c == 'ALL')
+)
+&&
+// and are only permitted to add back the `NET_BIND_SERVICE` capability
+object.spec.template.spec.containers.all(container,
+  !has(container.securityContext) ||
+  !has(container.securityContext.capabilities) ||
+  !has(container.securityContext.capabilities.add) ||
+  container.securityContext.capabilities.add.all(cap, cap in params.allowedCapabilities)
+)

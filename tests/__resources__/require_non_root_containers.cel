@@ -1,0 +1,20 @@
+// According the Pod Security Standards, Containers must be required to run as non-root users.
+// https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+
+// Pod or Containers must set `securityContext.runAsNonRoot`
+(
+  (has(object.spec.template.spec.securityContext) && has(object.spec.template.spec.securityContext.runAsNonRoot)) ||
+  object.spec.template.spec.containers.all(container,
+    has(container.securityContext) && has(container.securityContext.runAsNonRoot)
+  )
+)
+&&
+
+// Neither Pod nor Containers should set `securityContext.runAsNonRoot` to false
+(
+  (!has(object.spec.template.spec.securityContext) || !has(object.spec.template.spec.securityContext.runAsNonRoot) || object.spec.template.spec.securityContext.runAsNonRoot != false)
+  &&
+  object.spec.template.spec.containers.all(container,
+    !has(container.securityContext) || !has(container.securityContext.runAsNonRoot) || container.securityContext.runAsNonRoot != false
+  )
+)

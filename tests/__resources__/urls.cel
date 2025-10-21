@@ -1,0 +1,10 @@
+// Examples of Kubernetes URL CEL library that is available in the playground.
+// https://kubernetes.io/docs/reference/using-api/cel/#kubernetes-url-library
+
+isURL(object.href)
+&& url(object.href).getScheme() == 'https'
+&& url(object.href).getHost() == 'example.com:80'
+&& url(object.href).getHostname() == 'example.com'
+&& url(object.href).getPort() == '80'
+&& url(object.href).getEscapedPath() == '/path'
+&& url(object.href).getQuery().size() == 1
