@@ -52,9 +52,6 @@ $cel = new Cel\CommonExpressionLanguage();
 // Parse the expression
 $expression = $cel->parseString('account.balance >= transaction.amount');
 
-// Optimize the expression (optional but recommended)
-$expression = $cel->optimize($expression);
-
 // Evaluate with context
 $receipt = $cel->run($expression, [
     'account' => ['balance' => 1000],
