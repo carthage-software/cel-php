@@ -12,6 +12,7 @@ use Cel\Syntax\Expression;
 use Override;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
+use Throwable;
 
 use function hash;
 use function serialize;
@@ -76,8 +77,13 @@ final class CachedRuntime implements RuntimeInterface
     #[Override]
     public function run(Expression $expression, array $context = []): RuntimeReceipt
     {
-        // Generate cache key from serialized expression
-        $cacheKey = self::CACHE_KEY_PREFIX . hash('xxh128', serialize($expression));
+        try {
+            // Generate cache key from serialized expression
+            $cacheKey = self::CACHE_KEY_PREFIX . hash('xxh128', serialize($expression) . serialize($context));
+        } catch (Throwable $e) {
+            // e.g: context contains non-serializable values
+            throw InternalException::forMessage('Failed to generate cache key for expression and context.', $e);
+        }
 
         try {
             /** @var RuntimeReceipt|null $cached */
