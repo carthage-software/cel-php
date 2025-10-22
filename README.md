@@ -40,14 +40,14 @@ use Cel;
 
 // Simple expression evaluation
 $result = Cel\evaluate('1 + 2');
-echo $result->toNativeValue(); // Output: 3
+echo $result->getRawValue(); // Output: 3
 
 // With variables
 $result = Cel\evaluate(
     'user.age >= 18',
     ['user' => ['age' => 25]]
 );
-echo $result->toNativeValue(); // Output: true
+echo $result->getRawValue(); // Output: true
 ```
 
 ### Full API Example
@@ -83,7 +83,7 @@ try {
         ],
     ]);
 
-    echo $receipt->result->toNativeValue(); // Output: true
+    echo $receipt->result->getRawValue(); // Output: true
 
 } catch (Cel\Parser\Exception\UnexpectedTokenException $e) {
     // Handle parsing errors
