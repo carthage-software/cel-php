@@ -207,7 +207,7 @@ To get started with local development, you'll need to install `just` and `typos`
 If you have Rust and Cargo installed, you can install `just` via Cargo:
 
 ```bash
-car go install just
+cargo install just
 ```
 
 Alternatively, you can find other installation methods in the [Just documentation](https://github.com/casey/just#installation).
@@ -217,7 +217,7 @@ Alternatively, you can find other installation methods in the [Just documentatio
 If you have Rust and Cargo installed, you can install `typos` via Cargo:
 
 ```bash
-car go install typos-cli
+cargo install typos-cli
 ```
 
 After installing `just` and `typos`, you can install the project dependencies and run verification checks:
