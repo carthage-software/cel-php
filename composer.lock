@@ -1214,16 +1214,16 @@
         },
         {
             "name": "infection/infection",
-            "version": "0.31.7",
+            "version": "0.31.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/infection/infection.git",
-                "reference": "a66e38972304f5c742d4ee19adec132c45bb5a46"
+                "reference": "17347cdd95297fc2e0e8d54c74bc5ea325441d1e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/infection/infection/zipball/a66e38972304f5c742d4ee19adec132c45bb5a46",
-                "reference": "a66e38972304f5c742d4ee19adec132c45bb5a46",
+                "url": "https://api.github.com/repos/infection/infection/zipball/17347cdd95297fc2e0e8d54c74bc5ea325441d1e",
+                "reference": "17347cdd95297fc2e0e8d54c74bc5ea325441d1e",
                 "shasum": ""
             },
             "require": {
@@ -1329,7 +1329,7 @@
             ],
             "support": {
                 "issues": "https://github.com/infection/infection/issues",
-                "source": "https://github.com/infection/infection/tree/0.31.7"
+                "source": "https://github.com/infection/infection/tree/0.31.8"
             },
             "funding": [
                 {
@@ -1341,7 +1341,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2025-10-12T08:32:39+00:00"
+            "time": "2025-10-27T09:30:37+00:00"
         },
         {
             "name": "infection/mutator",
@@ -1606,16 +1606,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.6.1",
+            "version": "v5.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2"
+                "reference": "3a454ca033b9e06b63282ce19562e892747449bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2",
-                "reference": "f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/3a454ca033b9e06b63282ce19562e892747449bb",
+                "reference": "3a454ca033b9e06b63282ce19562e892747449bb",
                 "shasum": ""
             },
             "require": {
@@ -1658,9 +1658,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.6.1"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.6.2"
             },
-            "time": "2025-08-13T20:13:15+00:00"
+            "time": "2025-10-21T19:32:17+00:00"
         },
         {
             "name": "ondram/ci-detector",
