@@ -63,8 +63,8 @@ abstract class RuntimeTestCase extends TestCase
             $expectedResult->isEqual($actualResult),
             Str\format(
                 "Expected result to be equal.\nExpected: %s\nActual: %s",
-                var_export($expectedResult, true),
-                var_export($actualResult, true),
+                var_export($expectedResult, true) ?? '',
+                var_export($actualResult, true) ?? '',
             ),
         );
     }

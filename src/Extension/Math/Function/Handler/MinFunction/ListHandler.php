@@ -46,20 +46,15 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
             $numbers[] = $item->getRawValue();
         }
 
-        if ([] === $numbers) {
+        $result = Math\min($numbers);
+        if (null === $result) {
             throw new EvaluationException('min() requires a non-empty list', $call->getSpan());
         }
 
-        try {
-            $result = Math\min($numbers);
-
-            if (Type\int()->matches($result)) {
-                return new IntegerValue($result);
-            }
-
-            return new FloatValue($result);
-        } catch (Math\Exception\ExceptionInterface $e) {
-            throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
+        if (Type\int()->matches($result)) {
+            return new IntegerValue($result);
         }
+
+        return new FloatValue($result);
     }
 }

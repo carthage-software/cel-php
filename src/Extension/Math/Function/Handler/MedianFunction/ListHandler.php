@@ -42,17 +42,15 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
                     $call->getSpan(),
                 );
             }
+
             $numbers[] = $item->getRawValue();
         }
 
-        if ([] === $numbers) {
+        $result = Math\median($numbers);
+        if (null === $result) {
             throw new EvaluationException('median() requires a non-empty list', $call->getSpan());
         }
 
-        try {
-            return new FloatValue(Math\median($numbers));
-        } catch (Math\Exception\ExceptionInterface $e) {
-            throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
-        }
+        return new FloatValue($result);
     }
 }

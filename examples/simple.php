@@ -29,7 +29,7 @@ try {
         ],
     ]);
 
-    IO\write_line('Result: %s(%s)', $result->getType(), var_export($result->getRawValue(), true));
+    IO\write_line('Result: %s(%s)', $result->getType(), var_export($result->getRawValue(), true) ?? '');
 } catch (Cel\Parser\Exception\ExceptionInterface $exception) {
     IO\write_error_line('Failed to parse expression: %s', $exception->getMessage());
 
