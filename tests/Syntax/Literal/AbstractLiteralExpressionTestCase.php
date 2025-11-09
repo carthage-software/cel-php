@@ -16,6 +16,8 @@ use Psl\Str\Byte;
 abstract class AbstractLiteralExpressionTestCase extends TestCase
 {
     /**
+     * @param T $value
+     *
      * @return array{0: LiteralExpression, 1: T, 2: string, 3: Span, 4: ExpressionKind}
      */
     abstract protected function createLiteral(mixed $value, string $raw, Span $span): array;

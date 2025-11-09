@@ -51,7 +51,7 @@ final class ValueTest extends TestCase
                 }
 
                 #[Override]
-                public static function fromCelFields(array $_fields): static
+                public static function fromCelFields(array $fields): static
                 {
                     return new static();
                 }
