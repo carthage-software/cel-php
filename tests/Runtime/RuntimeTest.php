@@ -59,6 +59,25 @@ final class RuntimeTest extends RuntimeTestCase
             new BooleanValue(true),
         ];
 
+        yield 'Form: field in answers' => [
+            '\'field\' in answers',
+            [
+                'answers' => [
+                    'field' => 'available',
+                ],
+            ],
+            new BooleanValue(true),
+        ];
+        yield 'Form: field not in answers' => [
+            '\'field\' in answers',
+            [
+                'answers' => [
+                    'foo' => 'bar',
+                ],
+            ],
+            new BooleanValue(false),
+        ];
+
         yield 'RBAC: owner access' => [
             'user.id == resource.owner_id',
             [
