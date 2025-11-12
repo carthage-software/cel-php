@@ -9,7 +9,7 @@ use Cel\Syntax\ExpressionKind;
 use Override;
 
 /**
- * @extends LiteralExpression<int>
+ * @extends LiteralExpression<int|string>
  */
 final readonly class UnsignedIntegerLiteralExpression extends LiteralExpression
 {
