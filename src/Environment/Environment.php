@@ -80,10 +80,12 @@ final class Environment implements EnvironmentInterface
         $customResolvers = Vec\slice($this->valueResolvers, 0, $length);
 
         foreach (Vec\reverse($customResolvers) as $resolver) {
-            if ($resolver->canResolve($value)) {
-                $this->addVariable($name, $resolver->resolve($value));
-                return;
+            if (!$resolver->canResolve($value)) {
+                continue;
             }
+
+            $this->addVariable($name, $resolver->resolve($value));
+            return;
         }
 
         // Fall back to the default resolver (always the last one)

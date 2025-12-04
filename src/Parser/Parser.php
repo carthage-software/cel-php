@@ -480,7 +480,7 @@ final class Parser implements ParserInterface
      *
      * @throws InternalException If string unescaping fails.
      */
-    private function parseStringLiteral(Token $token): StringLiteralExpression
+    private function parseStringLiteral(#[\SensitiveParameter] Token $token): StringLiteralExpression
     {
         try {
             // Check if it's a raw string (prefixed with r or R)
@@ -515,7 +515,7 @@ final class Parser implements ParserInterface
      *
      * @throws InternalException If bytes unescaping fails.
      */
-    private function parseBytesLiteral(Token $token): BytesLiteralExpression
+    private function parseBytesLiteral(#[\SensitiveParameter] Token $token): BytesLiteralExpression
     {
         try {
             // Bytes can be: b"...", b'...', br"...", rb"...", etc.

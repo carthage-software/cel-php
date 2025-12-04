@@ -66,6 +66,6 @@ final readonly class ListValue extends Value
     #[Override]
     public function getRawValue(): array
     {
-        return Vec\map($this->value, fn(Value $item): mixed => $item->getRawValue());
+        return Vec\map($this->value, static fn(Value $item): mixed => $item->getRawValue());
     }
 }

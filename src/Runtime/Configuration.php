@@ -67,14 +67,16 @@ final class Configuration implements DefaultInterface
         bool $enableStandardExtensions = true,
     ) {
         foreach ($this->messageClassAliases as $messageAlias => $messageClassAlias) {
-            if (!Iter\contains($this->allowedMessageClasses, $messageClassAlias)) {
-                throw new MisconfigurationException(Str\format(
-                    'Message class alias "%s" ( `%s` ) does not map to an allowed message class. '
-                    . 'All aliases in $messageClassAliases must map to classes in $allowedMessageClasses.',
-                    $messageAlias,
-                    $messageClassAlias,
-                ));
+            if (Iter\contains($this->allowedMessageClasses, $messageClassAlias)) {
+                continue;
             }
+
+            throw new MisconfigurationException(Str\format(
+                'Message class alias "%s" ( `%s` ) does not map to an allowed message class. '
+                . 'All aliases in $messageClassAliases must map to classes in $allowedMessageClasses.',
+                $messageAlias,
+                $messageClassAlias,
+            ));
         }
 
         /** @var array<class-string<MessageInterface>, list<string>> $messageClassesToAliases */

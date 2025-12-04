@@ -552,19 +552,22 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $foundClassname = null;
         $usingAlias = false;
         foreach ($this->configuration->messageClassAliases as $typeAlias => $targetClassname) {
-            if (Byte\compare_ci($typename, $typeAlias) === 0) {
-                $foundClassname = $targetClassname;
-
-                break;
+            if (Byte\compare_ci($typename, $typeAlias) !== 0) {
+                continue;
             }
+
+            $foundClassname = $targetClassname;
+            break;
         }
 
         if (null === $foundClassname) {
             foreach ($this->configuration->allowedMessageClasses as $allowedClassname) {
-                if (Byte\compare_ci($classname, $allowedClassname) === 0) {
-                    $foundClassname = $allowedClassname;
-                    break;
+                if (Byte\compare_ci($classname, $allowedClassname) !== 0) {
+                    continue;
                 }
+
+                $foundClassname = $allowedClassname;
+                break;
             }
 
             if (

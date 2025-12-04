@@ -79,7 +79,7 @@ final readonly class AllMacro implements MacroInterface
 
         $environment = $context->getEnvironment()->fork();
         /** @var BooleanValue $result */
-        $result = $context->withEnvironment($environment, function () use (
+        $result = $context->withEnvironment($environment, static function () use (
             $items,
             $name,
             $callback,

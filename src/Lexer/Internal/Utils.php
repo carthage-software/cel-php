@@ -274,8 +274,8 @@ final readonly class Utils
     {
         $fn = match ($prefix) {
             'x' => ctype_xdigit(...),
-            'o' => fn(string $char): bool => $char >= '0' && $char <= '7',
-            'b' => fn(string $char): bool => '0' === $char || '1' === $char,
+            'o' => static fn(string $char): bool => $char >= '0' && $char <= '7',
+            'b' => static fn(string $char): bool => '0' === $char || '1' === $char,
             default => null,
         };
 
