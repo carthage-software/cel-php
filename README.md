@@ -33,8 +33,6 @@ This repository contains a PHP implementation of the [Common Expression Language
 
 ## Quick Example
 
-### Simple Usage
-
 ```php
 use Cel;
 
@@ -43,122 +41,15 @@ $result = Cel\evaluate('1 + 2');
 echo $result->getRawValue(); // Output: 3
 
 // With variables
-$result = Cel\evaluate(
-    'user.age >= 18',
-    ['user' => ['age' => 25]]
-);
+$result = Cel\evaluate('user.age >= 18', ['user' => ['age' => 25]]);
 echo $result->getRawValue(); // Output: true
 ```
 
-### Full API Example
-
-```php
-use Cel;
-
-const EXPRESSION = <<<CEL
-    account.balance >= transaction.withdrawal
-        || (account.overdraftProtection
-        && account.overdraftLimit >= transaction.withdrawal - account.balance)
-CEL;
-
-// Create CEL instance
-$cel = new Cel\CommonExpressionLanguage();
-
-try {
-    // Parse the expression
-    $expression = $cel->parseString(EXPRESSION);
-
-    // Evaluate with context
-    $receipt = $cel->run($expression, [
-        'account' => [
-            'balance' => 500,
-            'overdraftProtection' => true,
-            'overdraftLimit' => 1000,
-        ],
-        'transaction' => [
-            'withdrawal' => 700,
-        ],
-    ]);
-
-    echo $receipt->result->getRawValue(); // Output: true
-
-} catch (Cel\Parser\Exception\UnexpectedTokenException $e) {
-    // Handle parsing errors
-} catch (Cel\Exception\IncompatibleValueTypeException $e) {
-    // Handle type errors
-} catch (Cel\Exception\EvaluationException $e) {
-    // Handle runtime errors
-}
-```
-
-### Using Caching
-
-```php
-use Cel;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
-use Symfony\Component\Cache\Psr16Cache;
-
-// Create a cache instance
-$cache = new Psr16Cache(new ApcuAdapter());
-
-// Create CEL with caching enabled
-$cel = Cel\CommonExpressionLanguage::cached($cache);
-
-// Parsing and evaluation results will be cached automatically
-$expression = $cel->parseString('1 + 2');
-$receipt = $cel->run($expression);
-```
+See the [examples/](examples/) directory for more usage examples.
 
 ## Specification Compliance
 
-CEL-PHP is a **production-ready, spec-compliant** implementation of the Common Expression Language specification. All core language features, operators, macros, and standard library functions are fully implemented and tested.
-
-### ✅ Implemented Features
-
-- **Core Language**
-  - All primitive types (int, uint, double, bool, string, bytes, null)
-  - Lists and Maps with full indexing support
-  - Duration and Timestamp types
-  - Field selection and indexing
-  - All operators (arithmetic, comparison, logical, membership)
-  - Conditional expressions (`? :`)
-  - Message construction
-  - String/bytes literals with complete escape sequence support
-
-- **Macros**
-  - `has(e.f)` - Field presence checking
-  - `e.all(x, p)` - Universal quantification
-  - `e.exists(x, p)` - Existential quantification
-  - `e.exists_one(x, p)` - Unique existence
-  - `e.map(x, t)` - Transformation
-  - `e.filter(x, p)` - Filtering
-
-- **Standard Library**
-  - Core functions (type conversions, size, type checking)
-  - String functions (contains, split, trim, case conversion, etc.)
-  - List functions (chunk, flatten, reverse, sort, etc.)
-  - Math functions (min, max, sum, mean, median, etc.)
-  - DateTime functions (timestamp, duration, accessors)
-  - Decimal support for arbitrary precision (optional extension)
-
-- **Runtime & Tooling**
-  - Tree-walking interpreter with full error tracking
-  - Expression optimization (constant folding, short-circuit evaluation, etc.)
-  - Extension system for custom functions and operators
-  - Value resolvers for custom PHP types
-  - Parse and evaluation result caching (PSR-16 compatible)
-  - Comprehensive exception handling with source span information
-
-### 🎯 Production Ready for 1.0.0
-
-This implementation is **ready for production use** and meets all requirements for a 1.0.0 release. The following are potential future enhancements that could improve performance or developer experience, but are **not required** for the core functionality:
-
-- **Compile-time Type Checking**: Static analysis of expressions before runtime (nice-to-have for catching errors earlier)
-- **Stack-based Interpreter**: Alternative execution engine for improved performance (current tree-walking interpreter is sufficient for most use cases)
-- **Protocol Buffer Integration**: Native protobuf support (manual message construction works well)
-- **Conformance Test Suite**: Official CEL conformance tests (current test suite of 1,080+ tests provides comprehensive coverage)
-
-**Note**: Performance benchmarks show that complex expressions evaluate in ~0.001 seconds in production environments, which is acceptable for the vast majority of use cases.
+CEL-PHP is a **production-ready, fully spec-compliant** implementation of the [Common Expression Language specification](https://github.com/google/cel-spec). All core language features, operators, macros, and standard library functions are implemented and tested.
 
 ## License
 
