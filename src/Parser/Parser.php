@@ -52,7 +52,15 @@ final class Parser implements ParserInterface
 {
     use ParserConvenienceMethodsTrait;
 
+    /**
+     * @mago-expect analysis:uninitialized-property - Initialized in `construct` method.
+     */
     private TokenStream $stream;
+
+    public function __construct()
+    {
+        // Do nothing.
+    }
 
     /**
      * @inheritDoc

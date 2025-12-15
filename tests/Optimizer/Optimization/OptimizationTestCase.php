@@ -9,9 +9,6 @@ use Cel\Syntax\Expression;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @mago-expect lint:strict-assertions
- */
 abstract class OptimizationTestCase extends TestCase
 {
     #[DataProvider('provideOptimizationCases')]

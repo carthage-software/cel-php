@@ -30,7 +30,6 @@ final class CachedParserTest extends TestCase
         static::assertInstanceOf(Expression::class, $expr2);
 
         // Verify both expressions are equivalent (cache may deserialize, so check equality not identity)
-        // @mago-expect lint:strict-assertions
         static::assertEquals($expr1, $expr2);
     }
 
@@ -51,7 +50,6 @@ final class CachedParserTest extends TestCase
         static::assertInstanceOf(Expression::class, $expr2);
 
         // Verify both expressions are equivalent (cache may deserialize, so check equality not identity)
-        // @mago-expect lint:strict-assertions
         static::assertEquals($expr1, $expr2);
     }
 
@@ -63,7 +61,6 @@ final class CachedParserTest extends TestCase
         $expr1 = $parser->parseString('1 + 2');
         $expr2 = $parser->parseString('2 + 3');
 
-        // @mago-expect lint:strict-assertions
         static::assertNotEquals($expr1, $expr2);
     }
 
@@ -84,7 +81,6 @@ final class CachedParserTest extends TestCase
         // Both should be valid expressions
         static::assertInstanceOf(Expression::class, $expr1);
         static::assertInstanceOf(Expression::class, $expr2);
-        // @mago-expect lint:strict-assertions
         static::assertEquals($expr1, $expr2);
     }
 
@@ -99,7 +95,6 @@ final class CachedParserTest extends TestCase
 
         // Both should be valid and equivalent (cache may deserialize, so check equality not identity)
         static::assertInstanceOf(Expression::class, $expr1);
-        // @mago-expect lint:strict-assertions
         static::assertEquals($expr1, $expr2);
     }
 }
