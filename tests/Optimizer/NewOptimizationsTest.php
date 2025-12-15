@@ -165,25 +165,16 @@ final class NewOptimizationsTest extends TestCase
 
     public function testOptimizationsAreApplied(): void
     {
-        // Create a parser with optimizer
         $parser = Parser::default();
         $optimizer = Optimizer::default();
-
-        // Parse a simple constant expression
         $expression = $parser->parseString('1 + 2');
-        $optimized = $optimizer->optimize($expression);
 
-        // The optimizer should have many optimizations registered
-        static::assertInstanceOf(Optimizer::class, $optimizer);
-
-        // Test that we can add more optimizations
         $optimizer->addOptimization(new ConstantFoldingOptimization());
         $optimizer->addOptimization(new IdentityOperationOptimization());
         $optimizer->addOptimization(new DoubleNegationOptimization());
         $optimizer->addOptimization(new ConditionalSimplificationOptimization());
 
-        // Optimize again
-        $optimized2 = $optimizer->optimize($expression);
-        static::assertNotNull($optimized2);
+        $optimized = $optimizer->optimize($expression);
+        static::assertNotSame($optimized, $expression);
     }
 }

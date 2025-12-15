@@ -22,7 +22,6 @@ final class MapValueTest extends TestCase
 
         $native = $map->getRawValue();
 
-        static::assertIsArray($native);
         static::assertArrayHasKey('key', $native);
         static::assertSame('value', $native['key']);
     }

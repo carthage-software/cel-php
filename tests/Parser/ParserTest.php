@@ -70,7 +70,7 @@ final class ParserTest extends TestCase
     {
         yield 'integer literal' => [
             '123',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(IntegerLiteralExpression::class, $expr);
                 $test->assertSame(123, $expr->value);
             },
@@ -78,7 +78,7 @@ final class ParserTest extends TestCase
 
         yield 'simple addition' => [
             '1 + 2',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::Plus, $expr->operator->kind);
                 $test->assertInstanceOf(IntegerLiteralExpression::class, $expr->left);
@@ -88,7 +88,7 @@ final class ParserTest extends TestCase
 
         yield 'precedence: 1 + 2 * 3' => [
             '1 + 2 * 3',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::Plus, $expr->operator->kind);
                 $test->assertInstanceOf(IntegerLiteralExpression::class, $expr->left);
@@ -99,7 +99,7 @@ final class ParserTest extends TestCase
 
         yield 'precedence with parens: (1 + 2) * 3' => [
             '(1 + 2) * 3',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::Multiply, $expr->operator->kind);
                 $test->assertInstanceOf(ParenthesizedExpression::class, $expr->left);
@@ -110,7 +110,7 @@ final class ParserTest extends TestCase
 
         yield 'unary negation' => [
             '-a',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(UnaryExpression::class, $expr);
                 $test->assertSame(UnaryOperatorKind::Negate, $expr->operator->kind);
                 $test->assertInstanceOf(IdentifierExpression::class, $expr->operand);
@@ -119,7 +119,7 @@ final class ParserTest extends TestCase
 
         yield 'double unary' => [
             '--a',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(UnaryExpression::class, $expr);
                 $test->assertSame(UnaryOperatorKind::Negate, $expr->operator->kind);
                 $test->assertInstanceOf(UnaryExpression::class, $expr->operand);
@@ -129,7 +129,7 @@ final class ParserTest extends TestCase
 
         yield 'member access' => [
             'a.b.c',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(MemberAccessExpression::class, $expr);
                 $test->assertSame('c', $expr->field->name);
                 $test->assertInstanceOf(MemberAccessExpression::class, $expr->operand);
@@ -140,7 +140,7 @@ final class ParserTest extends TestCase
 
         yield 'index access' => [
             'a[0]',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(IndexExpression::class, $expr);
                 $test->assertInstanceOf(IdentifierExpression::class, $expr->operand);
                 $test->assertInstanceOf(IntegerLiteralExpression::class, $expr->index);
@@ -149,7 +149,7 @@ final class ParserTest extends TestCase
 
         yield 'function call' => [
             'a.b(c, 1)',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(CallExpression::class, $expr);
                 $test->assertSame('b', $expr->function->name);
                 $test->assertInstanceOf(IdentifierExpression::class, $expr->target);
@@ -159,7 +159,7 @@ final class ParserTest extends TestCase
 
         yield 'global function call' => [
             'size(a)',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(CallExpression::class, $expr);
                 $test->assertNull($expr->target);
                 $test->assertSame('size', $expr->function->name);
@@ -169,7 +169,7 @@ final class ParserTest extends TestCase
 
         yield 'list literal' => [
             '[1, "a", true]',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(ListExpression::class, $expr);
                 $test->assertCount(3, $expr->elements->elements);
                 $test->assertInstanceOf(IntegerLiteralExpression::class, $expr->elements->elements[0]);
@@ -180,7 +180,7 @@ final class ParserTest extends TestCase
 
         yield 'map literal' => [
             '{"a": 1, b: c}',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(MapExpression::class, $expr);
                 $test->assertCount(2, $expr->entries->elements);
             },
@@ -188,7 +188,7 @@ final class ParserTest extends TestCase
 
         yield 'message literal' => [
             'my.pkg.Message{field: "value", other: 1}',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(MessageExpression::class, $expr);
                 $test->assertSame('Message', $expr->followingSelectors->elements[1]->name);
                 $test->assertCount(2, $expr->initializers->elements);
@@ -197,7 +197,7 @@ final class ParserTest extends TestCase
 
         yield 'conditional' => [
             'a ? b : c',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(ConditionalExpression::class, $expr);
                 $test->assertInstanceOf(IdentifierExpression::class, $expr->condition);
                 $test->assertInstanceOf(IdentifierExpression::class, $expr->then);
@@ -207,7 +207,7 @@ final class ParserTest extends TestCase
 
         yield 'list with trailing comma' => [
             '[1, "a",]',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(ListExpression::class, $expr);
                 $test->assertCount(2, $expr->elements->elements);
                 $test->assertTrue($expr->elements->hasTrailingComma());
@@ -216,7 +216,7 @@ final class ParserTest extends TestCase
 
         yield 'map with trailing comma' => [
             '{"a": 1,}',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(MapExpression::class, $expr);
                 $test->assertCount(1, $expr->entries->elements);
                 $test->assertTrue($expr->entries->hasTrailingComma());
@@ -225,7 +225,7 @@ final class ParserTest extends TestCase
 
         yield 'message with trailing comma' => [
             'my.pkg.Message{field: "value",}',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(MessageExpression::class, $expr);
                 $test->assertCount(1, $expr->initializers->elements);
                 $test->assertTrue($expr->initializers->hasTrailingComma());
@@ -234,7 +234,7 @@ final class ParserTest extends TestCase
 
         yield 'call with trailing comma' => [
             'my_func(1,)',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(CallExpression::class, $expr);
                 $test->assertCount(1, $expr->arguments->elements);
                 $test->assertTrue($expr->arguments->hasTrailingComma());
@@ -249,7 +249,7 @@ final class ParserTest extends TestCase
     {
         yield 'uint literal' => [
             '123u',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(UnsignedIntegerLiteralExpression::class, $expr);
                 $test->assertSame(123, $expr->value);
             },
@@ -257,7 +257,7 @@ final class ParserTest extends TestCase
 
         yield 'float literal' => [
             '1.23',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(FloatLiteralExpression::class, $expr);
                 $test->assertSame(1.23, $expr->value);
             },
@@ -265,7 +265,7 @@ final class ParserTest extends TestCase
 
         yield 'bytes literal' => [
             'b"abc"',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BytesLiteralExpression::class, $expr);
                 $test->assertSame('abc', $expr->value);
             },
@@ -273,14 +273,14 @@ final class ParserTest extends TestCase
 
         yield 'null literal' => [
             'null',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(NullLiteralExpression::class, $expr);
             },
         ];
 
         yield 'false literal' => [
             'false',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BoolLiteralExpression::class, $expr);
                 $test->assertFalse($expr->value);
             },
@@ -288,7 +288,7 @@ final class ParserTest extends TestCase
 
         yield 'string literal value' => [
             '"hello"',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(StringLiteralExpression::class, $expr);
                 $test->assertSame('hello', $expr->value);
             },
@@ -299,7 +299,7 @@ final class ParserTest extends TestCase
     {
         yield 'unary not' => [
             '!a',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(UnaryExpression::class, $expr);
                 $test->assertSame(UnaryOperatorKind::Not, $expr->operator->kind);
             },
@@ -307,7 +307,7 @@ final class ParserTest extends TestCase
 
         yield 'binary or' => [
             'a || b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::Or, $expr->operator->kind);
             },
@@ -315,7 +315,7 @@ final class ParserTest extends TestCase
 
         yield 'binary and' => [
             'a && b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::And, $expr->operator->kind);
             },
@@ -323,7 +323,7 @@ final class ParserTest extends TestCase
 
         yield 'binary not equal' => [
             'a != b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::NotEqual, $expr->operator->kind);
             },
@@ -331,7 +331,7 @@ final class ParserTest extends TestCase
 
         yield 'binary less than' => [
             'a < b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::LessThan, $expr->operator->kind);
             },
@@ -339,7 +339,7 @@ final class ParserTest extends TestCase
 
         yield 'binary less than or equal' => [
             'a <= b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::LessThanOrEqual, $expr->operator->kind);
             },
@@ -347,7 +347,7 @@ final class ParserTest extends TestCase
 
         yield 'binary greater than' => [
             'a > b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::GreaterThan, $expr->operator->kind);
             },
@@ -355,7 +355,7 @@ final class ParserTest extends TestCase
 
         yield 'binary greater than or equal' => [
             'a >= b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::GreaterThanOrEqual, $expr->operator->kind);
             },
@@ -363,7 +363,7 @@ final class ParserTest extends TestCase
 
         yield 'binary in' => [
             'a in b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::In, $expr->operator->kind);
             },
@@ -371,7 +371,7 @@ final class ParserTest extends TestCase
 
         yield 'binary modulo' => [
             'a % b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::Modulo, $expr->operator->kind);
             },
@@ -379,7 +379,7 @@ final class ParserTest extends TestCase
 
         yield 'true literal' => [
             'true',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BoolLiteralExpression::class, $expr);
                 $test->assertTrue($expr->value);
             },
@@ -387,7 +387,7 @@ final class ParserTest extends TestCase
 
         yield 'binary equals' => [
             'a == b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::Equal, $expr->operator->kind);
             },
@@ -395,7 +395,7 @@ final class ParserTest extends TestCase
 
         yield 'binary divide' => [
             'a / b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::Divide, $expr->operator->kind);
             },
@@ -403,7 +403,7 @@ final class ParserTest extends TestCase
 
         yield 'binary subtract' => [
             'a - b',
-            function (TestCase $test, Expression $expr): void {
+            static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(BinaryExpression::class, $expr);
                 $test->assertSame(BinaryOperatorKind::Minus, $expr->operator->kind);
             },

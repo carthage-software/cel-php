@@ -68,7 +68,7 @@ final readonly class FilterMacro implements MacroInterface
         $environment = $context->getEnvironment()->fork();
 
         /** @var ListValue $result */
-        $result = $context->withEnvironment($environment, function () use (
+        $result = $context->withEnvironment($environment, static function () use (
             $target,
             $variableName,
             $callback,

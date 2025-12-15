@@ -8,7 +8,7 @@
       "Cel\\": "src/"
     },
     "files": [
-        "src/functions.php"
+      "src/functions.php"
     ]
   },
   "autoload-dev": {
@@ -32,12 +32,12 @@
   },
   "require-dev": {
     "ext-decimal": "*",
-    "carthage-software/mago": "^1.0.0-beta.34",
+    "carthage-software/mago": "^1.0.0-rc.13",
     "phpunit/phpunit": "^12.3",
     "php-coveralls/php-coveralls": "^2.8",
     "infection/infection": "^0.31.2",
     "phpbench/phpbench": "^1.4",
-    "symfony/expression-language": "^7.3"
+    "symfony/expression-language": "^7.3 || ^8.0"
   },
   "config": {
     "allow-plugins": {
