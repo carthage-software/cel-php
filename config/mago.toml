@@ -26,11 +26,17 @@ literal-named-argument = { enabled = false }
 no-boolean-flag-parameter = { enabled = false }
 
 [analyzer]
+plugins = ["php-standard-library"]
+find-unused-expressions = true
+find-unused-definitions = true
+find-unused-parameters = true
 analyze-dead-code = true
-perform-heuristic-checks = true
-check-missing-type-hints = true
-register-super-globals = false
-no-boolean-literal-comparison = true
-strict-list-index-checks = true
-allow-possibly-undefined-array-keys = false
 check-property-initialization = true
+check-missing-override = true
+check-missing-type-hints = true
+check-closure-missing-type-hints = true
+check-arrow-function-missing-type-hints = true
+strict-list-index-checks = true
+no-boolean-literal-comparison = true
+allow-possibly-undefined-array-keys = false
+trust-existence-checks = false
