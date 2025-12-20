@@ -55,11 +55,7 @@ final readonly class RequestMessage implements Cel\Message\MessageInterface
             $name = $fields['name']->getRawValue();
             $email = isset($fields['email']) ? $fields['email']->getRawValue() : null;
 
-            return new self(
-                id: $id,
-                name: $name,
-                email: $email,
-            );
+            return new self(id: $id, name: $name, email: $email);
         } catch (Type\Exception\AssertException $e) {
             throw new InvalidMessageFieldsException('Unable to create RequestMessage from CEL fields.', previous: $e);
         }

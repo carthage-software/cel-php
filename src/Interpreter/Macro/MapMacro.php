@@ -65,8 +65,8 @@ final readonly class MapMacro implements MacroInterface
         $variableName = $name->identifier->name;
         $environment = $context->getEnvironment()->fork();
 
-        /** @var ListValue $result */
-        $result = $context->withEnvironment($environment, static function () use (
+        /** @var ListValue */
+        return $context->withEnvironment($environment, static function () use (
             $call,
             $target,
             $variableName,
@@ -107,7 +107,5 @@ final readonly class MapMacro implements MacroInterface
 
             return new ListValue($results);
         });
-
-        return $result;
     }
 }

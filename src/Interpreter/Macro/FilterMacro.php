@@ -67,8 +67,8 @@ final readonly class FilterMacro implements MacroInterface
         $variableName = $name->identifier->name;
         $environment = $context->getEnvironment()->fork();
 
-        /** @var ListValue $result */
-        $result = $context->withEnvironment($environment, static function () use (
+        /** @var ListValue */
+        return $context->withEnvironment($environment, static function () use (
             $target,
             $variableName,
             $callback,
@@ -101,7 +101,5 @@ final readonly class FilterMacro implements MacroInterface
 
             return new ListValue($results);
         });
-
-        return $result;
     }
 }

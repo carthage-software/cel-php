@@ -78,8 +78,8 @@ final readonly class AllMacro implements MacroInterface
         $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
 
         $environment = $context->getEnvironment()->fork();
-        /** @var BooleanValue $result */
-        $result = $context->withEnvironment($environment, static function () use (
+        /** @var BooleanValue */
+        return $context->withEnvironment($environment, static function () use (
             $items,
             $name,
             $callback,
@@ -106,7 +106,5 @@ final readonly class AllMacro implements MacroInterface
 
             return new BooleanValue($all_true);
         });
-
-        return $result;
     }
 }

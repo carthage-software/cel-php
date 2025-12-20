@@ -169,11 +169,7 @@ final class CommonExpressionLanguageTest extends TestCase
         $optimizer = $this->createMock(OptimizerInterface::class);
         $runtime = $this->createMock(RuntimeInterface::class);
 
-        $cel = new CommonExpressionLanguage(
-            parser: $parser,
-            optimizer: $optimizer,
-            runtime: $runtime,
-        );
+        $cel = new CommonExpressionLanguage(parser: $parser, optimizer: $optimizer, runtime: $runtime);
 
         static::assertInstanceOf(CommonExpressionLanguage::class, $cel);
     }

@@ -70,10 +70,7 @@ final class OptimizedParserTest extends TestCase
 
     public function testCanBeConstructedWithCustomComponents(): void
     {
-        $parser = new OptimizedParser(
-            parser: Parser::default(),
-            optimizer: Optimizer::default(),
-        );
+        $parser = new OptimizedParser(parser: Parser::default(), optimizer: Optimizer::default());
 
         static::assertInstanceOf(OptimizedParser::class, $parser);
     }

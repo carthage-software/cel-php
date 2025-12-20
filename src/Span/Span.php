@@ -52,10 +52,7 @@ final readonly class Span implements Stringable
      */
     public function join(Span $other): self
     {
-        return new self(
-            start: $this->start,
-            end: $other->end,
-        );
+        return new self(start: $this->start, end: $other->end);
     }
 
     /**

@@ -5,6 +5,9 @@ paths = ["src/", "examples/", "benchmarks/", "tests/"]
 includes = ["vendor"]
 excludes = []
 
+[formatter]
+null-type-hint = "pipe"
+
 [linter]
 integrations = ["phpunit", "php-standard-library"]
 

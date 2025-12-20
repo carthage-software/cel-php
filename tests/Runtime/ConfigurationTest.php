@@ -55,10 +55,9 @@ final class ConfigurationTest extends TestCase
     {
         $messageClass = self::createMockMessageClass();
 
-        $config = new Configuration(
-            allowedMessageClasses: [$messageClass],
-            messageClassAliases: ['MyMessage' => $messageClass],
-        );
+        $config = new Configuration(allowedMessageClasses: [$messageClass], messageClassAliases: [
+            'MyMessage' => $messageClass,
+        ]);
 
         static::assertSame(['MyMessage' => $messageClass], $config->messageClassAliases);
         static::assertSame([$messageClass => ['MyMessage']], $config->messageClassesToAliases);
@@ -68,13 +67,10 @@ final class ConfigurationTest extends TestCase
     {
         $messageClass = self::createMockMessageClass();
 
-        $config = new Configuration(
-            allowedMessageClasses: [$messageClass],
-            messageClassAliases: [
-                'MyMessage' => $messageClass,
-                'Msg' => $messageClass,
-            ],
-        );
+        $config = new Configuration(allowedMessageClasses: [$messageClass], messageClassAliases: [
+            'MyMessage' => $messageClass,
+            'Msg' => $messageClass,
+        ]);
 
         static::assertContains('MyMessage', $config->messageClassesToAliases[$messageClass]);
         static::assertContains('Msg', $config->messageClassesToAliases[$messageClass]);
@@ -108,10 +104,7 @@ final class ConfigurationTest extends TestCase
         $this->expectException(MisconfigurationException::class);
         $this->expectExceptionMessage('does not map to an allowed message class');
 
-        new Configuration(
-            allowedMessageClasses: [],
-            messageClassAliases: ['MyMessage' => $messageClass],
-        );
+        new Configuration(allowedMessageClasses: [], messageClassAliases: ['MyMessage' => $messageClass]);
     }
 
     public function testAddExtension(): void
@@ -193,10 +186,9 @@ final class ConfigurationTest extends TestCase
     {
         $messageClass = self::createMockMessageClass();
 
-        $config = Configuration::forAllowedMessages(
-            allowedMessageClasses: [$messageClass],
-            messageClassAliases: ['MyMessage' => $messageClass],
-        );
+        $config = Configuration::forAllowedMessages(allowedMessageClasses: [$messageClass], messageClassAliases: [
+            'MyMessage' => $messageClass,
+        ]);
 
         static::assertSame(['MyMessage' => $messageClass], $config->messageClassAliases);
     }
@@ -220,10 +212,9 @@ final class ConfigurationTest extends TestCase
 
         $this->expectException(MisconfigurationException::class);
 
-        Configuration::forAllowedMessages(
-            allowedMessageClasses: [],
-            messageClassAliases: ['MyMessage' => $messageClass],
-        );
+        Configuration::forAllowedMessages(allowedMessageClasses: [], messageClassAliases: [
+            'MyMessage' => $messageClass,
+        ]);
     }
 
     /**
