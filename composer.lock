@@ -209,16 +209,16 @@
     "packages-dev": [
         {
             "name": "carthage-software/mago",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "a470d002d19d64126ed8ff2230664284e96df30d"
+                "reference": "a0fe630c90c8c284c8826d3675d9bcbbc7210989"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/a470d002d19d64126ed8ff2230664284e96df30d",
-                "reference": "a470d002d19d64126ed8ff2230664284e96df30d",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/a0fe630c90c8c284c8826d3675d9bcbbc7210989",
+                "reference": "a0fe630c90c8c284c8826d3675d9bcbbc7210989",
                 "shasum": ""
             },
             "require": {
@@ -256,7 +256,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.0.0"
+                "source": "https://github.com/carthage-software/mago/tree/1.0.1"
             },
             "funding": [
                 {
@@ -264,7 +264,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-20T00:14:03+00:00"
+            "time": "2025-12-20T14:34:19+00:00"
         },
         {
             "name": "colinodell/json5",
@@ -6024,5 +6024,5 @@
     "platform-dev": {
         "ext-decimal": "*"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
