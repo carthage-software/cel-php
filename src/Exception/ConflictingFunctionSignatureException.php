@@ -6,6 +6,4 @@ namespace Cel\Exception;
 
 use LogicException;
 
-final class ConflictingFunctionSignatureException extends LogicException implements ExceptionInterface
-{
-}
+final class ConflictingFunctionSignatureException extends LogicException implements ExceptionInterface {}

@@ -6,6 +6,4 @@ namespace Cel\Exception;
 
 use InvalidArgumentException;
 
-final class InvalidMessageFieldsException extends InvalidArgumentException implements ExceptionInterface
-{
-}
+final class InvalidMessageFieldsException extends InvalidArgumentException implements ExceptionInterface {}

@@ -37,13 +37,11 @@ final readonly class ComparisonOperator implements BinaryOperatorOverloadInterfa
         $comparator = match ($this->operator) {
             BinaryOperatorKind::LessThan => static fn(Value $a, Value $b): bool => $a->isLessThan($b),
             BinaryOperatorKind::LessThanOrEqual => static fn(Value $a, Value $b): bool => (
-                $a->isLessThan($b)
-                || $a->isEqual($b)
+                $a->isLessThan($b) || $a->isEqual($b)
             ),
             BinaryOperatorKind::GreaterThan => static fn(Value $a, Value $b): bool => $a->isGreaterThan($b),
             BinaryOperatorKind::GreaterThanOrEqual => static fn(Value $a, Value $b): bool => (
-                $a->isGreaterThan($b)
-                || $a->isEqual($b)
+                $a->isGreaterThan($b) || $a->isEqual($b)
             ),
             default => throw InternalException::forInvalidOperator($this->operator->getSymbol()),
         };

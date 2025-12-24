@@ -7,6 +7,4 @@ namespace Cel\Exception;
 /**
  * Thrown when attempting to create a message with a type that does not exist.
  */
-final class NoSuchTypeException extends EvaluationException
-{
-}
+final class NoSuchTypeException extends EvaluationException {}

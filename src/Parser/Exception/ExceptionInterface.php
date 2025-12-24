@@ -6,6 +6,4 @@ namespace Cel\Parser\Exception;
 
 use Cel\Exception;
 
-interface ExceptionInterface extends Exception\ExceptionInterface
-{
-}
+interface ExceptionInterface extends Exception\ExceptionInterface {}

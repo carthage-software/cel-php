@@ -12,6 +12,4 @@ use Throwable;
  * This allows consumers to catch any exception originating from this library
  * with a single catch block.
  */
-interface ExceptionInterface extends Throwable
-{
-}
+interface ExceptionInterface extends Throwable {}

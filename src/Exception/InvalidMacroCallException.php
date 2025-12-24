@@ -7,6 +7,4 @@ namespace Cel\Exception;
 /**
  * Thrown when a macro call is invalid.
  */
-final class InvalidMacroCallException extends EvaluationException
-{
-}
+final class InvalidMacroCallException extends EvaluationException {}

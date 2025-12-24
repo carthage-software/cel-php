@@ -7,6 +7,4 @@ namespace Cel\Exception;
 /**
  * Thrown when a function is not defined in the environment.
  */
-final class NoSuchFunctionException extends EvaluationException
-{
-}
+final class NoSuchFunctionException extends EvaluationException {}

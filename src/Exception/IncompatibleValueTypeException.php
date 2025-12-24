@@ -9,6 +9,4 @@ use DomainException;
 /**
  * Thrown when an unsupported PHP type is encountered during value conversion.
  */
-final class IncompatibleValueTypeException extends DomainException implements ExceptionInterface
-{
-}
+final class IncompatibleValueTypeException extends DomainException implements ExceptionInterface {}

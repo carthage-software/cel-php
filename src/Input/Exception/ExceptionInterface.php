@@ -9,6 +9,4 @@ use Cel\Exception;
 /**
  * A marker interface for all exceptions thrown by the Input components of the CEL library.
  */
-interface ExceptionInterface extends Exception\ExceptionInterface
-{
-}
+interface ExceptionInterface extends Exception\ExceptionInterface {}

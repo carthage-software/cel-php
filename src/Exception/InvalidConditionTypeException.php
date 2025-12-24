@@ -7,6 +7,4 @@ namespace Cel\Exception;
 /**
  * Thrown when a condition has an invalid type.
  */
-final class InvalidConditionTypeException extends EvaluationException
-{
-}
+final class InvalidConditionTypeException extends EvaluationException {}
