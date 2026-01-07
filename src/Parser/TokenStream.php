@@ -22,6 +22,10 @@ use function array_shift;
 final class TokenStream implements HasCursorInterface
 {
     private LexerInterface $lexer;
+
+    /**
+     * @var int<0, max> The current cursor position.
+     */
     private int $cursor = 0;
 
     /**
@@ -36,6 +40,8 @@ final class TokenStream implements HasCursorInterface
 
     /**
      * Returns the position at the *end* of the most recently consumed significant token.
+     *
+     * @return int<0, max> The current cursor position.
      */
     #[Override]
     public function cursorPosition(): int
