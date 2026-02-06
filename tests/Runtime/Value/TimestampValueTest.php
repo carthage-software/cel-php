@@ -16,7 +16,7 @@ final class TimestampValueTest extends TestCase
 {
     public function testConstructorAndgetRawValue(): void
     {
-        $timestamp = Timestamp::fromParts(123456789);
+        $timestamp = Timestamp::fromParts(123_456_789);
         $value = new TimestampValue($timestamp);
         static::assertSame($timestamp, $value->getRawValue());
     }

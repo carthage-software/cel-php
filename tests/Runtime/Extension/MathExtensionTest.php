@@ -79,7 +79,7 @@ final class MathExtensionTest extends RuntimeTestCase
 
         // mean()
         yield 'Math mean: list of integers' => ['mean([1, 2, 3])', [], new FloatValue(2.0)];
-        yield 'Math mean: list of floats' => ['mean([1.0, 2.0, 4.0])', [], new FloatValue(2.333333333333333)];
+        yield 'Math mean: list of floats' => ['mean([1.0, 2.0, 4.0])', [], new FloatValue(2.333_333_333_333_333)];
         yield 'Math mean: list of mixed numbers' => ['mean([1, 2.0, 3])', [], new FloatValue(2.0)];
         yield 'Math mean error: empty list' => [
             'mean([])',

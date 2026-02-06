@@ -137,7 +137,7 @@ final class CoreExtensionTest extends RuntimeTestCase
 
         yield 'Core string: from timestamp' => [
             'string(t)',
-            ['t' => new TimestampValue(Timestamp::fromParts(1757766605, 123000000))],
+            ['t' => new TimestampValue(Timestamp::fromParts(1_757_766_605, 123_000_000))],
             new StringValue('2025-09-13T12:30:05.123Z'),
         ];
 

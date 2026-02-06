@@ -205,7 +205,7 @@ final readonly class StringUnescaper
         }
 
         // Validate code point range
-        if ($codePoint > 0x10FFFF) {
+        if ($codePoint > 0x10_FFFF) {
             throw InternalException::forMessage(Str\format(
                 'Invalid Unicode code point: U+%X is out of range',
                 $codePoint,

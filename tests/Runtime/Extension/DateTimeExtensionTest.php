@@ -23,13 +23,13 @@ final class DateTimeExtensionTest extends RuntimeTestCase
         yield 'DateTime timestamp(): valid RFC3339 with milliseconds' => [
             'timestamp("2025-09-13T12:30:05.123Z")',
             [],
-            new TimestampValue(Timestamp::fromParts(1757766605, 123000000)),
+            new TimestampValue(Timestamp::fromParts(1_757_766_605, 123_000_000)),
         ];
 
         yield 'DateTime timestamp(): valid RFC3339 without milliseconds' => [
             'timestamp("2025-09-13T12:30:05Z")',
             [],
-            new TimestampValue(Timestamp::fromParts(1757766605)),
+            new TimestampValue(Timestamp::fromParts(1_757_766_605)),
         ];
 
         yield 'DateTime timestamp(): invalid format' => [
@@ -248,14 +248,14 @@ final class DateTimeExtensionTest extends RuntimeTestCase
         yield 'DateTime timestamp(): from integer seconds' => [
             'timestamp(1757766605)',
             [],
-            new TimestampValue(Timestamp::fromParts(1757766605)),
+            new TimestampValue(Timestamp::fromParts(1_757_766_605)),
         ];
 
         /// Timestamp from float seconds
         yield 'DateTime timestamp(): from float seconds' => [
             'timestamp(1757766605.123456)',
             [],
-            new TimestampValue(Timestamp::fromParts(1757766605, 123456001)),
+            new TimestampValue(Timestamp::fromParts(1_757_766_605, 123_456_001)),
         ];
     }
 

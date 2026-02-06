@@ -15,7 +15,6 @@ use Cel\Exception\NoSuchTypeException;
 use Cel\Exception\NoSuchVariableException;
 use Cel\Exception\UnexpectedMapKeyTypeException;
 use Cel\Exception\UnsupportedOperationException;
-use Cel\Interpreter\InterpreterInterface;
 use Cel\Interpreter\Macro\MacroContextInterface;
 use Cel\Interpreter\Macro\MacroRegistry;
 use Cel\Runtime\Configuration;
