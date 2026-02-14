@@ -12,10 +12,10 @@ use function var_export;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 const EXPRESSION = <<<CEL
-    account.balance >= transaction.withdrawal
-        || (account.overdraftProtection
-        && account.overdraftLimit >= transaction.withdrawal - account.balance)
-CEL;
+        account.balance >= transaction.withdrawal
+            || (account.overdraftProtection
+            && account.overdraftLimit >= transaction.withdrawal - account.balance)
+    CEL;
 
 try {
     $result = Cel\evaluate(EXPRESSION, [

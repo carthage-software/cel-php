@@ -263,23 +263,23 @@ final class LexerTest extends TestCase
     public function testLosslessTokenization(): void
     {
         $source = <<<CEL
-        // Condition
-        account.balance >= transaction.withdrawal
-            || (account.overdraftProtection
-            && account.overdraftLimit >= transaction.withdrawal - account.balance)
+            // Condition
+            account.balance >= transaction.withdrawal
+                || (account.overdraftProtection
+                && account.overdraftLimit >= transaction.withdrawal - account.balance)
 
-        // Object construction
-        common.GeoPoint{ latitude: 10.0, longitude: -5.5 }
+            // Object construction
+            common.GeoPoint{ latitude: 10.0, longitude: -5.5 }
 
-        // Function call
-        max(3, 5, 7)
+            // Function call
+            max(3, 5, 7)
 
-        // Literals
-        "Hello, World!"
-        b"\x48\x65\x6c\x6c\x6f"
-        true false null
-        3.14 42 0x2A 0o52 0b101010 23u
-        CEL;
+            // Literals
+            "Hello, World!"
+            b"\x48\x65\x6c\x6c\x6f"
+            true false null
+            3.14 42 0x2A 0o52 0b101010 23u
+            CEL;
 
         $lexer = new Lexer(new Input($source));
         $reconstructed = '';

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cel\Benchmarks;
 
 use Cel\CommonExpressionLanguage;
-use Cel\Syntax\Expression;
 use PhpBench\Benchmark\Metadata\Annotations\Iterations;
 use PhpBench\Benchmark\Metadata\Annotations\Revs;
 use PhpBench\Benchmark\Metadata\Annotations\Warmup;
@@ -23,69 +22,69 @@ use function extract;
 final class EvaluationBenchmark
 {
     private const string CEL_EXPRESSION = <<<'CEL'
-        (
-            // Multiple constant folding opportunities
-            (1 + 2 * 3 - 5) + 0 == 2 &&
-            (10 / 2 + 3 * 1) * 1 > 7 &&
+            (
+                // Multiple constant folding opportunities
+                (1 + 2 * 3 - 5) + 0 == 2 &&
+                (10 / 2 + 3 * 1) * 1 > 7 &&
 
-            // Identity operations
-            account.balance * 1 + 0 >= transaction.withdrawal - 0 &&
+                // Identity operations
+                account.balance * 1 + 0 >= transaction.withdrawal - 0 &&
 
-            // Double negations and short-circuit logic
-            !!(account.overdraftProtection || false) &&
-            (true && account.overdraftLimit * 1 >= (transaction.withdrawal - account.balance) + 0) &&
+                // Double negations and short-circuit logic
+                !!(account.overdraftProtection || false) &&
+                (true && account.overdraftLimit * 1 >= (transaction.withdrawal - account.balance) + 0) &&
 
-            // More constant folding
-            (5 + 5 - 3 * 2 + 1) > 3 &&
+                // More constant folding
+                (5 + 5 - 3 * 2 + 1) > 3 &&
 
-            // Conditional simplification and string operations
-            (true ? (account.tier + "" + " customer") : "unknown") != "" &&
+                // Conditional simplification and string operations
+                (true ? (account.tier + "" + " customer") : "unknown") != "" &&
 
-            // Complex boolean expressions with constants
-            (false || (true && (account.premium || false))) &&
+                // Complex boolean expressions with constants
+                (false || (true && (account.premium || false))) &&
 
-            // More identity operations
-            transaction.fee / 1 + 0 < account.balance / 1 &&
+                // More identity operations
+                transaction.fee / 1 + 0 < account.balance / 1 &&
 
-            // Nested constant expressions
-            ((1 + 1) * (2 + 2) / 2 - 3 + 1) == 2 &&
+                // Nested constant expressions
+                ((1 + 1) * (2 + 2) / 2 - 3 + 1) == 2 &&
 
-            // String concatenation with constants
-            ("" + account.name + "" + " " + account.surname).size() > 0 &&
+                // String concatenation with constants
+                ("" + account.name + "" + " " + account.surname).size() > 0 &&
 
-            // More short-circuit logic
-            (true || account.suspended) &&
-            (account.verified && true) &&
+                // More short-circuit logic
+                (true || account.suspended) &&
+                (account.verified && true) &&
 
-            // Additional constant folding in conditionals
-            (2 + 2 == 4 ? account.score : 0) * 1 >= 100 * 1 &&
+                // Additional constant folding in conditionals
+                (2 + 2 == 4 ? account.score : 0) * 1 >= 100 * 1 &&
 
-            // Complex nested arithmetic
-            ((account.deposits + 0) * 1 - (account.withdrawals - 0)) / 1 +
-            ((transaction.amount * 1 + 0) / 1) > (500 + 500 - 100 * 2) &&
+                // Complex nested arithmetic
+                ((account.deposits + 0) * 1 - (account.withdrawals - 0)) / 1 +
+                ((transaction.amount * 1 + 0) / 1) > (500 + 500 - 100 * 2) &&
 
-            // Final validation with multiple optimizations
-            !!(false || true) &&
-            (0 + 1 * account.balance / 1 - 0) >=
-                ((1 + 2 + 3 + 4) * 100 - (5 * 100 + 500)) + 0
-        )
-        ? account.name.toUpper() + " " + ("APPROVED" + "" + " " + (true ? "PREMIUM" : "STANDARD"))
-        : (false ? "ERROR" : "DENIED")
-    CEL;
+                // Final validation with multiple optimizations
+                !!(false || true) &&
+                (0 + 1 * account.balance / 1 - 0) >=
+                    ((1 + 2 + 3 + 4) * 100 - (5 * 100 + 500)) + 0
+            )
+            ? account.name.toUpper() + " " + ("APPROVED" + "" + " " + (true ? "PREMIUM" : "STANDARD"))
+            : (false ? "ERROR" : "DENIED")
+        CEL;
 
     private const string SEL_EXPRESSION = <<<'SEL'
-        (account['balance'] >= transaction['withdrawal']
-            || (account['overdraftProtection'] && account['overdraftLimit'] >= transaction['withdrawal'] - account['balance'])
-            || false
-            || (false && true)) ? toUpper(account['name']) : null
-    SEL;
+            (account['balance'] >= transaction['withdrawal']
+                || (account['overdraftProtection'] && account['overdraftLimit'] >= transaction['withdrawal'] - account['balance'])
+                || false
+                || (false && true)) ? toUpper(account['name']) : null
+        SEL;
 
     private const string PHP_EXPRESSION = <<<'PHP'
-        $result = ($account['balance'] >= $transaction['withdrawal']
-            || ($account['overdraftProtection'] && $account['overdraftLimit'] >= $transaction['withdrawal'] - $account['balance'])
-            || false
-            || (false && true)) ? \mb_strtoupper($account['name']) : null;
-    PHP;
+            $result = ($account['balance'] >= $transaction['withdrawal']
+                || ($account['overdraftProtection'] && $account['overdraftLimit'] >= $transaction['withdrawal'] - $account['balance'])
+                || false
+                || (false && true)) ? \mb_strtoupper($account['name']) : null;
+        PHP;
 
     private const array ENVIRONMENT = [
         'account' => [

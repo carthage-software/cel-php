@@ -15,9 +15,9 @@ use Psl\Vec;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $source = <<<CEL
-// Simple expression
-(request.size - 10) > 0 && 'admin' in request.auth.claims
-CEL;
+    // Simple expression
+    (request.size - 10) > 0 && 'admin' in request.auth.claims
+    CEL;
 
 IO\write_error_line("Tokenizing source:\n---\n%s\n---", $source);
 

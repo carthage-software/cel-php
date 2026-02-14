@@ -46,14 +46,14 @@ $expressions = [
     ],
     'complex' => [
         'expr' => <<<CEL
-        users.filter(u, u.age >= minAge && u.status == "active")
-             .map(u, {
-                 "name": u.name,
-                 "email": u.email,
-                 "ageGroup": u.age < 25 ? "young" : (u.age < 30 ? "medium" : "senior")
-             })
-             .size() > 0
-        CEL,
+            users.filter(u, u.age >= minAge && u.status == "active")
+                 .map(u, {
+                     "name": u.name,
+                     "email": u.email,
+                     "ageGroup": u.age < 25 ? "young" : (u.age < 30 ? "medium" : "senior")
+                 })
+                 .size() > 0
+            CEL,
         'vars' => ['users' => $users, 'minAge' => 18],
     ],
 ];

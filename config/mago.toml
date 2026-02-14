@@ -27,6 +27,9 @@ ambiguous-function-call = { enabled = true }
 # Noisy Rules (disabled)
 literal-named-argument = { enabled = false }
 no-boolean-flag-parameter = { enabled = false }
+no-isset = { enabled = false }
+# Exceptions
+file-name = { exclude = ["examples/"] }
 
 [analyzer]
 plugins = ["php-standard-library"]
