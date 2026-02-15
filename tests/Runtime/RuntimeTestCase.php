@@ -7,6 +7,7 @@ namespace Cel\Tests\Runtime;
 use Cel\CommonExpressionLanguage;
 use Cel\Exception\EvaluationException;
 use Cel\Runtime\Configuration;
+use Cel\Runtime\ExecutionBackend;
 use Cel\Runtime\Runtime;
 use Cel\Runtime\RuntimeReceipt;
 use Cel\Value\Value;
@@ -18,6 +19,11 @@ use function var_export;
 
 abstract class RuntimeTestCase extends TestCase
 {
+    protected static function getBackend(): ExecutionBackend
+    {
+        return ExecutionBackend::VirtualMachine;
+    }
+
     /**
      * @param array<string, mixed> $variables
      */
@@ -26,7 +32,16 @@ abstract class RuntimeTestCase extends TestCase
         array $variables = [],
         null|Configuration $configuration = null,
     ): RuntimeReceipt {
-        $cel = new CommonExpressionLanguage(runtime: new Runtime(configuration: $configuration ?? new Configuration()));
+        $config = $configuration ?? new Configuration();
+        $config = new Configuration(
+            enableMacros: $config->enableMacros,
+            allowedMessageClasses: $config->allowedMessageClasses,
+            messageClassAliases: $config->messageClassAliases,
+            enforceMessageClassAliases: $config->enforceMessageClassAliases,
+            executionBackend: static::getBackend(),
+        );
+
+        $cel = new CommonExpressionLanguage(runtime: new Runtime(configuration: $config));
 
         $expression = $cel->parseString($code);
         $expression = $cel->optimize($expression);

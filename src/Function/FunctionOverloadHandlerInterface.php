@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Function;
 
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Value\Value;
 
 /**
@@ -18,10 +18,10 @@ interface FunctionOverloadHandlerInterface
     /**
      * Handles the function call for this specific overload.
      *
-     * @param CallExpression $call The call expression being evaluated.
+     * @param Span $span The span covering the call expression.
      * @param list<Value> $arguments The evaluated arguments.
      *
      * @return Value The result of the function call.
      */
-    public function __invoke(CallExpression $call, array $arguments): Value;
+    public function __invoke(Span $span, array $arguments): Value;
 }

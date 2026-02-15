@@ -7,7 +7,7 @@ namespace Cel\Extension\List\Function\Handler\ChunkFunction;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
@@ -18,7 +18,7 @@ use Psl\Vec;
 final readonly class ChunkHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting value.
@@ -27,13 +27,13 @@ final readonly class ChunkHandler implements FunctionOverloadHandlerInterface
      * @throws EvaluationException If the chunk size is not a positive integer.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $list = ArgumentsUtil::get($arguments, 0, ListValue::class);
         $size = ArgumentsUtil::get($arguments, 1, IntegerValue::class);
 
         if ($size->value <= 0) {
-            throw new EvaluationException('Chunk size must be a positive integer', $call->getSpan());
+            throw new EvaluationException('Chunk size must be a positive integer', $span);
         }
 
         $chunks = Vec\chunk($list->value, $size->value);

@@ -7,7 +7,7 @@ namespace Cel\Extension\String\Function\Handler\IndexOf;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
@@ -19,7 +19,7 @@ use Psl\Str;
 final readonly class StringStringIntegerHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return IntegerValue The resulting value.
@@ -28,7 +28,7 @@ final readonly class StringStringIntegerHandler implements FunctionOverloadHandl
      * @throws EvaluationException If the string operation fails.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): IntegerValue
+    public function __invoke(Span $span, array $arguments): IntegerValue
     {
         $haystack = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $needle = ArgumentsUtil::get($arguments, 1, StringValue::class);
@@ -43,11 +43,7 @@ final readonly class StringStringIntegerHandler implements FunctionOverloadHandl
 
             return new IntegerValue($pos ?? -1);
         } catch (ExceptionInterface $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
+            throw new EvaluationException(Str\format('String operation failed: %s', $e->getMessage()), $span, $e);
         }
     }
 }

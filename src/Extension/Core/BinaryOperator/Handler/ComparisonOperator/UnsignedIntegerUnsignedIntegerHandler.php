@@ -6,7 +6,7 @@ namespace Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator;
 
 use Cel\Exception\InternalException;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
-use Cel\Syntax\Binary\BinaryExpression;
+use Cel\Span\Span;
 use Cel\Util\OperandUtil;
 use Cel\Value\BooleanValue;
 use Cel\Value\UnsignedIntegerValue;
@@ -23,7 +23,7 @@ final readonly class UnsignedIntegerUnsignedIntegerHandler implements BinaryOper
     ) {}
 
     /**
-     * @param BinaryExpression $expression The binary expression being evaluated.
+     * @param Span $span The span of the binary expression.
      * @param Value $left The evaluated left operand.
      * @param Value $right The evaluated right operand.
      *
@@ -32,7 +32,7 @@ final readonly class UnsignedIntegerUnsignedIntegerHandler implements BinaryOper
      * @throws InternalException If operand type assertion fails.
      */
     #[Override]
-    public function __invoke(BinaryExpression $expression, Value $left, Value $right): Value
+    public function __invoke(Span $span, Value $left, Value $right): Value
     {
         $left = OperandUtil::assertLeft($left, UnsignedIntegerValue::class);
         $right = OperandUtil::assertRight($right, UnsignedIntegerValue::class);

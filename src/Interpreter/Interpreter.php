@@ -266,7 +266,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             );
         }
 
-        return $handler($expression, $operand);
+        return $handler($expression->getSpan(), $operand);
     }
 
     /**
@@ -302,7 +302,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             // Try to get handler from registry
             $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
             if (null !== $handler) {
-                return $handler($expression, $left, $right);
+                return $handler($expression->getSpan(), $left, $right);
             }
 
             // Fallback error for AND
@@ -341,7 +341,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             // Try to get handler from registry
             $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
             if (null !== $handler) {
-                return $handler($expression, $left, $right);
+                return $handler($expression->getSpan(), $left, $right);
             }
 
             // Fallback error for OR
@@ -373,7 +373,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             );
         }
 
-        return $handler($expression, $left, $right);
+        return $handler($expression->getSpan(), $left, $right);
     }
 
     /**
@@ -625,10 +625,10 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             $arguments[] = $this->run($arg);
         }
 
-        $function = $this->registry->getFunction($expression, $arguments);
+        $function = $this->registry->getFunction($expression->function->name, $arguments);
         if (null === $function) {
             // Maybe the function exists with a different signature?
-            $available_signatures = $this->registry->getFunctionSignatures($expression);
+            $available_signatures = $this->registry->getFunctionSignatures($expression->function->name);
             if (null === $available_signatures) {
                 throw new NoSuchFunctionException(
                     Str\format('Function `%s` is not defined', $expression->function->name),
@@ -638,7 +638,12 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
             $argument_kinds = Vec\map($arguments, static fn(Value $arg): ValueKind => $arg->getKind());
 
-            throw NoSuchOverloadException::forCall($expression, $available_signatures, $argument_kinds);
+            throw NoSuchOverloadException::forCall(
+                $expression->function->name,
+                $expression->getSpan(),
+                $available_signatures,
+                $argument_kinds,
+            );
         }
 
         [$idempotent, $callable] = $function;
@@ -646,6 +651,6 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             $this->idempotent = false;
         }
 
-        return $callable($expression, $arguments);
+        return $callable($expression->getSpan(), $arguments);
     }
 }

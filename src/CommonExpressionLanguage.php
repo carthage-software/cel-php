@@ -71,7 +71,7 @@ readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInt
         return new self(
             parser: new CachedParser(OptimizedParser::default(), $cache, $cacheTtl),
             optimizer: Optimizer::default(),
-            runtime: new CachedRuntime(Runtime::default(), $cache, $cacheTtl),
+            runtime: new CachedRuntime(new Runtime(cache: $cache, cacheTtl: $cacheTtl), $cache, $cacheTtl),
         );
     }
 

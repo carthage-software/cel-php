@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Cel\Benchmarks;
 
 use Cel\CommonExpressionLanguage;
+use Cel\Runtime\Configuration;
+use Cel\Runtime\ExecutionBackend;
+use Cel\Runtime\Runtime;
+use Cel\Syntax\Expression;
 use PhpBench\Benchmark\Metadata\Annotations\Iterations;
 use PhpBench\Benchmark\Metadata\Annotations\Revs;
 use PhpBench\Benchmark\Metadata\Annotations\Warmup;
@@ -171,6 +175,80 @@ final class EvaluationBenchmark
         }
 
         $_ = $symfony->evaluate($expression, self::ENVIRONMENT);
+    }
+
+    /**
+     * @Revs(1000)
+     * @Iterations(3)
+     * @Warmup(2)
+     */
+    public function benchInterpreterCelExpression(): void
+    {
+        $config = new Configuration(executionBackend: ExecutionBackend::Interpreter);
+        $cel = new CommonExpressionLanguage(runtime: new Runtime(configuration: $config));
+        $expression = $cel->parseString(self::CEL_EXPRESSION);
+
+        $_ = $cel->run($expression, self::ENVIRONMENT);
+    }
+
+    /**
+     * @Revs(1000)
+     * @Iterations(3)
+     * @Warmup(2)
+     */
+    public function benchVmCelExpression(): void
+    {
+        $config = new Configuration(executionBackend: ExecutionBackend::VirtualMachine);
+        $cel = new CommonExpressionLanguage(runtime: new Runtime(configuration: $config));
+        $expression = $cel->parseString(self::CEL_EXPRESSION);
+
+        $_ = $cel->run($expression, self::ENVIRONMENT);
+    }
+
+    /**
+     * Measures isolated interpreter execution (no parse overhead).
+     *
+     * @Revs(1000)
+     * @Iterations(3)
+     * @Warmup(2)
+     */
+    public function benchInterpreterExecution(): void
+    {
+        /** @var null|CommonExpressionLanguage $cel */
+        static $cel = null;
+        /** @var null|Expression $expression */
+        static $expression = null;
+
+        if (null === $cel || null === $expression) {
+            $config = new Configuration(executionBackend: ExecutionBackend::Interpreter);
+            $cel = new CommonExpressionLanguage(runtime: new Runtime(configuration: $config));
+            $expression = $cel->parseString(self::CEL_EXPRESSION);
+        }
+
+        $_ = $cel->run($expression, self::ENVIRONMENT);
+    }
+
+    /**
+     * Measures isolated VM compilation + execution (no parse overhead).
+     *
+     * @Revs(1000)
+     * @Iterations(3)
+     * @Warmup(2)
+     */
+    public function benchVmExecution(): void
+    {
+        /** @var null|CommonExpressionLanguage $cel */
+        static $cel = null;
+        /** @var null|Expression $expression */
+        static $expression = null;
+
+        if (null === $cel || null === $expression) {
+            $config = new Configuration(executionBackend: ExecutionBackend::VirtualMachine);
+            $cel = new CommonExpressionLanguage(runtime: new Runtime(configuration: $config));
+            $expression = $cel->parseString(self::CEL_EXPRESSION);
+        }
+
+        $_ = $cel->run($expression, self::ENVIRONMENT);
     }
 
     /**

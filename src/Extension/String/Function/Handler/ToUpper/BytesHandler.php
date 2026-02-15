@@ -7,7 +7,7 @@ namespace Cel\Extension\String\Function\Handler\ToUpper;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\BytesValue;
 use Cel\Value\Value;
@@ -19,7 +19,7 @@ use Psl\Str\Byte;
 final readonly class BytesHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return BytesValue The resulting value.
@@ -28,18 +28,14 @@ final readonly class BytesHandler implements FunctionOverloadHandlerInterface
      * @throws EvaluationException If the string operation fails.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): BytesValue
+    public function __invoke(Span $span, array $arguments): BytesValue
     {
         $target = ArgumentsUtil::get($arguments, 0, BytesValue::class);
 
         try {
             return new BytesValue(Byte\uppercase($target->value));
         } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
+            throw new EvaluationException(Str\format('String operation failed: %s', $e->getMessage()), $span, $e);
         }
     }
 }

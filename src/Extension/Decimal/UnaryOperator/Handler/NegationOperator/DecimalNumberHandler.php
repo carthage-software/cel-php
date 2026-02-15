@@ -7,7 +7,7 @@ namespace Cel\Extension\Decimal\UnaryOperator\Handler\NegationOperator;
 use Cel\Exception\InternalException;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Operator\UnaryOperatorOverloadHandlerInterface;
-use Cel\Syntax\Unary\UnaryExpression;
+use Cel\Span\Span;
 use Cel\Util\OperandUtil;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
@@ -20,7 +20,7 @@ use function assert;
 final readonly class DecimalNumberHandler implements UnaryOperatorOverloadHandlerInterface
 {
     /**
-     * @param UnaryExpression $expression The unary expression being evaluated.
+     * @param Span $span The span of the unary expression being evaluated.
      * @param Value $operand The evaluated operand.
      *
      * @return Value The result of the unary operation.
@@ -28,7 +28,7 @@ final readonly class DecimalNumberHandler implements UnaryOperatorOverloadHandle
      * @throws InternalException If the Decimal operation fails or for OperandUtil calls.
      */
     #[Override]
-    public function __invoke(UnaryExpression $expression, Value $operand): Value
+    public function __invoke(Span $span, Value $operand): Value
     {
         $operand = OperandUtil::assert($operand, MessageValue::class);
         assert($operand->message instanceof DecimalNumber, 'Operand must be DecimalNumber');

@@ -8,13 +8,22 @@ use Cel\Environment\Environment;
 use Cel\Environment\EnvironmentInterface;
 use Cel\Exception\ConflictingFunctionSignatureException;
 use Cel\Exception\EvaluationException;
+use Cel\Exception\InternalException;
 use Cel\Exception\MisconfigurationException;
 use Cel\Extension\ExtensionInterface;
 use Cel\Interpreter\Interpreter;
 use Cel\Message\MessageInterface;
 use Cel\Syntax\Expression;
+use Cel\VirtualMachine\Compiler;
+use Cel\VirtualMachine\Program;
+use Cel\VirtualMachine\VirtualMachine;
 use Override;
 use Psl\Iter;
+use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException;
+
+use function hash;
+use function serialize;
 
 final class Runtime implements RuntimeInterface
 {
@@ -29,12 +38,31 @@ final class Runtime implements RuntimeInterface
     private EnvironmentInterface $environment;
 
     /**
+     * Cached merged configuration (invalidated on register() calls).
+     */
+    private ?Configuration $mergedConfiguration = null;
+
+    /**
+     * Cached compiler instance for VM backend (invalidated on register() calls).
+     */
+    private ?Compiler $vmCompiler = null;
+
+    /**
+     * Cached VM instance (invalidated on register() calls).
+     */
+    private ?VirtualMachine $vm = null;
+
+    private const string PROGRAM_CACHE_KEY_PREFIX = 'cel_prog_';
+
+    /**
      * @throws MisconfigurationException if configuration validation fails.
      * @throws ConflictingFunctionSignatureException if a function with the same name and signature already exists.
      */
     public function __construct(
         private readonly Configuration $configuration = new Configuration(),
         private readonly OperationRegistry $registry = new OperationRegistry(),
+        private readonly ?CacheInterface $cache = null,
+        private readonly ?int $cacheTtl = 3600,
     ) {
         // Create internal environment
         $this->environment = Environment::default();
@@ -61,6 +89,11 @@ final class Runtime implements RuntimeInterface
     public function register(ExtensionInterface $extension): void
     {
         $this->registry->register($extension);
+
+        // Invalidate cached objects that depend on registry/configuration state
+        $this->mergedConfiguration = null;
+        $this->vmCompiler = null;
+        $this->vm = null;
 
         // Register value resolvers from the extension into the internal environment
         foreach ($extension->getValueResolvers() as $resolver) {
@@ -97,26 +130,68 @@ final class Runtime implements RuntimeInterface
     #[Override]
     public function run(Expression $expression, array $context = []): RuntimeReceipt
     {
-        // Fork the internal environment to get a fresh environment with all registered value resolvers
         $environment = $this->environment->fork();
 
-        // Add context variables to the forked environment
         foreach ($context as $name => $value) { // @mago-expect analysis:mixed-assignment
             $environment->addRaw($name, $value);
         }
 
-        // Merge user-provided message types with extension-provided message types
-        $mergedConfiguration = $this->createMergedConfiguration();
+        $this->mergedConfiguration ??= $this->createMergedConfiguration();
+        $mergedConfiguration = $this->mergedConfiguration;
 
-        $interpreter = new Interpreter($mergedConfiguration, $this->registry, $environment);
-        $interpreter->reset(); // Ensure the interpreter is in a clean state before running.
-
-        $result = $interpreter->run($expression);
-        $idempotent = $interpreter->wasIdempotent();
-
-        $interpreter->reset(); // Reset the interpreter state after running, in case of reuse.
+        if ($mergedConfiguration->executionBackend === ExecutionBackend::VirtualMachine) {
+            $program = $this->compileOrLoadProgram($expression, $mergedConfiguration);
+            $this->vm ??= new VirtualMachine($mergedConfiguration, $this->registry);
+            $result = $this->vm->execute($program, $environment);
+            $idempotent = $this->vm->wasIdempotent();
+        } else {
+            $interpreter = new Interpreter($mergedConfiguration, $this->registry, $environment);
+            $interpreter->reset();
+            $result = $interpreter->run($expression);
+            $idempotent = $interpreter->wasIdempotent();
+            $interpreter->reset();
+        }
 
         return new RuntimeReceipt($result, $idempotent);
+    }
+
+    /**
+     * Compiles the expression to bytecode, using PSR-16 cache when available.
+     *
+     * The Compiler also has a 1-entry identity cache that skips recompilation
+     * when the same Expression object is passed consecutively. The PSR-16 cache
+     * extends this across requests (filesystem, Redis, etc.).
+     */
+    private function compileOrLoadProgram(Expression $expression, Configuration $mergedConfiguration): Program
+    {
+        $this->vmCompiler ??= new Compiler($mergedConfiguration);
+
+        if (null === $this->cache) {
+            return $this->vmCompiler->compile($expression);
+        }
+
+        $cacheKey = self::PROGRAM_CACHE_KEY_PREFIX . hash('xxh128', serialize($expression));
+
+        try {
+            /** @var null|Program */
+            $cached = $this->cache->get($cacheKey);
+        } catch (InvalidArgumentException $e) {
+            throw InternalException::forMessage('Cache operation failed: ' . $e->getMessage());
+        }
+
+        if ($cached instanceof Program) {
+            return $cached;
+        }
+
+        $program = $this->vmCompiler->compile($expression);
+
+        try {
+            $this->cache->set($cacheKey, $program, $this->cacheTtl);
+        } catch (InvalidArgumentException $e) {
+            throw InternalException::forMessage('Cache operation failed: ' . $e->getMessage());
+        }
+
+        return $program;
     }
 
     /**
@@ -151,6 +226,7 @@ final class Runtime implements RuntimeInterface
             messageClassAliases: $mergedMessageClassAliases,
             enforceMessageClassAliases: $this->configuration->enforceMessageClassAliases,
             enableStandardExtensions: false, // Don't re-register extensions
+            executionBackend: $this->configuration->executionBackend,
         );
 
         // Copy extensions from original configuration

@@ -24,7 +24,7 @@ use Psl\DateTime\Timestamp;
 /**
  * @mago-expect lint:halstead
  */
-final class CoreExtensionTest extends RuntimeTestCase
+class CoreExtensionTest extends RuntimeTestCase
 {
     /**
      * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|EvaluationException}>

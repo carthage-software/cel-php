@@ -18,7 +18,7 @@ use Override;
 /**
  * @mago-expect lint:halstead
  */
-final class MacroTest extends RuntimeTestCase
+class MacroTest extends RuntimeTestCase
 {
     /**
      * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|EvaluationException}>

@@ -8,7 +8,7 @@ use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Exception\TypeConversionException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\StringValue;
 use Cel\Value\TimestampValue;
@@ -26,7 +26,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
     private const string RFC3339_PATTERN = '/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d+))?(.*)$/';
 
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting value.
@@ -35,7 +35,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
      * @throws InternalException If an internal error occurs.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $value = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $timestampString = $value->value;
@@ -46,7 +46,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             if (null === $parts) {
                 throw new TypeConversionException(
                     Str\format('Failed to parse timestamp string "%s".', $timestampString),
-                    $call->getSpan(),
+                    $span,
                 );
             }
 
@@ -72,7 +72,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
                 $message = 'Failed to parse timestamp string.';
             }
 
-            throw new TypeConversionException($message, $call->getSpan());
+            throw new TypeConversionException($message, $span);
         }
     }
 }

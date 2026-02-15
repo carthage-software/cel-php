@@ -7,7 +7,7 @@ namespace Cel\Extension\DateTime\Function\Handler\GetMinutesFunction;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
@@ -22,7 +22,7 @@ use Psl\Str;
 final readonly class TimestampWithTimezoneHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting value.
@@ -31,7 +31,7 @@ final readonly class TimestampWithTimezoneHandler implements FunctionOverloadHan
      * @throws InternalException If an internal error occurs.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $timestamp = ArgumentsUtil::get($arguments, 0, TimestampValue::class);
         $timezoneArg = ArgumentsUtil::get($arguments, 1, StringValue::class);
@@ -40,7 +40,7 @@ final readonly class TimestampWithTimezoneHandler implements FunctionOverloadHan
         if (null === $timezone) {
             throw new EvaluationException(
                 Str\format('getHours: timezone `%s` is not valid', $timezoneArg->value),
-                $call->getSpan(),
+                $span,
             );
         }
 
@@ -49,7 +49,7 @@ final readonly class TimestampWithTimezoneHandler implements FunctionOverloadHan
 
             return new IntegerValue($datetime->getMinutes());
         } catch (InvariantViolationException $e) {
-            throw new EvaluationException(Str\format('Operation failed: %s', $e->getMessage()), $call->getSpan(), $e);
+            throw new EvaluationException(Str\format('Operation failed: %s', $e->getMessage()), $span, $e);
         }
     }
 }

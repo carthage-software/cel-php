@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Operator;
 
-use Cel\Syntax\Unary\UnaryExpression;
+use Cel\Span\Span;
 use Cel\Value\Value;
 
 /**
@@ -15,10 +15,10 @@ interface UnaryOperatorOverloadHandlerInterface
     /**
      * Handles the unary operation for this specific overload.
      *
-     * @param UnaryExpression $expression The unary expression being evaluated.
+     * @param Span $span The span covering the unary expression.
      * @param Value $operand The evaluated operand.
      *
      * @return Value The result of the unary operation.
      */
-    public function __invoke(UnaryExpression $expression, Value $operand): Value;
+    public function __invoke(Span $span, Value $operand): Value;
 }

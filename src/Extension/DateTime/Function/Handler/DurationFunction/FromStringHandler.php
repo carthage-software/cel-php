@@ -8,7 +8,7 @@ use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Exception\TypeConversionException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\DurationValue;
 use Cel\Value\StringValue;
@@ -26,7 +26,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
     private const string DURATION_PATTERN = '/^([+-])?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+(?:\.\d*)?)s)?(?:(\d+)ms)?(?:(\d+)us)?(?:(\d+)ns)?$/';
 
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting value.
@@ -35,7 +35,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
      * @throws InternalException If an internal error occurs.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $value = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $durationStr = $value->value;
@@ -43,10 +43,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
         try {
             $matches = Regex\first_match($durationStr, self::DURATION_PATTERN);
             if (null === $matches) {
-                throw new TypeConversionException(
-                    Str\format('Invalid duration format: "%s"', $durationStr),
-                    $call->getSpan(),
-                );
+                throw new TypeConversionException(Str\format('Invalid duration format: "%s"', $durationStr), $span);
             }
 
             $negate = ($matches[1] ?? '+') === '-' ? true : false;
@@ -82,7 +79,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
                 $message = 'Operation failed.';
             }
 
-            throw new EvaluationException($message, $call->getSpan(), $e);
+            throw new EvaluationException($message, $span, $e);
         }
     }
 }

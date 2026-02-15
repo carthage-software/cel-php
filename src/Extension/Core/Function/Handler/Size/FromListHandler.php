@@ -6,7 +6,7 @@ namespace Cel\Extension\Core\Function\Handler\Size;
 
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
@@ -20,7 +20,7 @@ use Psl\Iter;
 final readonly class FromListHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting value.
@@ -28,7 +28,7 @@ final readonly class FromListHandler implements FunctionOverloadHandlerInterface
      * @throws InternalException If argument type assertion fails.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $value = ArgumentsUtil::get($arguments, 0, ListValue::class);
 

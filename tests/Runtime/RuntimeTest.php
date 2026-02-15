@@ -20,7 +20,7 @@ use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
 
-final class RuntimeTest extends RuntimeTestCase
+class RuntimeTest extends RuntimeTestCase
 {
     /**
      * @return iterable<string, array{

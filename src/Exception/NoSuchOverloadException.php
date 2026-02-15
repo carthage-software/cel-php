@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Exception;
 
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Value\ValueKind;
 use Psl\Iter;
 use Psl\Str;
@@ -18,23 +18,25 @@ use function array_pop;
 final class NoSuchOverloadException extends EvaluationException
 {
     /**
-     * @param CallExpression $expression The call expression that caused the error.
+     * @param string $functionName The name of the function that was called.
+     * @param Span $span The span of the call expression.
      * @param non-empty-list<list<ValueKind>> $availableSignatures A list of all valid signatures for the function.
      * @param list<ValueKind> $providedArgumentKinds The kinds of the arguments that were actually provided.
      */
     public static function forCall(
-        CallExpression $expression,
+        string $functionName,
+        Span $span,
         array $availableSignatures,
         array $providedArgumentKinds,
     ): static {
         $message = Str\format(
             'Invalid arguments for function "%s". Got `%s`, but expected one of: %s',
-            $expression->function->name,
+            $functionName,
             self::formatKinds($providedArgumentKinds),
             self::formatSignatures($availableSignatures),
         );
 
-        return new static($message, $expression->getSpan());
+        return new static($message, $span);
     }
 
     /**

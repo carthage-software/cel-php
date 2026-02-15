@@ -7,7 +7,7 @@ namespace Cel\Extension\Math\Function\Handler\ClampFunction;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\FloatValue;
 use Cel\Value\Value;
@@ -17,7 +17,7 @@ use Psl\Math;
 final readonly class FloatHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return FloatValue The resulting value.
@@ -26,7 +26,7 @@ final readonly class FloatHandler implements FunctionOverloadHandlerInterface
      * @throws InternalException
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): FloatValue
+    public function __invoke(Span $span, array $arguments): FloatValue
     {
         $value = ArgumentsUtil::get($arguments, 0, FloatValue::class);
         $min = ArgumentsUtil::get($arguments, 1, FloatValue::class);
@@ -35,7 +35,7 @@ final readonly class FloatHandler implements FunctionOverloadHandlerInterface
         try {
             return new FloatValue(Math\clamp($value->value, $min->value, $max->value));
         } catch (Math\Exception\ExceptionInterface $e) {
-            throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
+            throw new EvaluationException($e->getMessage(), $span, $e);
         }
     }
 }

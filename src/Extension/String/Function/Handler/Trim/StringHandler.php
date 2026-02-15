@@ -7,7 +7,7 @@ namespace Cel\Extension\String\Function\Handler\Trim;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
@@ -18,7 +18,7 @@ use Psl\Str;
 final readonly class StringHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return StringValue The resulting value.
@@ -27,18 +27,14 @@ final readonly class StringHandler implements FunctionOverloadHandlerInterface
      * @throws EvaluationException If the string operation fails.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): StringValue
+    public function __invoke(Span $span, array $arguments): StringValue
     {
         $target = ArgumentsUtil::get($arguments, 0, StringValue::class);
 
         try {
             return new StringValue(Str\trim($target->value));
         } catch (ExceptionInterface $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
+            throw new EvaluationException(Str\format('String operation failed: %s', $e->getMessage()), $span, $e);
         }
     }
 }

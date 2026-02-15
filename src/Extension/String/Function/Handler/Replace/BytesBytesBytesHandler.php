@@ -7,7 +7,7 @@ namespace Cel\Extension\String\Function\Handler\Replace;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\BytesValue;
 use Cel\Value\Value;
@@ -19,7 +19,7 @@ use Psl\Str\Byte;
 final readonly class BytesBytesBytesHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return BytesValue The resulting value.
@@ -28,7 +28,7 @@ final readonly class BytesBytesBytesHandler implements FunctionOverloadHandlerIn
      * @throws EvaluationException If the string operation fails.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): BytesValue
+    public function __invoke(Span $span, array $arguments): BytesValue
     {
         $haystack = ArgumentsUtil::get($arguments, 0, BytesValue::class);
         $needle = ArgumentsUtil::get($arguments, 1, BytesValue::class);
@@ -47,11 +47,7 @@ final readonly class BytesBytesBytesHandler implements FunctionOverloadHandlerIn
 
             return new BytesValue(Byte\replace($haystack->value, $needle->value, $replacement->value));
         } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
+            throw new EvaluationException(Str\format('String operation failed: %s', $e->getMessage()), $span, $e);
         }
     }
 }

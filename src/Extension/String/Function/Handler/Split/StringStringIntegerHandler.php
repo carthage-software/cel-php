@@ -7,7 +7,7 @@ namespace Cel\Extension\String\Function\Handler\Split;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
@@ -21,7 +21,7 @@ use Psl\Vec;
 final readonly class StringStringIntegerHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return ListValue The resulting value.
@@ -30,7 +30,7 @@ final readonly class StringStringIntegerHandler implements FunctionOverloadHandl
      * @throws EvaluationException If the string operation fails.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): ListValue
+    public function __invoke(Span $span, array $arguments): ListValue
     {
         $haystack = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $delimiter = ArgumentsUtil::get($arguments, 1, StringValue::class);
@@ -39,7 +39,7 @@ final readonly class StringStringIntegerHandler implements FunctionOverloadHandl
         if ($limit->value < 1) {
             throw new EvaluationException(
                 Str\format('split: limit %d is less than 1, only positive integers are supported', $limit->value),
-                $call->getSpan(),
+                $span,
             );
         }
 
@@ -48,11 +48,7 @@ final readonly class StringStringIntegerHandler implements FunctionOverloadHandl
 
             return new ListValue(Vec\map($parts, static fn(string $p): StringValue => new StringValue($p)));
         } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
+            throw new EvaluationException(Str\format('String operation failed: %s', $e->getMessage()), $span, $e);
         }
     }
 }

@@ -56,6 +56,7 @@ final class Configuration implements DefaultInterface
      *                                         If true, a class in `$allowedMessageClasses` that also has an alias in `$messageClassAliases`
      *                                         can only be constructed using its alias.
      * @param bool $enableStandardExtensions Whether to enable all standard extensions (core, datetime, math, string, list).
+     * @param ExecutionBackend $executionBackend The execution backend to use for evaluating expressions.
      *
      * @throws MisconfigurationException if any alias in `$messageClassAliases` does not map to a class in `$allowedMessageClasses`.
      */
@@ -65,6 +66,7 @@ final class Configuration implements DefaultInterface
         public array $messageClassAliases = [],
         public bool $enforceMessageClassAliases = false,
         bool $enableStandardExtensions = true,
+        public ExecutionBackend $executionBackend = ExecutionBackend::VirtualMachine,
     ) {
         foreach ($this->messageClassAliases as $messageAlias => $messageClassAlias) {
             if (Iter\contains($this->allowedMessageClasses, $messageClassAlias)) {

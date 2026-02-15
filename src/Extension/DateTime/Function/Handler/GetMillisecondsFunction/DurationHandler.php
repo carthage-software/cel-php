@@ -6,7 +6,7 @@ namespace Cel\Extension\DateTime\Function\Handler\GetMillisecondsFunction;
 
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\DurationValue;
 use Cel\Value\IntegerValue;
@@ -16,7 +16,7 @@ use Override;
 final readonly class DurationHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting value.
@@ -24,7 +24,7 @@ final readonly class DurationHandler implements FunctionOverloadHandlerInterface
      * @throws InternalException
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $duration = ArgumentsUtil::get($arguments, 0, DurationValue::class);
 

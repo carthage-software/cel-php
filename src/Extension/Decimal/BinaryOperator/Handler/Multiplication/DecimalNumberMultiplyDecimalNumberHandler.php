@@ -7,7 +7,7 @@ namespace Cel\Extension\Decimal\BinaryOperator\Handler\Multiplication;
 use Cel\Exception\InternalException;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
-use Cel\Syntax\Binary\BinaryExpression;
+use Cel\Span\Span;
 use Cel\Util\OperandUtil;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
@@ -23,7 +23,7 @@ use function assert;
 final readonly class DecimalNumberMultiplyDecimalNumberHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**
-     * @param BinaryExpression $expression The binary expression being evaluated.
+     * @param Span $span The span of the binary expression.
      * @param Value $left The evaluated left operand (must be MessageValue containing DecimalNumber).
      * @param Value $right The evaluated right operand (must be MessageValue containing DecimalNumber).
      *
@@ -32,7 +32,7 @@ final readonly class DecimalNumberMultiplyDecimalNumberHandler implements Binary
      * @throws InternalException If the Decimal operation fails or for OperandUtil calls.
      */
     #[Override]
-    public function __invoke(BinaryExpression $expression, Value $left, Value $right): Value
+    public function __invoke(Span $span, Value $left, Value $right): Value
     {
         $left = OperandUtil::assertLeft($left, MessageValue::class);
         $right = OperandUtil::assertRight($right, MessageValue::class);

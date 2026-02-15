@@ -15,7 +15,7 @@ use Override;
 use Psl\DateTime\Duration;
 use Psl\DateTime\Timestamp;
 
-final class DateTimeExtensionTest extends RuntimeTestCase
+class DateTimeExtensionTest extends RuntimeTestCase
 {
     #[Override]
     public static function provideEvaluationCases(): iterable

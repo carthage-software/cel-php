@@ -7,7 +7,7 @@ namespace Cel\Extension\DateTime\Function\Handler\TimestampFunction;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\FloatValue;
 use Cel\Value\TimestampValue;
@@ -21,7 +21,7 @@ use Psl\Str;
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting value.
@@ -30,7 +30,7 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
      * @throws InternalException If an internal error occurs.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $seconds = ArgumentsUtil::get($arguments, 0, FloatValue::class);
 
@@ -46,7 +46,7 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
                 $message = 'Operation failed.';
             }
 
-            throw new EvaluationException($message, $call->getSpan(), $e);
+            throw new EvaluationException($message, $span, $e);
         }
     }
 }

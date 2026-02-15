@@ -7,7 +7,7 @@ namespace Cel\Extension\Math\Function\Handler\MaxFunction;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\FloatValue;
 use Cel\Value\IntegerValue;
@@ -21,7 +21,7 @@ use Psl\Type;
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting value.
@@ -30,7 +30,7 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
      * @throws InternalException
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $list = ArgumentsUtil::get($arguments, 0, ListValue::class);
 
@@ -40,7 +40,7 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
             if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
                 throw new EvaluationException(
                     Str\format('max() only supports lists of integers and floats, got `%s`', $item->getType()),
-                    $call->getSpan(),
+                    $span,
                 );
             }
 
@@ -49,7 +49,7 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
 
         $result = Math\max($numbers);
         if (null === $result) {
-            throw new EvaluationException('max() requires a non-empty list', $call->getSpan());
+            throw new EvaluationException('max() requires a non-empty list', $span);
         }
 
         if (Type\int()->matches($result)) {

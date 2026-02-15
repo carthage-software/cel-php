@@ -7,7 +7,7 @@ namespace Cel\Extension\Decimal\Function\Handler;
 use Cel\Exception\InternalException;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Function\FunctionOverloadHandlerInterface;
-use Cel\Syntax\Member\CallExpression;
+use Cel\Span\Span;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\FloatValue;
 use Cel\Value\Value;
@@ -22,7 +22,7 @@ use Throwable;
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {
     /**
-     * @param CallExpression $call The call expression.
+     * @param Span $span The call expression.
      * @param list<Value> $arguments The function arguments.
      *
      * @return Value The resulting DecimalNumber value.
@@ -30,7 +30,7 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
      * @throws InternalException If the Decimal creation fails.
      */
     #[Override]
-    public function __invoke(CallExpression $call, array $arguments): Value
+    public function __invoke(Span $span, array $arguments): Value
     {
         $arg = ArgumentsUtil::get($arguments, 0, FloatValue::class);
 

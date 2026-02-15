@@ -13,7 +13,6 @@ use Cel\Operator\BinaryOperatorOverloadInterface;
 use Cel\Operator\UnaryOperatorOverloadHandlerInterface;
 use Cel\Operator\UnaryOperatorOverloadInterface;
 use Cel\Syntax\Binary\BinaryOperatorKind;
-use Cel\Syntax\Member\CallExpression;
 use Cel\Syntax\Unary\UnaryOperatorKind;
 use Cel\Value\Value;
 use Cel\Value\ValueKind;
@@ -21,6 +20,8 @@ use Override;
 use Psl\Default\DefaultInterface;
 use Psl\Str;
 use Psl\Vec;
+
+use function count;
 
 final class OperationRegistry implements DefaultInterface
 {
@@ -143,7 +144,7 @@ final class OperationRegistry implements DefaultInterface
     }
 
     /**
-     * Retrieves a function implementation based on the call expression and provided arguments.
+     * Retrieves a function implementation based on the function name and provided arguments.
      *
      * If no matching function is found, returns null.
      * If a matching function is found, returns a tuple containing:
@@ -154,17 +155,25 @@ final class OperationRegistry implements DefaultInterface
      *
      * @return null|list{bool, FunctionOverloadHandlerInterface}
      */
-    public function getFunction(CallExpression $expression, array $arguments): null|array
+    public function getFunction(string $name, array $arguments): ?array
     {
-        $name = $expression->function->name;
         $candidates = $this->functionOverloads[$name] ?? [];
 
         if ([] === $candidates) {
             return null;
         }
 
-        $providedArgumentKinds = Vec\map($arguments, static fn(Value $v): ValueKind => $v->getKind());
-        $signatureHash = self::hashSignature($providedArgumentKinds);
+        // Inline signature hash computation (avoid Vec\map + Str\join overhead)
+        $argCount = count($arguments);
+        if ($argCount === 0) {
+            $signatureHash = '<no-args>';
+        } else {
+            $signatureHash = $arguments[0]->getKind()->value;
+            for ($i = 1; $i < $argCount; $i++) {
+                $signatureHash .= ',' . $arguments[$i]->getKind()->value;
+            }
+        }
+
         $function = $candidates[$signatureHash] ?? null;
         if (null === $function) {
             return null;
@@ -182,7 +191,7 @@ final class OperationRegistry implements DefaultInterface
         BinaryOperatorKind $operator,
         ValueKind $lhsKind,
         ValueKind $rhsKind,
-    ): null|BinaryOperatorOverloadHandlerInterface {
+    ): ?BinaryOperatorOverloadHandlerInterface {
         return $this->binaryOperatorOverloads[$operator->name][$lhsKind->value][$rhsKind->value] ?? null;
     }
 
@@ -194,16 +203,15 @@ final class OperationRegistry implements DefaultInterface
     public function getUnaryOperator(
         UnaryOperatorKind $operator,
         ValueKind $operandKind,
-    ): null|UnaryOperatorOverloadHandlerInterface {
+    ): ?UnaryOperatorOverloadHandlerInterface {
         return $this->unaryOperatorOverloads[$operator->name][$operandKind->value] ?? null;
     }
 
     /**
      * @return null|non-empty-list<list<ValueKind>>
      */
-    public function getFunctionSignatures(CallExpression $expression): null|array
+    public function getFunctionSignatures(string $name): ?array
     {
-        $name = $expression->function->name;
         $candidates = $this->functionOverloads[$name] ?? null;
 
         if (null === $candidates) {
@@ -225,6 +233,44 @@ final class OperationRegistry implements DefaultInterface
         }
 
         return $signatures;
+    }
+
+    /**
+     * Builds a pre-computed lookup table for binary operators indexed by operator index.
+     *
+     * The returned table maps: [$operatorIndex][$lhsKindValue][$rhsKindValue] => handler
+     *
+     * This allows the VM to bypass BinaryOperatorKind enum reconstruction and
+     * getBinaryOperator() method call overhead in the hot dispatch loop.
+     *
+     * @return array<int, array<string, array<string, BinaryOperatorOverloadHandlerInterface>>>
+     */
+    public function buildBinaryOperatorLookup(): array
+    {
+        // Maps Compiler::binaryOperatorIndex values to BinaryOperatorKind enum names
+        static $indexToName = [
+            0 => 'LessThan',
+            1 => 'LessThanOrEqual',
+            2 => 'GreaterThan',
+            3 => 'GreaterThanOrEqual',
+            4 => 'Equal',
+            5 => 'NotEqual',
+            6 => 'In',
+            7 => 'Plus',
+            8 => 'Minus',
+            9 => 'Multiply',
+            10 => 'Divide',
+            11 => 'Modulo',
+            12 => 'And',
+            13 => 'Or',
+        ];
+
+        $table = [];
+        foreach ($indexToName as $idx => $name) {
+            $table[$idx] = $this->binaryOperatorOverloads[$name] ?? [];
+        }
+
+        return $table;
     }
 
     /**

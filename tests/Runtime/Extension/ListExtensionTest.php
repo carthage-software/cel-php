@@ -14,7 +14,7 @@ use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 
-final class ListExtensionTest extends RuntimeTestCase
+class ListExtensionTest extends RuntimeTestCase
 {
     /**
      * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: Value|EvaluationException}>
