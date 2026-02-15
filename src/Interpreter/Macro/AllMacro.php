@@ -55,7 +55,8 @@ final readonly class AllMacro implements MacroInterface
     #[Override]
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
-        assert(null !== $call->target, 'all() macro requires a target');
+        $call_target = $call->target;
+        assert(null !== $call_target, 'all() macro requires a target');
 
         $name = $call->arguments->elements[0];
         $callback = $call->arguments->elements[1];
@@ -67,11 +68,11 @@ final readonly class AllMacro implements MacroInterface
             );
         }
 
-        $target = $context->evaluate($call->target);
+        $target = $context->evaluate($call_target);
         if (!$target instanceof ListValue && !$target instanceof MapValue) {
             throw new InvalidMacroCallException(
                 Str\format('The `all` macro requires a list or map target, got `%s`', $target->getType()),
-                $call->target->getSpan(),
+                $call_target->getSpan(),
             );
         }
 

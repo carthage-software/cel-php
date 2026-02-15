@@ -43,7 +43,8 @@ final readonly class MapMacro implements MacroInterface
     #[Override]
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
-        assert(null !== $call->target, 'map() macro requires a target');
+        $call_target = $call->target;
+        assert(null !== $call_target, 'map() macro requires a target');
 
         $name = $call->arguments->elements[0];
 
@@ -54,11 +55,11 @@ final readonly class MapMacro implements MacroInterface
             );
         }
 
-        $target = $context->evaluate($call->target);
+        $target = $context->evaluate($call_target);
         if (!$target instanceof ListValue && !$target instanceof MapValue) {
             throw new InvalidMacroCallException(
                 Str\format('The `map` macro requires a list or map target, got `%s`', $target->getType()),
-                $call->target->getSpan(),
+                $call_target->getSpan(),
             );
         }
 
