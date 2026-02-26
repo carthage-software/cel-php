@@ -209,16 +209,16 @@
     "packages-dev": [
         {
             "name": "carthage-software/mago",
-            "version": "1.10.0",
+            "version": "1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "0e21384330e235da9df3be2d50ba655ea94514df"
+                "reference": "bcfd6bbdfce634e59f16c74d657dfffd6ebb32df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/0e21384330e235da9df3be2d50ba655ea94514df",
-                "reference": "0e21384330e235da9df3be2d50ba655ea94514df",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/bcfd6bbdfce634e59f16c74d657dfffd6ebb32df",
+                "reference": "bcfd6bbdfce634e59f16c74d657dfffd6ebb32df",
                 "shasum": ""
             },
             "require": {
@@ -233,7 +233,8 @@
             "type": "library",
             "autoload": {
                 "files": [
-                    "composer/functions.php"
+                    "composer/functions.php",
+                    "composer/internal.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -252,7 +253,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.10.0"
+                "source": "https://github.com/carthage-software/mago/tree/1.13.0"
             },
             "funding": [
                 {
@@ -260,7 +261,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-22T09:15:34+00:00"
+            "time": "2026-02-26T09:47:46+00:00"
         },
         {
             "name": "colinodell/json5",
