@@ -27,7 +27,7 @@
     "php": "~8.4 || ~8.5",
     "ext-bcmath": "*",
     "ext-intl": "*",
-    "azjezz/psl": "~3.2 || ~4.0",
+    "azjezz/psl": "~3.2 || ~4.0 || ~5.0",
     "psr/simple-cache": "^3.0"
   },
   "require-dev": {
