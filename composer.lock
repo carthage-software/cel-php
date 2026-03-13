@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ac7b5e99d9f967bf5e44cade9d3151b",
+    "content-hash": "28fa8e023da62cdc47ac70dc369434e8",
     "packages": [
         {
             "name": "azjezz/psl",
-            "version": "4.3.0",
+            "version": "5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azjezz/psl.git",
-                "reference": "74c95be0214eb7ea39146ed00ac4eb71b45d787b"
+                "reference": "8534d06d442b602970ee66ebc1d79c92361a4ba7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azjezz/psl/zipball/74c95be0214eb7ea39146ed00ac4eb71b45d787b",
-                "reference": "74c95be0214eb7ea39146ed00ac4eb71b45d787b",
+                "url": "https://api.github.com/repos/azjezz/psl/zipball/8534d06d442b602970ee66ebc1d79c92361a4ba7",
+                "reference": "8534d06d442b602970ee66ebc1d79c92361a4ba7",
                 "shasum": ""
             },
             "require": {
@@ -25,16 +25,17 @@
                 "ext-intl": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
+                "ext-openssl": "*",
                 "ext-sodium": "*",
-                "php": "~8.3.0 || ~8.4.0 || ~8.5.0",
-                "revolt/event-loop": "^1.0.7"
+                "php": "~8.4.0 || ~8.5.0",
+                "revolt/event-loop": "^1.0.8"
             },
             "require-dev": {
-                "carthage-software/mago": "^1.6.0",
-                "infection/infection": "^0.31.2",
-                "php-coveralls/php-coveralls": "^2.7.0",
-                "phpbench/phpbench": "^1.4.0",
-                "phpunit/phpunit": "^9.6.22"
+                "carthage-software/mago": "^1.14.0",
+                "infection/infection": "^0.32.6",
+                "php-coveralls/php-coveralls": "^2.9.1",
+                "phpbench/phpbench": "^1.5.1",
+                "phpunit/phpunit": "^13.0.5"
             },
             "suggest": {
                 "php-standard-library/phpstan-extension": "PHPStan integration",
@@ -68,7 +69,7 @@
             "description": "PHP Standard Library",
             "support": {
                 "issues": "https://github.com/azjezz/psl/issues",
-                "source": "https://github.com/azjezz/psl/tree/4.3.0"
+                "source": "https://github.com/azjezz/psl/tree/5.5.0"
             },
             "funding": [
                 {
@@ -80,7 +81,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-24T01:58:53+00:00"
+            "time": "2026-03-12T20:19:39+00:00"
         },
         {
             "name": "psr/simple-cache",
@@ -6036,5 +6037,5 @@
     "platform-dev": {
         "ext-decimal": "*"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
