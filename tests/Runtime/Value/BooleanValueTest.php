@@ -29,6 +29,9 @@ final class BooleanValueTest extends TestCase
         static::assertSame($expected, $a->isEqual($b));
     }
 
+    /**
+     * @return iterable<string, array{bool,BooleanValue, BooleanValue}>
+     */
     public static function provideEqualityCases(): iterable
     {
         yield 'true == true' => [true, new BooleanValue(true), new BooleanValue(true)];
@@ -52,6 +55,9 @@ final class BooleanValueTest extends TestCase
         static::assertSame($isGreater, $a->isGreaterThan($b));
     }
 
+    /**
+     * @return iterable<string, array{BooleanValue, BooleanValue, bool, bool}>
+     */
     public static function provideComparisonCases(): iterable
     {
         yield 'true vs false' => [new BooleanValue(true), new BooleanValue(false), false, true];

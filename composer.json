@@ -27,12 +27,12 @@
     "php": "~8.4 || ~8.5",
     "ext-bcmath": "*",
     "ext-intl": "*",
-    "azjezz/psl": "~3.2 || ~4.0",
+    "php-standard-library/php-standard-library": "~5.0 || ~6.0",
     "psr/simple-cache": "^3.0"
   },
   "require-dev": {
     "ext-decimal": "*",
-    "carthage-software/mago": "^1.8.0",
+    "carthage-software/mago": "^1.14.1",
     "phpunit/phpunit": "^12.3",
     "php-coveralls/php-coveralls": "^2.8",
     "infection/infection": "^0.31.2",

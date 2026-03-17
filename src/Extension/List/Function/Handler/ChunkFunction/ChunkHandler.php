@@ -38,6 +38,10 @@ final readonly class ChunkHandler implements FunctionOverloadHandlerInterface
 
         $chunks = Vec\chunk($list->value, $size->value);
 
-        return new ListValue(Vec\map($chunks, static fn(array $chunk): ListValue => new ListValue($chunk)));
+        return new ListValue(Vec\map(
+            $chunks,
+            /** @param list<Value> $chunk */
+            static fn(array $chunk): ListValue => new ListValue($chunk),
+        ));
     }
 }

@@ -51,10 +51,9 @@ abstract class RuntimeTestCase extends TestCase
 
         $actualResult = $this->evaluate($code, $variables, $configuration)->result;
         if (!$expectedResult instanceof Value) {
-            static::fail('Expected exception of type '
-            . $expectedResult::class
-            . ' but got result: '
-            . $actualResult::class);
+            static::fail(
+                'Expected exception of type ' . $expectedResult::class . ' but got result: ' . $actualResult::class,
+            );
         }
 
         static::assertInstanceOf(Value::class, $actualResult);

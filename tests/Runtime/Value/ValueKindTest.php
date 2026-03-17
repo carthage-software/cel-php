@@ -16,6 +16,9 @@ final class ValueKindTest extends TestCase
         static::assertSame($expected, $kind->isAggregate());
     }
 
+    /**
+     * @return iterable<string, array{ValueKind, bool}>
+     */
     public static function provideIsAggregateCases(): iterable
     {
         yield 'boolean is not aggregate' => [ValueKind::Boolean, false];

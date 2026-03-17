@@ -33,6 +33,9 @@ final class ValueTest extends TestCase
         static::assertInstanceOf($expectedClass, $value);
     }
 
+    /**
+     * @return iterable<string, array{mixed, class-string<Value>}>
+     */
     public static function provideFromCases(): iterable
     {
         yield 'null' => [null, NullValue::class];

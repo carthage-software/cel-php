@@ -16,6 +16,9 @@ final class BinaryOperatorKindTest extends TestCase
         static::assertSame($expected, $kind->isLogical());
     }
 
+    /**
+     * @return iterable<string, array{BinaryOperatorKind, bool}>
+     */
     public static function provideIsLogicalCases(): iterable
     {
         foreach (BinaryOperatorKind::cases() as $case) {
@@ -33,6 +36,9 @@ final class BinaryOperatorKindTest extends TestCase
         static::assertSame($expected, $kind->isComparison());
     }
 
+    /**
+     * @return iterable<string, array{BinaryOperatorKind, bool}>
+     */
     public static function provideIsComparisonCases(): iterable
     {
         foreach (BinaryOperatorKind::cases() as $case) {
@@ -57,6 +63,9 @@ final class BinaryOperatorKindTest extends TestCase
         static::assertSame($expected, $kind->isArithmetic());
     }
 
+    /**
+     * @return iterable<string, array{BinaryOperatorKind, bool}>
+     */
     public static function provideIsArithmeticCases(): iterable
     {
         foreach (BinaryOperatorKind::cases() as $case) {
@@ -79,6 +88,9 @@ final class BinaryOperatorKindTest extends TestCase
         static::assertSame($expected, $kind->isAdditive());
     }
 
+    /**
+     * @return iterable<string, array{BinaryOperatorKind, bool}>
+     */
     public static function provideIsAdditiveCases(): iterable
     {
         foreach (BinaryOperatorKind::cases() as $case) {
@@ -96,6 +108,9 @@ final class BinaryOperatorKindTest extends TestCase
         static::assertSame($expected, $kind->isMultiplicative());
     }
 
+    /**
+     * @return iterable<string, array{BinaryOperatorKind, bool}>
+     */
     public static function provideIsMultiplicativeCases(): iterable
     {
         foreach (BinaryOperatorKind::cases() as $case) {

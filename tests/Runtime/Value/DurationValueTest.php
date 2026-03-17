@@ -16,14 +16,14 @@ final class DurationValueTest extends TestCase
 {
     public function testConstructorAndgetRawValue(): void
     {
-        $duration = Duration::days(1);
+        $duration = Duration::hours(1);
         $value = new DurationValue($duration);
         static::assertSame($duration, $value->getRawValue());
     }
 
     public function testGetKindAndGetType(): void
     {
-        $value = new DurationValue(Duration::days(1));
+        $value = new DurationValue(Duration::hours(1));
         static::assertSame(ValueKind::Duration, $value->getKind());
         static::assertSame('duration', $value->getType());
     }
@@ -34,21 +34,24 @@ final class DurationValueTest extends TestCase
         static::assertSame($expected, $self->isEqual($other));
     }
 
+    /**
+     * @return iterable<string, array{DurationValue, DurationValue, bool}>
+     */
     public static function provideIsEqualCases(): iterable
     {
         yield 'equal durations' => [
-            new DurationValue(Duration::days(1)),
-            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::hours(1)),
+            new DurationValue(Duration::hours(1)),
             true,
         ];
         yield 'not equal durations' => [
-            new DurationValue(Duration::days(1)),
-            new DurationValue(Duration::days(2)),
+            new DurationValue(Duration::hours(1)),
+            new DurationValue(Duration::hours(2)),
             false,
         ];
         yield 'equal durations with different units' => [
-            new DurationValue(Duration::hours(24)),
-            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::minutes(60)),
+            new DurationValue(Duration::hours(1)),
             true,
         ];
     }
@@ -58,7 +61,7 @@ final class DurationValueTest extends TestCase
         $this->expectException(UnsupportedOperationException::class);
         $this->expectExceptionMessage('Cannot compare values of type `duration` and `bool` for equality');
 
-        $durationValue = new DurationValue(Duration::days(1));
+        $durationValue = new DurationValue(Duration::hours(1));
         $booleanValue = new BooleanValue(true);
 
         $durationValue->isEqual($booleanValue);
@@ -70,21 +73,24 @@ final class DurationValueTest extends TestCase
         static::assertSame($expected, $self->isGreaterThan($other));
     }
 
+    /**
+     * @return iterable<string, array{DurationValue, DurationValue, bool}>
+     */
     public static function provideIsGreaterThanCases(): iterable
     {
         yield 'greater than' => [
-            new DurationValue(Duration::days(2)),
-            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::hours(2)),
+            new DurationValue(Duration::hours(1)),
             true,
         ];
         yield 'not greater than (equal)' => [
-            new DurationValue(Duration::days(1)),
-            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::hours(1)),
+            new DurationValue(Duration::hours(1)),
             false,
         ];
         yield 'not greater than (less)' => [
-            new DurationValue(Duration::days(1)),
-            new DurationValue(Duration::days(2)),
+            new DurationValue(Duration::hours(1)),
+            new DurationValue(Duration::hours(2)),
             false,
         ];
     }
@@ -94,7 +100,7 @@ final class DurationValueTest extends TestCase
         $this->expectException(UnsupportedOperationException::class);
         $this->expectExceptionMessage('Cannot compare values of type `duration` and `bool`');
 
-        $durationValue = new DurationValue(Duration::days(1));
+        $durationValue = new DurationValue(Duration::hours(1));
         $booleanValue = new BooleanValue(true);
 
         $durationValue->isGreaterThan($booleanValue);
@@ -106,21 +112,24 @@ final class DurationValueTest extends TestCase
         static::assertSame($expected, $self->isLessThan($other));
     }
 
+    /**
+     * @return iterable<string, array{DurationValue, DurationValue, bool}>
+     */
     public static function provideIsLessThanCases(): iterable
     {
         yield 'less than' => [
-            new DurationValue(Duration::days(1)),
-            new DurationValue(Duration::days(2)),
+            new DurationValue(Duration::hours(1)),
+            new DurationValue(Duration::hours(2)),
             true,
         ];
         yield 'not less than (equal)' => [
-            new DurationValue(Duration::days(1)),
-            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::hours(1)),
+            new DurationValue(Duration::hours(1)),
             false,
         ];
         yield 'not less than (greater)' => [
-            new DurationValue(Duration::days(2)),
-            new DurationValue(Duration::days(1)),
+            new DurationValue(Duration::hours(2)),
+            new DurationValue(Duration::hours(1)),
             false,
         ];
     }
@@ -130,7 +139,7 @@ final class DurationValueTest extends TestCase
         $this->expectException(UnsupportedOperationException::class);
         $this->expectExceptionMessage('Cannot compare values of type `duration` and `bool`');
 
-        $durationValue = new DurationValue(Duration::days(1));
+        $durationValue = new DurationValue(Duration::hours(1));
         $booleanValue = new BooleanValue(true);
 
         $durationValue->isLessThan($booleanValue);

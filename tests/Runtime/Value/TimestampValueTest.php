@@ -34,6 +34,9 @@ final class TimestampValueTest extends TestCase
         static::assertSame($expected, $self->isEqual($other));
     }
 
+    /**
+     * @return iterable<string, array{TimestampValue, TimestampValue, bool}>
+     */
     public static function provideIsEqualCases(): iterable
     {
         yield 'equal timestamps' => [
@@ -65,6 +68,9 @@ final class TimestampValueTest extends TestCase
         static::assertSame($expected, $self->isGreaterThan($other));
     }
 
+    /**
+     * @return iterable<string, array{TimestampValue, TimestampValue, bool}>
+     */
     public static function provideIsGreaterThanCases(): iterable
     {
         yield 'greater than' => [
@@ -101,6 +107,9 @@ final class TimestampValueTest extends TestCase
         static::assertSame($expected, $self->isLessThan($other));
     }
 
+    /**
+     * @return iterable<string, array{TimestampValue, TimestampValue, bool}>
+     */
     public static function provideIsLessThanCases(): iterable
     {
         yield 'less than' => [

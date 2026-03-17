@@ -31,6 +31,9 @@ final class FloatValueTest extends TestCase
         static::assertSame($expected, $a->isEqual($b));
     }
 
+    /**
+     * @return iterable<string, array{bool, FloatValue, Value}>
+     */
     public static function provideEqualityCases(): iterable
     {
         yield 'float == float' => [true, new FloatValue(1.5), new FloatValue(1.5)];
@@ -49,6 +52,9 @@ final class FloatValueTest extends TestCase
         static::assertSame($isGreater, $a->isGreaterThan($b));
     }
 
+    /**
+     * @return iterable<string, array{FloatValue, FloatValue, bool, bool}>
+     */
     public static function provideComparisonCases(): iterable
     {
         yield '1.5 vs 1.6' => [new FloatValue(1.5), new FloatValue(1.6), true, false];

@@ -31,6 +31,7 @@ use Cel\Syntax\Unary\UnaryOperatorKind;
 use Cel\Tests\ResourceProviderTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 final class ParserTest extends TestCase
 {
@@ -57,7 +58,7 @@ final class ParserTest extends TestCase
     }
 
     /**
-     * @param class-string<\Throwable> $expectedException
+     * @param class-string<Throwable> $expectedException
      */
     #[DataProvider('provideParseErrorCases')]
     public function testParseError(string $source, string $expectedException): void
@@ -66,6 +67,9 @@ final class ParserTest extends TestCase
         new Parser()->parseString($source);
     }
 
+    /**
+     * @return iterable<string, array{string, Closure(TestCase, Expression): void}>
+     */
     public static function provideParseSuccessCases(): iterable
     {
         yield 'integer literal' => [
@@ -245,6 +249,9 @@ final class ParserTest extends TestCase
         yield from self::provideOperatorSuccessCases();
     }
 
+    /**
+     * @return iterable<string, array{string, Closure(TestCase, Expression): void}>
+     */
     public static function provideLiteralSuccessCases(): iterable
     {
         yield 'uint literal' => [
@@ -295,6 +302,9 @@ final class ParserTest extends TestCase
         ];
     }
 
+    /**
+     * @return iterable<string, array{string, Closure(TestCase, Expression): void}>
+     */
     public static function provideOperatorSuccessCases(): iterable
     {
         yield 'unary not' => [
@@ -410,6 +420,9 @@ final class ParserTest extends TestCase
         ];
     }
 
+    /**
+     * @return iterable<string, array{string, class-string<Throwable>}>
+     */
     public static function provideParseErrorCases(): iterable
     {
         yield 'unexpected token' => ['1 +', UnexpectedEndOfFileException::class];
