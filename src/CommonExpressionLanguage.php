@@ -35,7 +35,7 @@ use Psr\SimpleCache\CacheInterface;
  */
 readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInterface, RuntimeInterface
 {
-    public function __construct(
+    public final function __construct(
         private ParserInterface $parser = new OptimizedParser(),
         private OptimizerInterface $optimizer = new Optimizer(),
         private RuntimeInterface $runtime = new Runtime(),
@@ -47,7 +47,7 @@ readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInt
     #[Override]
     public static function default(): static
     {
-        return new self(
+        return new static(
             parser: OptimizedParser::default(),
             optimizer: Optimizer::default(),
             runtime: Runtime::default(),
@@ -68,7 +68,7 @@ readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInt
      */
     public static function cached(CacheInterface $cache, null|int $cacheTtl = 3600): static
     {
-        return new self(
+        return new static(
             parser: new CachedParser(OptimizedParser::default(), $cache, $cacheTtl),
             optimizer: Optimizer::default(),
             runtime: new CachedRuntime(Runtime::default(), $cache, $cacheTtl),
