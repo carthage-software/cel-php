@@ -35,7 +35,7 @@ use Psr\SimpleCache\CacheInterface;
  */
 readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInterface, RuntimeInterface
 {
-    public final function __construct(
+    final public function __construct(
         private ParserInterface $parser = new OptimizedParser(),
         private OptimizerInterface $optimizer = new Optimizer(),
         private RuntimeInterface $runtime = new Runtime(),
