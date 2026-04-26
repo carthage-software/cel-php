@@ -58,8 +58,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             $nanoseconds = (int) ($matches[7] ?? 0);
 
             $totalNanoseconds = (int) (
-                ($secondsWithFraction - (int) $secondsWithFraction)
-                * DateTime\NANOSECONDS_PER_SECOND
+                ($secondsWithFraction - (int) $secondsWithFraction) * DateTime\NANOSECONDS_PER_SECOND
             );
             $totalNanoseconds += $milliseconds * DateTime\MICROSECONDS_PER_SECOND;
             $totalNanoseconds += $microseconds * DateTime\NANOSECONDS_PER_MICROSECOND;

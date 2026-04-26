@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 final class MapValueTest extends TestCase
 {
     /**
-     * @mago-expect analysis:possibly-undefined-array-index
+     * @mago-expect analysis:possibly-undefined-string-array-index
      */
     public function testgetRawValue(): void
     {

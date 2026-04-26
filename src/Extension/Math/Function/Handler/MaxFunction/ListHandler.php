@@ -47,6 +47,7 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
             $numbers[] = $item->value;
         }
 
+        /** @var float|int|null $result */
         $result = Math\max($numbers);
         if (null === $result) {
             throw new EvaluationException('max() requires a non-empty list', $call->getSpan());

@@ -15,7 +15,7 @@ use Traversable;
  * Represents a punctuated list of nodes, like arguments in a function call or elements in a list literal.
  * It preserves the spans of the punctuation (e.g., commas).
  *
- * @template T of Node
+ * @template-covariant T of Node
  *
  * @implements IteratorAggregate<T>
  */
