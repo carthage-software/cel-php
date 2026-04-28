@@ -14,6 +14,9 @@ use function bccomp;
  */
 final readonly class UnsignedIntegerValue extends Value
 {
+    /**
+     * @param int|numeric-string $value The unsigned integer value, which can be a native int or a numeric string for large values.
+     */
     public function __construct(
         public int|string $value,
     ) {}
@@ -62,6 +65,9 @@ final readonly class UnsignedIntegerValue extends Value
         return bccomp((string) $this->value, (string) $other->value, 0) === -1;
     }
 
+    /**
+     * @return int|numeric-string The raw unsigned integer value, which can be a native int or a numeric string for large values.
+     */
     #[Override]
     public function getRawValue(): int|string
     {

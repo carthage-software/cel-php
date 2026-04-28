@@ -9,10 +9,13 @@ use Cel\Syntax\ExpressionKind;
 use Override;
 
 /**
- * @extends LiteralExpression<int|string>
+ * @extends LiteralExpression<int|numeric-string>
  */
 final readonly class UnsignedIntegerLiteralExpression extends LiteralExpression
 {
+    /**
+     * @param int|numeric-string $value The unsigned integer value, which can be a native int or a numeric string for large values.
+     */
     public function __construct(
         public string|int $value,
         public string $raw,
