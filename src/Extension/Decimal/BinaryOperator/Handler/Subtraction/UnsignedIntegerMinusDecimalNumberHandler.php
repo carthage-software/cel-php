@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\BinaryOperator\Handler\Subtraction;
 
 use Cel\Exception\InternalException;
+use Cel\Extension\Decimal\DecimalFactory;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
@@ -12,7 +13,6 @@ use Cel\Util\OperandUtil;
 use Cel\Value\MessageValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
-use Decimal\Decimal;
 use Override;
 use Psl\Str;
 use Throwable;
@@ -42,7 +42,7 @@ final readonly class UnsignedIntegerMinusDecimalNumberHandler implements BinaryO
         assert($right->message instanceof DecimalNumber, 'Right operand must be DecimalNumber');
 
         try {
-            $result = new Decimal((string) $left->value)->sub($right->message->getInner());
+            $result = DecimalFactory::from((string) $left->value)->sub($right->message->getInner());
         } catch (Throwable $e) {
             throw InternalException::forMessage(Str\format('Decimal subtraction failed: %s', $e->getMessage()), $e);
         }

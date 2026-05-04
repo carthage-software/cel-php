@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\Function\Handler;
 
 use Cel\Exception\InternalException;
+use Cel\Extension\Decimal\DecimalFactory;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
-use Decimal\Decimal;
 use Override;
 use Psl\Str;
 use Throwable;
@@ -35,7 +35,7 @@ final readonly class FromUnsignedIntegerHandler implements FunctionOverloadHandl
         $arg = ArgumentsUtil::get($arguments, 0, UnsignedIntegerValue::class);
 
         try {
-            $decimal = new Decimal((string) $arg->value);
+            $decimal = DecimalFactory::from((string) $arg->value);
         } catch (Throwable $e) {
             throw InternalException::forMessage(
                 Str\format('Failed to create decimal from unsigned integer: %s', $e->getMessage()),

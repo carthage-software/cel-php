@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\Function\Handler;
 
 use Cel\Exception\InternalException;
+use Cel\Extension\Decimal\DecimalFactory;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
-use Decimal\Decimal;
 use Override;
 use Psl\Str;
 use Throwable;
@@ -35,7 +35,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
         $arg = ArgumentsUtil::get($arguments, 0, StringValue::class);
 
         try {
-            $decimal = new Decimal($arg->value);
+            $decimal = DecimalFactory::from($arg->value);
         } catch (Throwable $e) {
             throw InternalException::forMessage(
                 Str\format('Failed to create decimal from string "%s": %s', $arg->value, $e->getMessage()),

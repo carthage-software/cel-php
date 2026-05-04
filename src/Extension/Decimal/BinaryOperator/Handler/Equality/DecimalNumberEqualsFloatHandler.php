@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\BinaryOperator\Handler\Equality;
 
 use Cel\Exception\InternalException;
+use Cel\Extension\Decimal\DecimalFactory;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
@@ -14,7 +15,6 @@ use Cel\Value\BooleanValue;
 use Cel\Value\FloatValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
-use Decimal\Decimal;
 use Override;
 use Psl\Str;
 use Throwable;
@@ -48,7 +48,7 @@ final readonly class DecimalNumberEqualsFloatHandler implements BinaryOperatorOv
         assert($left->message instanceof DecimalNumber, 'Left operand must be DecimalNumber');
 
         try {
-            $equals = $left->message->getInner()->equals(new Decimal((string) $right->value));
+            $equals = $left->message->getInner()->equals(DecimalFactory::from((string) $right->value));
         } catch (Throwable $e) {
             throw InternalException::forMessage(
                 Str\format('Decimal equality comparison failed: %s', $e->getMessage()),

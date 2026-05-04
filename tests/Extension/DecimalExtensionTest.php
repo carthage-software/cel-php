@@ -6,9 +6,9 @@ namespace Cel\Tests\Extension;
 
 use Cel\CommonExpressionLanguage;
 use Cel\Extension\Decimal\DecimalExtension;
+use Cel\Extension\Decimal\DecimalFactory;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Value\MessageValue;
-use Decimal\Decimal;
 use Override;
 use PHPUnit\Framework\TestCase;
 
@@ -43,7 +43,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('123.456')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('123.456')));
     }
 
     public function testDecimalFunctionFromInt(): void
@@ -55,7 +55,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('42')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('42')));
     }
 
     public function testDecimalFunctionFromUInt(): void
@@ -67,7 +67,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('42')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('42')));
     }
 
     public function testDecimalFunctionFromFloat(): void
@@ -79,7 +79,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('3.14')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('3.14')));
     }
 
     public function testDecimalFunctionWithPrecision(): void
@@ -105,7 +105,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('4')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('4')));
     }
 
     public function testDecimalAdditionWithInt(): void
@@ -117,7 +117,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('15.5')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('15.5')));
     }
 
     public function testIntAdditionWithDecimal(): void
@@ -129,7 +129,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('15.5')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('15.5')));
     }
 
     public function testDecimalSubtraction(): void
@@ -141,7 +141,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('7.3')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('7.3')));
     }
 
     public function testDecimalMultiplication(): void
@@ -153,7 +153,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('10')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('10')));
     }
 
     public function testDecimalDivision(): void
@@ -165,7 +165,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('2.5')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('2.5')));
     }
 
     public function testDecimalModulo(): void
@@ -177,7 +177,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('1')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('1')));
     }
 
     public function testDecimalNegation(): void
@@ -189,7 +189,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('-5.5')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('-5.5')));
     }
 
     public function testDecimalLessThan(): void
@@ -283,7 +283,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
         // (10.5 + 5.5) * 2 - 10 = 16 * 2 - 10 = 32 - 10 = 22
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('22')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('22')));
     }
 
     public function testDecimalWithVariables(): void
@@ -291,14 +291,14 @@ final class DecimalExtensionTest extends TestCase
         $cel = $this->createCel();
         $expr = $cel->parseString('x + y');
         $receipt = $cel->run($expr, [
-            'x' => new DecimalNumber(new Decimal('100.50')),
-            'y' => new DecimalNumber(new Decimal('50.25')),
+            'x' => new DecimalNumber(DecimalFactory::from('100.50')),
+            'y' => new DecimalNumber(DecimalFactory::from('50.25')),
         ]);
 
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('150.75')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('150.75')));
     }
 
     public function testDecimalValueResolver(): void
@@ -306,13 +306,13 @@ final class DecimalExtensionTest extends TestCase
         $cel = $this->createCel();
         $expr = $cel->parseString('value * decimal("2")');
         $receipt = $cel->run($expr, [
-            'value' => new DecimalNumber(new Decimal('25.5')),
+            'value' => new DecimalNumber(DecimalFactory::from('25.5')),
         ]);
 
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('51')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('51')));
     }
 
     public function testDecimalPrecisionPreservation(): void
@@ -337,7 +337,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('15')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('15')));
 
         // decimal + uint
         $expr = $cel->parseString('decimal("10") + 5u');
@@ -345,7 +345,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('15')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('15')));
 
         // decimal + float
         $expr = $cel->parseString('decimal("10") + 5.5');
@@ -353,7 +353,7 @@ final class DecimalExtensionTest extends TestCase
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(MessageValue::class, $receipt->result);
         static::assertInstanceOf(DecimalNumber::class, $receipt->result->message);
-        static::assertTrue($receipt->result->message->getInner()->equals(new Decimal('15.5')));
+        static::assertTrue($receipt->result->message->getInner()->equals(DecimalFactory::from('15.5')));
     }
 
     public function testDecimalMessageTypeRegistration(): void
@@ -364,8 +364,8 @@ final class DecimalExtensionTest extends TestCase
         // by verifying we can use DecimalNumber instances in expressions
         $expr = $cel->parseString('x == y');
         $receipt = $cel->run($expr, [
-            'x' => new DecimalNumber(new Decimal('123')),
-            'y' => new DecimalNumber(new Decimal('123')),
+            'x' => new DecimalNumber(DecimalFactory::from('123')),
+            'y' => new DecimalNumber(DecimalFactory::from('123')),
         ]);
 
         static::assertTrue($receipt->result->getRawValue());

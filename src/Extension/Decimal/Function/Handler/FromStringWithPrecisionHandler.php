@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\Function\Handler;
 
 use Cel\Exception\InternalException;
+use Cel\Extension\Decimal\DecimalFactory;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
@@ -12,7 +13,6 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
-use Decimal\Decimal;
 use Override;
 use Psl\Str;
 use Throwable;
@@ -43,7 +43,7 @@ final readonly class FromStringWithPrecisionHandler implements FunctionOverloadH
             // Note: ext-decimal may emit a warning about data loss when applying precision.
             // We suppress this as it's expected behavior when rounding occurs.
             set_error_handler(static fn(): true => true);
-            $decimal = new Decimal($valueArg->value, $precisionArg->value);
+            $decimal = DecimalFactory::from($valueArg->value, $precisionArg->value);
             restore_error_handler();
         } catch (Throwable $e) {
             restore_error_handler();

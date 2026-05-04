@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\BinaryOperator\Handler\Comparison;
 
 use Cel\Exception\InternalException;
+use Cel\Extension\Decimal\DecimalFactory;
 use Cel\Extension\Decimal\DecimalNumber;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
@@ -14,7 +15,6 @@ use Cel\Value\BooleanValue;
 use Cel\Value\MessageValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
-use Decimal\Decimal;
 use LogicException;
 use Override;
 use Psl\Str;
@@ -49,7 +49,7 @@ final readonly class UnsignedIntegerCompareDecimalNumberHandler implements Binar
         assert($right->message instanceof DecimalNumber, 'Right operand must be DecimalNumber');
 
         try {
-            $comparison = new Decimal((string) $left->value)->compareTo($right->message->getInner());
+            $comparison = DecimalFactory::from((string) $left->value)->compareTo($right->message->getInner());
         } catch (Throwable $e) {
             throw InternalException::forMessage(Str\format('Decimal comparison failed: %s', $e->getMessage()), $e);
         }
