@@ -396,16 +396,16 @@
     "packages-dev": [
         {
             "name": "carthage-software/mago",
-            "version": "1.26.0",
+            "version": "1.27.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/carthage-software/mago.git",
-                "reference": "9ae2f7ad58ffeeaa2ff890e736a8658f8e397cdf"
+                "reference": "f4c31bbcb871e6bcbb96323ce791e06288b39b2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/carthage-software/mago/zipball/9ae2f7ad58ffeeaa2ff890e736a8658f8e397cdf",
-                "reference": "9ae2f7ad58ffeeaa2ff890e736a8658f8e397cdf",
+                "url": "https://api.github.com/repos/carthage-software/mago/zipball/f4c31bbcb871e6bcbb96323ce791e06288b39b2a",
+                "reference": "f4c31bbcb871e6bcbb96323ce791e06288b39b2a",
                 "shasum": ""
             },
             "require": {
@@ -420,9 +420,12 @@
             "type": "library",
             "autoload": {
                 "files": [
-                    "composer/functions.php",
-                    "composer/internal.php"
-                ]
+                    "composer/src/functions.php",
+                    "composer/src/internal.php"
+                ],
+                "psr-4": {
+                    "Mago\\": "composer/src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -440,7 +443,7 @@
             ],
             "support": {
                 "issues": "https://github.com/carthage-software/mago/issues",
-                "source": "https://github.com/carthage-software/mago/tree/1.26.0"
+                "source": "https://github.com/carthage-software/mago/tree/1.27.1"
             },
             "funding": [
                 {
@@ -448,7 +451,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-06T21:44:02+00:00"
+            "time": "2026-05-13T15:32:36+00:00"
         },
         {
             "name": "colinodell/json5",
