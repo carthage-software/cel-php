@@ -23,6 +23,12 @@ final readonly class IntegerValue extends Value
     }
 
     #[Override]
+    public function isZeroValue(): bool
+    {
+        return 0 === $this->value;
+    }
+
+    #[Override]
     public function isEqual(Value $other): bool
     {
         if ($other instanceof IntegerValue) {

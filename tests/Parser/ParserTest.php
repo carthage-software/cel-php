@@ -176,9 +176,9 @@ final class ParserTest extends TestCase
             static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(ListExpression::class, $expr);
                 $test->assertCount(3, $expr->elements->elements);
-                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr->elements->elements[0]);
-                $test->assertInstanceOf(StringLiteralExpression::class, $expr->elements->elements[1]);
-                $test->assertInstanceOf(BoolLiteralExpression::class, $expr->elements->elements[2]);
+                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr->elements->elements[0]->value);
+                $test->assertInstanceOf(StringLiteralExpression::class, $expr->elements->elements[1]->value);
+                $test->assertInstanceOf(BoolLiteralExpression::class, $expr->elements->elements[2]->value);
             },
         ];
 

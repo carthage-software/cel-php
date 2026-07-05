@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Optimizer;
 
 use Cel\Syntax\Aggregate\FieldInitializerNode;
+use Cel\Syntax\Aggregate\ListElementNode;
 use Cel\Syntax\Aggregate\ListExpression;
 use Cel\Syntax\Aggregate\MapEntryNode;
 use Cel\Syntax\Aggregate\MapExpression;
@@ -65,7 +66,7 @@ final class Optimizer implements OptimizerInterface
         if ($expression instanceof ListExpression) {
             $optimizedElements = [];
             foreach ($expression->elements->elements as $element) {
-                $optimizedElements[] = $this->optimize($element);
+                $optimizedElements[] = new ListElementNode($element->question, $this->optimize($element->value));
             }
 
             $expression = new ListExpression(
@@ -81,7 +82,7 @@ final class Optimizer implements OptimizerInterface
                 $optimizedKey = $this->optimize($entry->key);
                 $optimizedValue = $this->optimize($entry->value);
 
-                $optimizedEntries[] = new MapEntryNode($optimizedKey, $entry->colon, $optimizedValue);
+                $optimizedEntries[] = new MapEntryNode($entry->question, $optimizedKey, $entry->colon, $optimizedValue);
             }
 
             $expression = new MapExpression(
@@ -121,7 +122,12 @@ final class Optimizer implements OptimizerInterface
         if ($expression instanceof MemberAccessExpression) {
             $optimizedOperand = $this->optimize($expression->operand);
 
-            $expression = new MemberAccessExpression($optimizedOperand, $expression->dot, $expression->field);
+            $expression = new MemberAccessExpression(
+                $optimizedOperand,
+                $expression->dot,
+                $expression->question,
+                $expression->field,
+            );
         }
 
         if ($expression instanceof IndexExpression) {
@@ -131,6 +137,7 @@ final class Optimizer implements OptimizerInterface
             $expression = new IndexExpression(
                 $optimizedOperand,
                 $expression->openingBracket,
+                $expression->question,
                 $optimizedIndex,
                 $expression->closingBracket,
             );
@@ -163,6 +170,7 @@ final class Optimizer implements OptimizerInterface
                 $optimizedInitializerValue = $this->optimize($initializer->value);
 
                 $initializers[] = new FieldInitializerNode(
+                    $initializer->question,
                     $initializer->field,
                     $initializer->colon,
                     $optimizedInitializerValue,

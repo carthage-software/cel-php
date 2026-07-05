@@ -23,6 +23,12 @@ final readonly class BytesValue extends Value
     }
 
     #[Override]
+    public function isZeroValue(): bool
+    {
+        return '' === $this->value;
+    }
+
+    #[Override]
     public function isEqual(Value $other): bool
     {
         if (!$other instanceof BytesValue) {

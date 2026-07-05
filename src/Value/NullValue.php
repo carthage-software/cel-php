@@ -25,6 +25,12 @@ final readonly class NullValue extends Value
     }
 
     #[Override]
+    public function isZeroValue(): bool
+    {
+        return true;
+    }
+
+    #[Override]
     public function isEqual(Value $other): bool
     {
         if (!$other instanceof NullValue) {

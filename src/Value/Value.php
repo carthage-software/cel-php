@@ -27,6 +27,15 @@ abstract readonly class Value
     abstract public function getKind(): ValueKind;
 
     /**
+     * Indicates whether this value is a "zero value": the default empty value
+     * for its type (e.g. `false`, `0`, `""`, `b""`, `[]`, `{}`, or `null`).
+     *
+     * Used by `optional.ofNonZeroValue` to decide whether a value should be
+     * wrapped or treated as absent.
+     */
+    abstract public function isZeroValue(): bool;
+
+    /**
      * Indicates whether this value is equal to another value.
      *
      * @param Value $other The other value to compare with.

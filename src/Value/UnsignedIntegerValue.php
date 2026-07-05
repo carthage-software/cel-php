@@ -28,6 +28,12 @@ final readonly class UnsignedIntegerValue extends Value
     }
 
     #[Override]
+    public function isZeroValue(): bool
+    {
+        return 0 === bccomp((string) $this->value, '0', 0);
+    }
+
+    #[Override]
     public function isEqual(Value $other): bool
     {
         if ($other instanceof UnsignedIntegerValue) {

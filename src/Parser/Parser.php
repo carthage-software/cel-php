@@ -10,6 +10,7 @@ use Cel\Parser\Exception\UnexpectedEndOfFileException;
 use Cel\Parser\Exception\UnexpectedTokenException;
 use Cel\Span\Span;
 use Cel\Syntax\Aggregate\FieldInitializerNode;
+use Cel\Syntax\Aggregate\ListElementNode;
 use Cel\Syntax\Aggregate\ListExpression;
 use Cel\Syntax\Aggregate\MapEntryNode;
 use Cel\Syntax\Aggregate\MapExpression;
@@ -48,6 +49,11 @@ use Psl\Exception\ExceptionInterface;
 use Psl\Str;
 use Psl\Str\Byte;
 
+/**
+ * A recursive-descent parser for the Common Expression Language (CEL).
+ *
+ * @mago-expect lint:too-many-methods
+ */
 final class Parser implements ParserInterface
 {
     use ParserConvenienceMethodsTrait;
@@ -257,10 +263,16 @@ final class Parser implements ParserInterface
         while (!$this->stream->hasReachedEnd()) {
             if ($this->stream->isAt(TokenKind::Dot)) {
                 $dot = $this->stream->eat(TokenKind::Dot);
+                $question = $this->eatOptionalMarker();
                 $field = $this->stream->eat(TokenKind::Identifier);
                 $selector = new SelectorNode($field->value, $field->span);
 
-                if (!$this->stream->hasReachedEnd() && $this->stream->isAt(TokenKind::LeftParenthesis)) {
+                // An optional selection (`.?field`) is never a method call.
+                if (
+                    null === $question
+                    && !$this->stream->hasReachedEnd()
+                    && $this->stream->isAt(TokenKind::LeftParenthesis)
+                ) {
                     $openParen = $this->stream->eat(TokenKind::LeftParenthesis);
                     $args = $this->parsePunctuatedSequence(TokenKind::RightParenthesis, $this->parseExpression(...));
                     $closeParen = $this->stream->eat(TokenKind::RightParenthesis);
@@ -274,14 +286,15 @@ final class Parser implements ParserInterface
                         $closeParen->span,
                     );
                 } else {
-                    $expr = new MemberAccessExpression($expr, $dot->span, $selector);
+                    $expr = new MemberAccessExpression($expr, $dot->span, $question, $selector);
                 }
             } elseif ($this->stream->isAt(TokenKind::LeftBracket)) {
                 $openBracket = $this->stream->eat(TokenKind::LeftBracket);
+                $question = $this->eatOptionalMarker();
                 $index = $this->parseExpression();
                 $closeBracket = $this->stream->eat(TokenKind::RightBracket);
 
-                $expr = new IndexExpression($expr, $openBracket->span, $index, $closeBracket->span);
+                $expr = new IndexExpression($expr, $openBracket->span, $question, $index, $closeBracket->span);
             } else {
                 break;
             }
@@ -374,10 +387,40 @@ final class Parser implements ParserInterface
     private function parseListLiteral(): ListExpression
     {
         $open = $this->stream->eat(TokenKind::LeftBracket);
-        $elements = $this->parsePunctuatedSequence(TokenKind::RightBracket, $this->parseExpression(...));
+        $elements = $this->parsePunctuatedSequence(TokenKind::RightBracket, $this->parseListElement(...));
         $close = $this->stream->eat(TokenKind::RightBracket);
 
         return new ListExpression($open->span, $elements, $close->span);
+    }
+
+    /**
+     * @throws UnexpectedEndOfFileException
+     * @throws UnexpectedTokenException
+     * @throws InternalException If internal parsing operations fail.
+     */
+    private function parseListElement(): ListElementNode
+    {
+        $question = $this->eatOptionalMarker();
+        $value = $this->parseExpression();
+
+        return new ListElementNode($question, $value);
+    }
+
+    /**
+     * Consumes an optional marker `?` if present, returning its span.
+     *
+     * Used by optional field selections, indices, map entries, list elements,
+     * and message field initializers.
+     *
+     * @throws UnexpectedEndOfFileException
+     */
+    private function eatOptionalMarker(): null|Span
+    {
+        if ($this->stream->isAt(TokenKind::Question)) {
+            return $this->stream->eat(TokenKind::Question)->span;
+        }
+
+        return null;
     }
 
     /**
@@ -400,11 +443,12 @@ final class Parser implements ParserInterface
      */
     private function parseMapEntry(): MapEntryNode
     {
+        $question = $this->eatOptionalMarker();
         $key = $this->parseExpression();
         $colon = $this->stream->eat(TokenKind::Colon);
         $value = $this->parseExpression();
 
-        return new MapEntryNode($key, $colon->span, $value);
+        return new MapEntryNode($question, $key, $colon->span, $value);
     }
 
     /**
@@ -450,12 +494,13 @@ final class Parser implements ParserInterface
      */
     private function parseFieldInitializer(): FieldInitializerNode
     {
+        $question = $this->eatOptionalMarker();
         $fieldToken = $this->stream->eat(TokenKind::Identifier);
         $field = new SelectorNode($fieldToken->value, $fieldToken->span);
         $colon = $this->stream->eat(TokenKind::Colon);
         $value = $this->parseExpression();
 
-        return new FieldInitializerNode($field, $colon->span, $value);
+        return new FieldInitializerNode($question, $field, $colon->span, $value);
     }
 
     /**

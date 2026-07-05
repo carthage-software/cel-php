@@ -25,6 +25,12 @@ final readonly class DurationValue extends Value
     }
 
     #[Override]
+    public function isZeroValue(): bool
+    {
+        return $this->value->isZero();
+    }
+
+    #[Override]
     public function isEqual(Value $other): bool
     {
         if (!$other instanceof DurationValue) {

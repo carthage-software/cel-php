@@ -8,6 +8,7 @@ use Cel\CommonExpressionLanguage;
 use Cel\Extension\Decimal\DecimalExtension;
 use Cel\Extension\Decimal\DecimalFactory;
 use Cel\Extension\Decimal\DecimalNumber;
+use Cel\Value\BooleanValue;
 use Cel\Value\MessageValue;
 use Override;
 use PHPUnit\Framework\TestCase;
@@ -369,5 +370,39 @@ final class DecimalExtensionTest extends TestCase
         ]);
 
         static::assertTrue($receipt->result->getRawValue());
+    }
+
+    public function testZeroDecimalIsZeroValue(): void
+    {
+        $decimal = new DecimalNumber(DecimalFactory::from('0'));
+
+        static::assertTrue($decimal->isZeroValue());
+    }
+
+    public function testNonZeroDecimalIsNotZeroValue(): void
+    {
+        $decimal = new DecimalNumber(DecimalFactory::from('5.5'));
+
+        static::assertFalse($decimal->isZeroValue());
+    }
+
+    public function testOfNonZeroValueTreatsZeroDecimalAsAbsent(): void
+    {
+        $cel = $this->createCel();
+        $expr = $cel->parseString('optional.ofNonZeroValue(decimal("0")).hasValue()');
+        $receipt = $cel->run($expr);
+
+        static::assertInstanceOf(BooleanValue::class, $receipt->result);
+        static::assertFalse($receipt->result->value);
+    }
+
+    public function testOfNonZeroValueWrapsNonZeroDecimal(): void
+    {
+        $cel = $this->createCel();
+        $expr = $cel->parseString('optional.ofNonZeroValue(decimal("5")).hasValue()');
+        $receipt = $cel->run($expr);
+
+        static::assertInstanceOf(BooleanValue::class, $receipt->result);
+        static::assertTrue($receipt->result->value);
     }
 }

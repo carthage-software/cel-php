@@ -16,9 +16,9 @@ use Override;
 final readonly class ListExpression extends Expression
 {
     /**
-     * @param Span                           $openingBracket The span of the opening bracket `[`.
-     * @param PunctuatedSequence<Expression> $elements       The list of element expressions.
-     * @param Span                           $closingBracket The span of the closing bracket `]`.
+     * @param Span                                $openingBracket The span of the opening bracket `[`.
+     * @param PunctuatedSequence<ListElementNode> $elements       The list of element nodes.
+     * @param Span                                $closingBracket The span of the closing bracket `]`.
      */
     public function __construct(
         public Span $openingBracket,

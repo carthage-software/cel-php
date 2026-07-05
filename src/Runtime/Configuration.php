@@ -10,6 +10,7 @@ use Cel\Extension\DateTime\DateTimeExtension;
 use Cel\Extension\ExtensionInterface;
 use Cel\Extension\List\ListExtension;
 use Cel\Extension\Math\MathExtension;
+use Cel\Extension\Optional\OptionalExtension;
 use Cel\Extension\String\StringExtension;
 use Cel\Interpreter\Macro\AllMacro;
 use Cel\Interpreter\Macro\ExistsMacro;
@@ -18,6 +19,10 @@ use Cel\Interpreter\Macro\FilterMacro;
 use Cel\Interpreter\Macro\HasMacro;
 use Cel\Interpreter\Macro\MacroRegistry;
 use Cel\Interpreter\Macro\MapMacro;
+use Cel\Interpreter\Macro\OptFlatMapMacro;
+use Cel\Interpreter\Macro\OptMapMacro;
+use Cel\Interpreter\Macro\OrMacro;
+use Cel\Interpreter\Macro\OrValueMacro;
 use Cel\Message\MessageInterface;
 use Cel\Value\Resolver\ValueResolverInterface;
 use Override;
@@ -96,6 +101,10 @@ final class Configuration implements DefaultInterface
             $this->macroRegistry->register(new ExistsOneMacro());
             $this->macroRegistry->register(new FilterMacro());
             $this->macroRegistry->register(new MapMacro());
+            $this->macroRegistry->register(new OrMacro());
+            $this->macroRegistry->register(new OrValueMacro());
+            $this->macroRegistry->register(new OptMapMacro());
+            $this->macroRegistry->register(new OptFlatMapMacro());
         }
 
         // Register standard extensions by default
@@ -105,6 +114,7 @@ final class Configuration implements DefaultInterface
             $this->addExtension(new MathExtension());
             $this->addExtension(new StringExtension());
             $this->addExtension(new ListExtension());
+            $this->addExtension(new OptionalExtension());
         }
     }
 

@@ -21,10 +21,12 @@ final class IndexExpressionTest extends TestCase
         $index = new IntegerLiteralExpression(1, '1', new Span(5, 6));
         $close = new Span(6, 7);
 
-        $expr = new IndexExpression($operand, $open, $index, $close);
+        $expr = new IndexExpression($operand, $open, null, $index, $close);
 
         static::assertSame($operand, $expr->operand);
         static::assertSame($open, $expr->openingBracket);
+        static::assertNull($expr->question);
+        static::assertFalse($expr->isOptional());
         static::assertSame($index, $expr->index);
         static::assertSame($close, $expr->closingBracket);
         static::assertSame(ExpressionKind::Index, $expr->getKind());

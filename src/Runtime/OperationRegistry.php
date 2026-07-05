@@ -156,7 +156,21 @@ final class OperationRegistry implements DefaultInterface
      */
     public function getFunction(CallExpression $expression, array $arguments): null|array
     {
-        $name = $expression->function->name;
+        return $this->getFunctionByName($expression->function->name, $arguments);
+    }
+
+    /**
+     * Retrieves a function implementation by its fully qualified name and provided arguments.
+     *
+     * This supports namespaced global functions such as `optional.of`, whose name is not
+     * derivable from a single call expression selector.
+     *
+     * @param list<Value> $arguments
+     *
+     * @return null|list{bool, FunctionOverloadHandlerInterface}
+     */
+    public function getFunctionByName(string $name, array $arguments): null|array
+    {
         $candidates = $this->functionOverloads[$name] ?? [];
 
         if ([] === $candidates) {
@@ -203,7 +217,14 @@ final class OperationRegistry implements DefaultInterface
      */
     public function getFunctionSignatures(CallExpression $expression): null|array
     {
-        $name = $expression->function->name;
+        return $this->getFunctionSignaturesByName($expression->function->name);
+    }
+
+    /**
+     * @return null|non-empty-list<list<ValueKind>>
+     */
+    public function getFunctionSignaturesByName(string $name): null|array
+    {
         $candidates = $this->functionOverloads[$name] ?? null;
 
         if (null === $candidates) {

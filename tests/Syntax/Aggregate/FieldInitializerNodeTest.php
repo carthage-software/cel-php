@@ -18,8 +18,10 @@ final class FieldInitializerNodeTest extends TestCase
         $colon = new Span(5, 6);
         $value = new StringLiteralExpression('value', '"value"', new Span(7, 12));
 
-        $node = new FieldInitializerNode($field, $colon, $value);
+        $node = new FieldInitializerNode(null, $field, $colon, $value);
 
+        static::assertNull($node->question);
+        static::assertFalse($node->isOptional());
         static::assertSame($field, $node->field);
         static::assertSame($colon, $node->colon);
         static::assertSame($value, $node->value);

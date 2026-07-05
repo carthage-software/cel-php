@@ -6,6 +6,7 @@ namespace Cel\Tests\Syntax;
 
 use Cel\Span\Span;
 use Cel\Syntax\Aggregate\FieldInitializerNode;
+use Cel\Syntax\Aggregate\ListElementNode;
 use Cel\Syntax\Aggregate\ListExpression;
 use Cel\Syntax\Aggregate\MapEntryNode;
 use Cel\Syntax\Aggregate\MapExpression;
@@ -75,8 +76,8 @@ final class GrammarNodeCreationTest extends TestCase
 
     public function testListExpressionNode(): void
     {
-        $el1 = new IdentifierExpression(new IdentifierNode('a', new Span(1, 2)));
-        $el2 = new IdentifierExpression(new IdentifierNode('b', new Span(4, 5)));
+        $el1 = new ListElementNode(null, new IdentifierExpression(new IdentifierNode('a', new Span(1, 2))));
+        $el2 = new ListElementNode(null, new IdentifierExpression(new IdentifierNode('b', new Span(4, 5))));
         $elements = new PunctuatedSequence([$el1, $el2], [new Span(3, 4)]);
         $expr = new ListExpression(new Span(0, 1), $elements, new Span(5, 6));
         static::assertSame(6, $expr->getSpan()->length());
@@ -86,7 +87,7 @@ final class GrammarNodeCreationTest extends TestCase
     {
         $key = new StringLiteralExpression('key', '"key"', new Span(1, 4));
         $value = new IntegerLiteralExpression(1, '1', new Span(6, 7));
-        $entry = new MapEntryNode($key, new Span(5, 6), $value);
+        $entry = new MapEntryNode(null, $key, new Span(5, 6), $value);
         $entries = new PunctuatedSequence([$entry], []);
         $expr = new MapExpression(new Span(0, 1), $entries, new Span(7, 8));
         static::assertSame(8, $expr->getSpan()->length());
@@ -97,7 +98,7 @@ final class GrammarNodeCreationTest extends TestCase
         $typeName = new SelectorNode('MyMessage', new Span(0, 9));
         $field = new SelectorNode('field', new Span(10, 15));
         $value = new IntegerLiteralExpression(1, '1', new Span(17, 18));
-        $initializer = new FieldInitializerNode($field, new Span(16, 17), $value);
+        $initializer = new FieldInitializerNode(null, $field, new Span(16, 17), $value);
         $initializers = new PunctuatedSequence([$initializer], []);
         /** @var PunctuatedSequence<SelectorNode> */
         $selectors = new PunctuatedSequence([], []);
@@ -130,7 +131,7 @@ final class GrammarNodeCreationTest extends TestCase
         $operand = new IdentifierExpression(new IdentifierNode('obj', new Span(0, 3)));
         $dot = new Span(3, 4);
         $field = new SelectorNode('prop', new Span(4, 8));
-        $expr = new MemberAccessExpression($operand, $dot, $field);
+        $expr = new MemberAccessExpression($operand, $dot, null, $field);
         static::assertSame(8, $expr->getSpan()->length());
     }
 
@@ -140,7 +141,7 @@ final class GrammarNodeCreationTest extends TestCase
         $open = new Span(3, 4);
         $index = new IntegerLiteralExpression(0, '0', new Span(4, 5));
         $close = new Span(5, 6);
-        $expr = new IndexExpression($operand, $open, $index, $close);
+        $expr = new IndexExpression($operand, $open, null, $index, $close);
         static::assertSame(6, $expr->getSpan()->length());
     }
 
