@@ -1,13 +1,14 @@
 {
     "source": {
         "directories": [
-            "src"
+            "./../src"
         ]
     },
     "timeout": 5,
-    "minMsi": 80,
-    "minCoveredMsi": 80,
+    "minMsi": 100,
+    "minCoveredMsi": 100,
     "threads": "max",
+    "staticAnalysisTool": "mago",
     "logs": {
         "github": true,
         "stryker": {
@@ -15,6 +16,10 @@
         }
     },
     "tmpDir": "../var",
+    "mago": {
+        "configDir": "./",
+        "customPath": "./../vendor/bin/mago"
+    },
     "mutators": {
         "@default": true,
         "@function_signature": false,
