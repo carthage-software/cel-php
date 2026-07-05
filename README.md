@@ -26,6 +26,7 @@ This repository contains a PHP implementation of the [Common Expression Language
 
 - [Getting Started](./docs/getting-started.md) - Installation, basic usage, and core concepts
 - [Standard Extensions Reference](./docs/extensions.md) - Available functions and operators
+- [Optional Values](./docs/optional-values.md) - Work with values that may be absent
 - [Caching](./docs/caching.md) - Improve performance with caching
 - [Custom Functions](./docs/custom-functions.md) - Extend CEL with your own functions
 - [Custom Operators](./docs/custom-operators.md) - Add custom binary and unary operators

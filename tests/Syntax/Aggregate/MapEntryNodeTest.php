@@ -19,8 +19,10 @@ final class MapEntryNodeTest extends TestCase
         $colon = new Span(3, 4);
         $value = new StringLiteralExpression('value', '"value"', new Span(5, 10));
 
-        $node = new MapEntryNode($key, $colon, $value);
+        $node = new MapEntryNode(null, $key, $colon, $value);
 
+        static::assertNull($node->question);
+        static::assertFalse($node->isOptional());
         static::assertSame($key, $node->key);
         static::assertSame($colon, $node->colon);
         static::assertSame($value, $node->value);

@@ -6,6 +6,7 @@ namespace Cel\Extension\Decimal;
 
 use Cel\Exception\InternalException;
 use Cel\Message\MessageInterface;
+use Cel\Message\ZeroValueInterface;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Decimal\Decimal;
@@ -17,11 +18,21 @@ use Override;
  * This allows Decimal numbers to be used seamlessly in CEL expressions
  * with full operator overload support.
  */
-final readonly class DecimalNumber implements MessageInterface
+final readonly class DecimalNumber implements MessageInterface, ZeroValueInterface
 {
     public function __construct(
         private Decimal $inner,
     ) {}
+
+    /**
+     * A decimal is a zero value when it is numerically zero, so that
+     * `optional.ofNonZeroValue(decimal("0"))` yields `optional.none()`.
+     */
+    #[Override]
+    public function isZeroValue(): bool
+    {
+        return $this->inner->isZero();
+    }
 
     /**
      * Gets the wrapped Decimal\Decimal instance.

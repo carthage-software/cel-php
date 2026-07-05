@@ -24,6 +24,17 @@ final readonly class TimestampValue extends Value
         return ValueKind::Timestamp;
     }
 
+    /**
+     * A timestamp is never a zero value: the CEL/Go zero timestamp is the
+     * uninitialized zero time sentinel, which cannot be represented here (even
+     * the Unix epoch is explicitly not a zero value).
+     */
+    #[Override]
+    public function isZeroValue(): bool
+    {
+        return false;
+    }
+
     #[Override]
     public function isEqual(Value $other): bool
     {

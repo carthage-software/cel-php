@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cel\Tests\Syntax\Aggregate;
 
 use Cel\Span\Span;
+use Cel\Syntax\Aggregate\ListElementNode;
 use Cel\Syntax\Aggregate\ListExpression;
-use Cel\Syntax\Expression;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\Member\IdentifierExpression;
@@ -19,7 +19,7 @@ final class ListExpressionTest extends TestCase
     {
         $open = new Span(0, 1);
         $close = new Span(1, 2);
-        /** @var PunctuatedSequence<Expression> */
+        /** @var PunctuatedSequence<ListElementNode> */
         $elements = new PunctuatedSequence([], []);
 
         $expr = new ListExpression($open, $elements, $close);
@@ -37,8 +37,8 @@ final class ListExpressionTest extends TestCase
     public function testGetChildrenWithElements(): void
     {
         $open = new Span(0, 1);
-        $el1 = new IdentifierExpression(new IdentifierNode('a', new Span(1, 2)));
-        $el2 = new IdentifierExpression(new IdentifierNode('b', new Span(3, 4)));
+        $el1 = new ListElementNode(null, new IdentifierExpression(new IdentifierNode('a', new Span(1, 2))));
+        $el2 = new ListElementNode(null, new IdentifierExpression(new IdentifierNode('b', new Span(3, 4))));
         $elements = new PunctuatedSequence([$el1, $el2], [new Span(2, 3)]);
         $close = new Span(4, 5);
 

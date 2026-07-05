@@ -6,6 +6,7 @@ namespace Cel\Value;
 
 use Cel\Exception\UnsupportedOperationException;
 use Cel\Message\MessageInterface;
+use Cel\Message\ZeroValueInterface;
 use Override;
 
 /**
@@ -25,6 +26,17 @@ final readonly class MessageValue extends Value
     public function getKind(): ValueKind
     {
         return ValueKind::Message;
+    }
+
+    /**
+     * A message is a zero value only when its underlying message opts in via
+     * {@see ZeroValueInterface} and reports itself as zero. Messages that do not
+     * implement it are never treated as zero values.
+     */
+    #[Override]
+    public function isZeroValue(): bool
+    {
+        return $this->message instanceof ZeroValueInterface && $this->message->isZeroValue();
     }
 
     #[Override]

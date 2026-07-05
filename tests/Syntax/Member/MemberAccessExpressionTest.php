@@ -20,10 +20,12 @@ final class MemberAccessExpressionTest extends TestCase
         $dot = new Span(3, 4);
         $field = new SelectorNode('field', new Span(4, 9));
 
-        $expr = new MemberAccessExpression($operand, $dot, $field);
+        $expr = new MemberAccessExpression($operand, $dot, null, $field);
 
         static::assertSame($operand, $expr->operand);
         static::assertSame($dot, $expr->dot);
+        static::assertNull($expr->question);
+        static::assertFalse($expr->isOptional());
         static::assertSame($field, $expr->field);
         static::assertSame(ExpressionKind::MemberAccess, $expr->getKind());
         static::assertSame([$operand, $field], $expr->getChildren());

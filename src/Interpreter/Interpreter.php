@@ -7,6 +7,7 @@ namespace Cel\Interpreter;
 use Cel\Environment\EnvironmentInterface;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InvalidConditionTypeException;
+use Cel\Exception\InvalidOptionalConstructionException;
 use Cel\Exception\MessageConstructionException;
 use Cel\Exception\NoSuchFunctionException;
 use Cel\Exception\NoSuchKeyException;
@@ -19,6 +20,7 @@ use Cel\Interpreter\Macro\MacroContextInterface;
 use Cel\Interpreter\Macro\MacroRegistry;
 use Cel\Runtime\Configuration;
 use Cel\Runtime\OperationRegistry;
+use Cel\Span\Span;
 use Cel\Syntax\Aggregate\ListExpression;
 use Cel\Syntax\Aggregate\MapExpression;
 use Cel\Syntax\Aggregate\MessageExpression;
@@ -48,6 +50,7 @@ use Cel\Value\ListValue;
 use Cel\Value\MapValue;
 use Cel\Value\MessageValue;
 use Cel\Value\NullValue;
+use Cel\Value\OptionalValue;
 use Cel\Value\StringValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
@@ -64,6 +67,7 @@ use Throwable;
  * traversing the expression tree.
  *
  * @mago-expect lint:kan-defect
+ * @mago-expect lint:cyclomatic-complexity
  */
 final class Interpreter implements InterpreterInterface, MacroContextInterface
 {
@@ -199,8 +203,25 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
     private function list(ListExpression $expression): Value
     {
         $values = [];
-        foreach ($expression->elements as $element) {
-            $values[] = $this->run($element);
+        foreach ($expression->elements->elements as $element) {
+            $value = $this->run($element->value);
+
+            if ($element->isOptional()) {
+                if (!$value instanceof OptionalValue) {
+                    throw new InvalidOptionalConstructionException(
+                        Str\format('Optional list element requires an optional value, got `%s`', $value->getType()),
+                        $element->getSpan(),
+                    );
+                }
+
+                if (null !== $value->value) {
+                    $values[] = $value->value;
+                }
+
+                continue;
+            }
+
+            $values[] = $value;
         }
 
         return new ListValue($values);
@@ -221,7 +242,24 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
                 );
             }
 
-            $values[$key->value] = $this->run($entry->value);
+            $value = $this->run($entry->value);
+
+            if ($entry->isOptional()) {
+                if (!$value instanceof OptionalValue) {
+                    throw new InvalidOptionalConstructionException(
+                        Str\format('Optional map entry requires an optional value, got `%s`', $value->getType()),
+                        $entry->value->getSpan(),
+                    );
+                }
+
+                if (null !== $value->value) {
+                    $values[$key->value] = $value->value;
+                }
+
+                continue;
+            }
+
+            $values[$key->value] = $value;
         }
 
         return new MapValue($values);
@@ -398,37 +436,76 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
     private function memberAccess(MemberAccessExpression $expression): Value
     {
         $operand = $this->run($expression->operand);
+        $field = $expression->field->name;
+
+        // Viral optional: if the operand is itself an optional, propagate `none`,
+        // otherwise select optionally on the wrapped value.
+        if ($operand instanceof OptionalValue) {
+            $inner = $operand->value;
+            if (null === $inner) {
+                return OptionalValue::none();
+            }
+
+            return $this->optionalSelect($inner, $field, $expression->getSpan());
+        }
+
+        if ($expression->isOptional()) {
+            return $this->optionalSelect($operand, $field, $expression->getSpan());
+        }
+
         if ($operand instanceof MessageValue) {
-            $field = $operand->getField($expression->field->name);
-            if (null === $field) {
+            $value = $operand->getField($field);
+            if (null === $value) {
                 throw new NoSuchKeyException(
-                    Str\format(
-                        'Field `%s` does not exist on message of type `%s`',
-                        $expression->field->name,
-                        $operand->message::class,
-                    ),
+                    Str\format('Field `%s` does not exist on message of type `%s`', $field, $operand->message::class),
                     $expression->getSpan(),
                 );
             }
 
-            return $field;
+            return $value;
         }
 
         if ($operand instanceof MapValue) {
-            $field = $operand->get($expression->field->name);
-            if (null === $field) {
+            $value = $operand->get($field);
+            if (null === $value) {
                 throw new NoSuchKeyException(
-                    Str\format('Key `%s` does not exist in map', $expression->field->name),
+                    Str\format('Key `%s` does not exist in map', $field),
                     $expression->getSpan(),
                 );
             }
 
-            return $field;
+            return $value;
         }
 
         throw new NoSuchOverloadException(
-            Str\format('Cannot access member `%s` on type `%s`', $expression->field->name, $operand->getType()),
+            Str\format('Cannot access member `%s` on type `%s`', $field, $operand->getType()),
             $expression->getSpan(),
+        );
+    }
+
+    /**
+     * Performs an optional field selection on a concrete value, returning an optional
+     * that holds the field value when present and `optional.none()` when it is absent.
+     *
+     * @throws EvaluationException If the value does not support field selection.
+     */
+    private function optionalSelect(Value $base, string $field, Span $span): OptionalValue
+    {
+        if ($base instanceof MessageValue) {
+            $value = $base->getField($field);
+
+            return null === $value ? OptionalValue::none() : OptionalValue::of($value);
+        }
+
+        if ($base instanceof MapValue) {
+            $value = $base->get($field);
+
+            return null === $value ? OptionalValue::none() : OptionalValue::of($value);
+        }
+
+        throw new NoSuchOverloadException(
+            Str\format('Cannot access member `%s` on type `%s`', $field, $base->getType()),
+            $span,
         );
     }
 
@@ -438,6 +515,22 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
     private function index(IndexExpression $expression): Value
     {
         $operand = $this->run($expression->operand);
+
+        // Viral optional: if the operand is itself an optional, propagate `none`,
+        // otherwise index optionally into the wrapped value.
+        if ($operand instanceof OptionalValue) {
+            $inner = $operand->value;
+            if (null === $inner) {
+                return OptionalValue::none();
+            }
+
+            return $this->optionalIndex($inner, $this->run($expression->index), $expression);
+        }
+
+        if ($expression->isOptional()) {
+            return $this->optionalIndex($operand, $this->run($expression->index), $expression);
+        }
+
         if (!$operand instanceof ListValue && !$operand instanceof MapValue && !$operand instanceof MessageValue) {
             throw new NoSuchOverloadException(
                 Str\format('Indexing is only supported on lists, maps, and messages, got `%s`', $operand->getType()),
@@ -509,6 +602,61 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         return $operand->value[$index->value];
+    }
+
+    /**
+     * Performs an optional index access on a concrete value, returning an optional that
+     * holds the indexed value when present and `optional.none()` when the index is absent.
+     *
+     * @throws EvaluationException If the value does not support indexing or the index type is invalid.
+     */
+    private function optionalIndex(Value $base, Value $index, IndexExpression $expression): OptionalValue
+    {
+        if ($base instanceof ListValue) {
+            if (!$index instanceof IntegerValue) {
+                throw new NoSuchOverloadException(
+                    Str\format('List indices must be integer, got `%s`', $index->getType()),
+                    $expression->index->getSpan(),
+                );
+            }
+
+            if ($index->value < 0 || $index->value >= Iter\count($base->value)) {
+                return OptionalValue::none();
+            }
+
+            return OptionalValue::of($base->value[$index->value]);
+        }
+
+        if ($base instanceof MapValue) {
+            if (!$index instanceof StringValue && !$index instanceof IntegerValue) {
+                throw new NoSuchOverloadException(
+                    Str\format('Map keys must be string or integer, got `%s`', $index->getType()),
+                    $expression->index->getSpan(),
+                );
+            }
+
+            $value = $base->get($index->value);
+
+            return null === $value ? OptionalValue::none() : OptionalValue::of($value);
+        }
+
+        if ($base instanceof MessageValue) {
+            if (!$index instanceof StringValue) {
+                throw new NoSuchOverloadException(
+                    Str\format('Message fields must be accessed by string, got `%s`', $index->getType()),
+                    $expression->index->getSpan(),
+                );
+            }
+
+            $value = $base->getField($index->value);
+
+            return null === $value ? OptionalValue::none() : OptionalValue::of($value);
+        }
+
+        throw new NoSuchOverloadException(
+            Str\format('Indexing is only supported on lists, maps, and messages, got `%s`', $base->getType()),
+            $expression->getSpan(),
+        );
     }
 
     /**
@@ -591,7 +739,27 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
         $fields = [];
         foreach ($expression->initializers as $initializer) {
-            $fields[$initializer->field->name] = $this->run($initializer->value);
+            $value = $this->run($initializer->value);
+
+            if ($initializer->isOptional()) {
+                if (!$value instanceof OptionalValue) {
+                    throw new InvalidOptionalConstructionException(
+                        Str\format(
+                            'Optional field initializer requires an optional value, got `%s`',
+                            $value->getType(),
+                        ),
+                        $initializer->value->getSpan(),
+                    );
+                }
+
+                if (null !== $value->value) {
+                    $fields[$initializer->field->name] = $value->value;
+                }
+
+                continue;
+            }
+
+            $fields[$initializer->field->name] = $value;
         }
 
         try {
@@ -613,6 +781,13 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $macro_result = $this->macroRegistry->tryExecute($expression, $this);
         if (null !== $macro_result) {
             return $macro_result;
+        }
+
+        // Namespaced global function calls, such as `optional.of(x)`, where the target
+        // identifier (`optional`) is a reserved namespace rather than a variable.
+        $namespaced_result = $this->namespacedCall($expression);
+        if (null !== $namespaced_result) {
+            return $namespaced_result;
         }
 
         // Fall back to regular function calls
@@ -639,6 +814,54 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             $argument_kinds = Vec\map($arguments, static fn(Value $arg): ValueKind => $arg->getKind());
 
             throw NoSuchOverloadException::forCall($expression, $available_signatures, $argument_kinds);
+        }
+
+        [$idempotent, $callable] = $function;
+        if (!$idempotent) {
+            $this->idempotent = false;
+        }
+
+        return $callable($expression, $arguments);
+    }
+
+    /**
+     * Attempts to resolve a call whose target is a namespace identifier (e.g. `optional`)
+     * to a registered dotted global function (e.g. `optional.of`).
+     *
+     * Returns null when the call is not a namespaced global function call, in which case
+     * it is handled as an ordinary function or method call.
+     *
+     * @throws EvaluationException
+     */
+    private function namespacedCall(CallExpression $expression): null|Value
+    {
+        $target = $expression->target;
+        if (!$target instanceof IdentifierExpression) {
+            return null;
+        }
+
+        $namespace = $target->identifier->name;
+        if ($this->environment->hasVariable($namespace)) {
+            // A variable of the same name shadows the namespace.
+            return null;
+        }
+
+        $name = $namespace . '.' . $expression->function->name;
+        $signatures = $this->registry->getFunctionSignaturesByName($name);
+        if (null === $signatures) {
+            return null;
+        }
+
+        $arguments = [];
+        foreach ($expression->arguments->elements as $arg) {
+            $arguments[] = $this->run($arg);
+        }
+
+        $function = $this->registry->getFunctionByName($name, $arguments);
+        if (null === $function) {
+            $argument_kinds = Vec\map($arguments, static fn(Value $arg): ValueKind => $arg->getKind());
+
+            throw NoSuchOverloadException::forCall($expression, $signatures, $argument_kinds);
         }
 
         [$idempotent, $callable] = $function;

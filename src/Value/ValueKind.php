@@ -18,6 +18,7 @@ enum ValueKind: string
     case UnsignedInteger = 'uint';
     case Duration = 'duration';
     case Timestamp = 'timestamp';
+    case Optional = 'optional_type';
 
     public function isAggregate(): bool
     {
