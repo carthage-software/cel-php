@@ -20,23 +20,7 @@ final class DateTimeExtensionTest extends RuntimeTestCase
     #[Override]
     public static function provideEvaluationCases(): iterable
     {
-        yield 'DateTime timestamp(): valid RFC3339 with milliseconds' => [
-            'timestamp("2025-09-13T12:30:05.123Z")',
-            [],
-            new TimestampValue(Timestamp::fromParts(1_757_766_605, 123_000_000)),
-        ];
-
-        yield 'DateTime timestamp(): valid RFC3339 without milliseconds' => [
-            'timestamp("2025-09-13T12:30:05Z")',
-            [],
-            new TimestampValue(Timestamp::fromParts(1_757_766_605)),
-        ];
-
-        yield 'DateTime timestamp(): invalid format' => [
-            'timestamp("2025-09-13 12:30:05")',
-            [],
-            new TypeConversionException('Failed to parse timestamp string "2025-09-13 12:30:05".', new Span(0, 30)),
-        ];
+        yield from self::provideTimestampStringCases();
 
         yield 'DateTime duration(): simple hours' => [
             'duration("2h")',
@@ -343,6 +327,66 @@ final class DateTimeExtensionTest extends RuntimeTestCase
         ];
 
         yield from self::provideArithmeticCases();
+    }
+
+    /**
+     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: TimestampValue|TypeConversionException}>
+     */
+    private static function provideTimestampStringCases(): iterable
+    {
+        yield 'DateTime timestamp(): valid RFC3339 with milliseconds' => [
+            'timestamp("2025-09-13T12:30:05.123Z")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_757_766_605, 123_000_000)),
+        ];
+
+        yield 'DateTime timestamp(): valid RFC3339 without milliseconds' => [
+            'timestamp("2025-09-13T12:30:05Z")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_757_766_605)),
+        ];
+
+        yield 'DateTime timestamp(): nanosecond precision with leading zeros' => [
+            'timestamp("2009-02-13T23:31:20.000000001Z")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_234_567_880, 1)),
+        ];
+
+        yield 'DateTime timestamp(): full nanosecond fraction' => [
+            'timestamp("2009-02-13T23:31:20.123456789Z")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_234_567_880, 123_456_789)),
+        ];
+
+        yield 'DateTime timestamp(): year 0001 on the proleptic Gregorian calendar' => [
+            'timestamp("0001-01-01T00:00:00Z")',
+            [],
+            new TimestampValue(Timestamp::fromParts(-62_135_596_800)),
+        ];
+
+        yield 'DateTime timestamp(): positive timezone offset shifts to UTC' => [
+            'timestamp("2025-09-13T12:30:05+02:30")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_757_757_605)),
+        ];
+
+        yield 'DateTime timestamp(): negative timezone offset shifts to UTC' => [
+            'timestamp("2025-09-13T12:30:05-05:00")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_757_784_605)),
+        ];
+
+        yield 'DateTime timestamp(): impossible calendar date is rejected' => [
+            'timestamp("2025-02-30T00:00:00Z")',
+            [],
+            new TypeConversionException('Failed to parse timestamp string "2025-02-30T00:00:00Z".', new Span(0, 37)),
+        ];
+
+        yield 'DateTime timestamp(): invalid format' => [
+            'timestamp("2025-09-13 12:30:05")',
+            [],
+            new TypeConversionException('Failed to parse timestamp string "2025-09-13 12:30:05".', new Span(0, 30)),
+        ];
     }
 
     /**
