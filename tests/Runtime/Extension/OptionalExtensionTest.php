@@ -142,6 +142,25 @@ final class OptionalExtensionTest extends RuntimeTestCase
         ];
 
         yield 'type of optional' => ['type(optional.of(1))', [], new TypeValue('optional_type')];
+        yield 'optional_type denotation' => ['optional_type', [], new TypeValue('optional_type')];
+        yield 'optional_type matches an optional value type' => [
+            'type(optional.none()) == optional_type',
+            [],
+            new BooleanValue(true),
+        ];
+
+        yield 'has on absent optional field' => ['has({}.?x.y)', [], new BooleanValue(false)];
+        yield 'has on present optional field' => ['has(optional.of({"c": 1}).c)', [], new BooleanValue(true)];
+        yield 'has on missing present optional field' => [
+            'has(optional.of({"c": 1}).missing)',
+            [],
+            new BooleanValue(false),
+        ];
+        yield 'has on optional none map value' => [
+            'has({"foo": optional.none()}.foo.bar)',
+            [],
+            new BooleanValue(false),
+        ];
     }
 
     /**
@@ -208,12 +227,25 @@ final class OptionalExtensionTest extends RuntimeTestCase
 
         // Optional list indexing.
         yield 'list optional index present' => ['[10, 20][?1].value()', [], new IntegerValue(20)];
+        yield 'list optional index integral double' => ['[10, 20][?dyn(1.0)].value()', [], new IntegerValue(20)];
+        yield 'list optional index uint' => ['[10, 20][?dyn(1u)].value()', [], new IntegerValue(20)];
         yield 'list optional index out of bounds' => ['[10][?5].hasValue()', [], new BooleanValue(false)];
         yield 'list optional index negative' => ['[10][?-1].hasValue()', [], new BooleanValue(false)];
         yield 'list optional index wrong type' => [
             '[10][?"x"].hasValue()',
             [],
-            new NoSuchOverloadException('List indices must be integer, got `string`', new Span(0, 0)),
+            new NoSuchOverloadException(
+                'List indices must be an integer or integral double, got `string`',
+                new Span(0, 0),
+            ),
+        ];
+        yield 'list optional index non-integral double' => [
+            '[10][?dyn(0.5)].hasValue()',
+            [],
+            new NoSuchOverloadException(
+                'List indices must be an integer or integral double, got `double`',
+                new Span(0, 0),
+            ),
         ];
 
         // Optional map indexing.

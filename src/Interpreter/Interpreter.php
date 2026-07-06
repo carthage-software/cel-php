@@ -64,6 +64,8 @@ use Psl\Str\Byte;
 use Psl\Vec;
 use Throwable;
 
+use function is_int;
+
 /**
  * A tree-walking interpreter that evaluates expressions by recursively
  * traversing the expression tree.
@@ -582,25 +584,33 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             return $field;
         }
 
-        if (!$index instanceof IntegerValue) {
+        $position = $this->resolveListIndex($index);
+        if (null === $position) {
             throw new NoSuchOverloadException(
-                Str\format('List indices must be integer, got `%s`', $index->getType()),
+                Str\format('List indices must be an integer or integral double, got `%s`', $index->getType()),
                 $expression->index->getSpan(),
             );
         }
 
-        if ($index->value < 0 || $index->value >= Iter\count($operand->value)) {
+        if ($position < 0 || $position >= Iter\count($operand->value)) {
             throw new NoSuchKeyException(
                 Str\format(
                     'Index `%d` is out of bounds for list of length `%d`',
-                    $index->value,
+                    $position,
                     Iter\count($operand->value),
                 ),
                 $expression->getSpan(),
             );
         }
 
-        return $operand->value[$index->value];
+        return $operand->value[$position];
+    }
+
+    private function resolveListIndex(Value $index): null|int
+    {
+        $resolved = MapKeyUtil::resolve($index);
+
+        return is_int($resolved) ? $resolved : null;
     }
 
     /**
@@ -612,18 +622,19 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
     private function optionalIndex(Value $base, Value $index, IndexExpression $expression): OptionalValue
     {
         if ($base instanceof ListValue) {
-            if (!$index instanceof IntegerValue) {
+            $position = $this->resolveListIndex($index);
+            if (null === $position) {
                 throw new NoSuchOverloadException(
-                    Str\format('List indices must be integer, got `%s`', $index->getType()),
+                    Str\format('List indices must be an integer or integral double, got `%s`', $index->getType()),
                     $expression->index->getSpan(),
                 );
             }
 
-            if ($index->value < 0 || $index->value >= Iter\count($base->value)) {
+            if ($position < 0 || $position >= Iter\count($base->value)) {
                 return OptionalValue::none();
             }
 
-            return OptionalValue::of($base->value[$index->value]);
+            return OptionalValue::of($base->value[$position]);
         }
 
         if ($base instanceof MapValue) {

@@ -15,6 +15,7 @@ use Cel\Tests\Fixture\CommentMessage;
 use Cel\Tests\Fixture\UserMessage;
 use Cel\Value\BooleanValue;
 use Cel\Value\FloatValue;
+use Cel\Value\IntegerValue;
 use Cel\Value\MessageValue;
 use Cel\Value\StringValue;
 use Cel\Value\UnsignedIntegerValue;
@@ -32,6 +33,8 @@ final class RuntimeTest extends RuntimeTestCase
      *     2: Value|EvaluationException,
      *     3?: null|Configuration
      * }>
+     *
+     * @mago-expect lint:halstead
      */
     #[Override]
     public static function provideEvaluationCases(): iterable
@@ -289,6 +292,17 @@ final class RuntimeTest extends RuntimeTestCase
             '-(-9223372036854775808)',
             [],
             new OverflowException('Integer overflow on negation', new Span(0, 23)),
+        ];
+
+        yield 'List index by integral double' => ['[7, 8, 9][dyn(0.0)]', [], new IntegerValue(7)];
+        yield 'List index by unsigned integer' => ['[7, 8, 9][dyn(2u)]', [], new IntegerValue(9)];
+        yield 'List index by non-integral double errors' => [
+            '[7, 8, 9][dyn(0.5)]',
+            [],
+            new NoSuchOverloadException(
+                'List indices must be an integer or integral double, got `double`',
+                new Span(0, 0),
+            ),
         ];
 
         yield 'Unsigned integer sum in range' => ['10u + 20u', [], new UnsignedIntegerValue('30')];

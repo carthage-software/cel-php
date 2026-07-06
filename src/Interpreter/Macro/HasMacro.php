@@ -10,6 +10,7 @@ use Cel\Syntax\Member\MemberAccessExpression;
 use Cel\Value\BooleanValue;
 use Cel\Value\MapValue;
 use Cel\Value\MessageValue;
+use Cel\Value\OptionalValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Str;
@@ -61,6 +62,14 @@ final readonly class HasMacro implements MacroInterface
         }
 
         $operand = $context->evaluate($argument->operand);
+        if ($operand instanceof OptionalValue) {
+            if (null === $operand->value) {
+                return new BooleanValue(false);
+            }
+
+            $operand = $operand->value;
+        }
+
         if (!$operand instanceof MessageValue && !$operand instanceof MapValue) {
             throw new InvalidMacroCallException(
                 Str\format('The `has` macro requires a message or map operand, got `%s`', $operand->getType()),

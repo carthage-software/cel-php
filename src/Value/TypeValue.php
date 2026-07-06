@@ -32,6 +32,7 @@ final readonly class TypeValue extends Value
         'map',
         'null_type',
         'type',
+        'optional_type',
     ];
 
     /**
