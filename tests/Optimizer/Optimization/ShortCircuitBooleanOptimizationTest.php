@@ -26,7 +26,7 @@ final class ShortCircuitBooleanOptimizationTest extends OptimizationTestCase
     #[Override]
     public static function provideOptimizationCases(): iterable
     {
-        $ident = new IdentifierExpression(new IdentifierNode('a', Span::zero()));
+        $ident = new IdentifierExpression(null, new IdentifierNode('a', Span::zero()));
         $true = new BoolLiteralExpression(true, 'true', Span::zero());
         $false = new BoolLiteralExpression(false, 'false', Span::zero());
         $and = new BinaryOperator(BinaryOperatorKind::And, Span::zero());

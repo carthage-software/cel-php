@@ -15,11 +15,11 @@ final class ConditionalExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void
     {
-        $cond = new IdentifierExpression(new IdentifierNode('a', new Span(0, 1)));
+        $cond = new IdentifierExpression(null, new IdentifierNode('a', new Span(0, 1)));
         $q = new Span(2, 3);
-        $then = new IdentifierExpression(new IdentifierNode('b', new Span(4, 5)));
+        $then = new IdentifierExpression(null, new IdentifierNode('b', new Span(4, 5)));
         $c = new Span(6, 7);
-        $else = new IdentifierExpression(new IdentifierNode('c', new Span(8, 9)));
+        $else = new IdentifierExpression(null, new IdentifierNode('c', new Span(8, 9)));
 
         $expr = new ConditionalExpression($cond, $q, $then, $c, $else);
 

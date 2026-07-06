@@ -16,7 +16,7 @@ final class IndexExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void
     {
-        $operand = new IdentifierExpression(new IdentifierNode('list', new Span(0, 4)));
+        $operand = new IdentifierExpression(null, new IdentifierNode('list', new Span(0, 4)));
         $open = new Span(4, 5);
         $index = new IntegerLiteralExpression(1, '1', new Span(5, 6));
         $close = new Span(6, 7);

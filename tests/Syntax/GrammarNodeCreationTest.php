@@ -63,21 +63,21 @@ final class GrammarNodeCreationTest extends TestCase
 
     public function testIdentifierExpressionNode(): void
     {
-        $ident = new IdentifierExpression(new IdentifierNode('myVar', new Span(0, 5)));
+        $ident = new IdentifierExpression(null, new IdentifierNode('myVar', new Span(0, 5)));
         static::assertSame(5, $ident->getSpan()->length());
     }
 
     public function testParenthesizedExpressionNode(): void
     {
-        $inner = new IdentifierExpression(new IdentifierNode('a', new Span(1, 2)));
+        $inner = new IdentifierExpression(null, new IdentifierNode('a', new Span(1, 2)));
         $expr = new ParenthesizedExpression(new Span(0, 1), $inner, new Span(2, 3));
         static::assertSame(3, $expr->getSpan()->length());
     }
 
     public function testListExpressionNode(): void
     {
-        $el1 = new ListElementNode(null, new IdentifierExpression(new IdentifierNode('a', new Span(1, 2))));
-        $el2 = new ListElementNode(null, new IdentifierExpression(new IdentifierNode('b', new Span(4, 5))));
+        $el1 = new ListElementNode(null, new IdentifierExpression(null, new IdentifierNode('a', new Span(1, 2))));
+        $el2 = new ListElementNode(null, new IdentifierExpression(null, new IdentifierNode('b', new Span(4, 5))));
         $elements = new PunctuatedSequence([$el1, $el2], [new Span(3, 4)]);
         $expr = new ListExpression(new Span(0, 1), $elements, new Span(5, 6));
         static::assertSame(6, $expr->getSpan()->length());
@@ -108,27 +108,27 @@ final class GrammarNodeCreationTest extends TestCase
 
     public function testBinaryExpressionNode(): void
     {
-        $left = new IdentifierExpression(new IdentifierNode('a', new Span(0, 1)));
+        $left = new IdentifierExpression(null, new IdentifierNode('a', new Span(0, 1)));
         $op = new BinaryOperator(BinaryOperatorKind::Plus, new Span(1, 2));
-        $right = new IdentifierExpression(new IdentifierNode('b', new Span(3, 4)));
+        $right = new IdentifierExpression(null, new IdentifierNode('b', new Span(3, 4)));
         $expr = new BinaryExpression($left, $op, $right);
         static::assertSame(4, $expr->getSpan()->length());
     }
 
     public function testConditionalExpressionNode(): void
     {
-        $cond = new IdentifierExpression(new IdentifierNode('a', new Span(0, 1)));
+        $cond = new IdentifierExpression(null, new IdentifierNode('a', new Span(0, 1)));
         $q = new Span(1, 2);
-        $then = new IdentifierExpression(new IdentifierNode('b', new Span(2, 3)));
+        $then = new IdentifierExpression(null, new IdentifierNode('b', new Span(2, 3)));
         $c = new Span(3, 4);
-        $else = new IdentifierExpression(new IdentifierNode('c', new Span(4, 5)));
+        $else = new IdentifierExpression(null, new IdentifierNode('c', new Span(4, 5)));
         $expr = new ConditionalExpression($cond, $q, $then, $c, $else);
         static::assertSame(5, $expr->getSpan()->length());
     }
 
     public function testMemberAccessExpressionNode(): void
     {
-        $operand = new IdentifierExpression(new IdentifierNode('obj', new Span(0, 3)));
+        $operand = new IdentifierExpression(null, new IdentifierNode('obj', new Span(0, 3)));
         $dot = new Span(3, 4);
         $field = new SelectorNode('prop', new Span(4, 8));
         $expr = new MemberAccessExpression($operand, $dot, null, $field);
@@ -137,7 +137,7 @@ final class GrammarNodeCreationTest extends TestCase
 
     public function testIndexExpressionNode(): void
     {
-        $operand = new IdentifierExpression(new IdentifierNode('arr', new Span(0, 3)));
+        $operand = new IdentifierExpression(null, new IdentifierNode('arr', new Span(0, 3)));
         $open = new Span(3, 4);
         $index = new IntegerLiteralExpression(0, '0', new Span(4, 5));
         $close = new Span(5, 6);
@@ -147,11 +147,11 @@ final class GrammarNodeCreationTest extends TestCase
 
     public function testCallExpressionNode(): void
     {
-        $target = new IdentifierExpression(new IdentifierNode('obj', new Span(0, 3)));
+        $target = new IdentifierExpression(null, new IdentifierNode('obj', new Span(0, 3)));
         $targetSeparator = new Span(3, 4);
         $function = new SelectorNode('method', new Span(4, 10));
         $open = new Span(10, 11);
-        $arg1 = new IdentifierExpression(new IdentifierNode('a', new Span(11, 12)));
+        $arg1 = new IdentifierExpression(null, new IdentifierNode('a', new Span(11, 12)));
         $args = new PunctuatedSequence([$arg1], []);
         $close = new Span(12, 13);
         $expr = new CallExpression($target, $targetSeparator, $function, $open, $args, $close);
@@ -161,7 +161,7 @@ final class GrammarNodeCreationTest extends TestCase
     public function testUnaryExpressionNode(): void
     {
         $op = new UnaryOperator(UnaryOperatorKind::Not, new Span(0, 1));
-        $operand = new IdentifierExpression(new IdentifierNode('a', new Span(1, 2)));
+        $operand = new IdentifierExpression(null, new IdentifierNode('a', new Span(1, 2)));
         $expr = new UnaryExpression($op, $operand);
         static::assertSame(2, $expr->getSpan()->length());
     }

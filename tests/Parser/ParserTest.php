@@ -90,6 +90,35 @@ final class ParserTest extends TestCase
             },
         ];
 
+        yield 'plain identifier has no leading dot' => [
+            'y',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(IdentifierExpression::class, $expr);
+                $test->assertNull($expr->leadingDot);
+                $test->assertSame('y', $expr->identifier->name);
+            },
+        ];
+
+        yield 'leading-dot identifier is an absolute reference' => [
+            '.y',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(IdentifierExpression::class, $expr);
+                $test->assertNotNull($expr->leadingDot);
+                $test->assertSame('y', $expr->identifier->name);
+            },
+        ];
+
+        yield 'leading-dot qualified reference' => [
+            '.y.z',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(MemberAccessExpression::class, $expr);
+                $test->assertSame('z', $expr->field->name);
+                $test->assertInstanceOf(IdentifierExpression::class, $expr->operand);
+                $test->assertNotNull($expr->operand->leadingDot);
+                $test->assertSame('y', $expr->operand->identifier->name);
+            },
+        ];
+
         yield 'precedence: 1 + 2 * 3' => [
             '1 + 2 * 3',
             static function (TestCase $test, Expression $expr): void {

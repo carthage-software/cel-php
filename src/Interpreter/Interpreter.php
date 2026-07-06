@@ -71,11 +71,18 @@ use Throwable;
  *
  * @mago-expect lint:kan-defect
  * @mago-expect lint:cyclomatic-complexity
+ * @mago-expect lint:too-many-methods
  */
 final class Interpreter implements InterpreterInterface, MacroContextInterface
 {
     private bool $idempotent = true;
     private readonly MacroRegistry $macroRegistry;
+
+    /**
+     * The environment as it stood when evaluation began, used to resolve
+     * absolute (leading-dot) references regardless of comprehension scoping.
+     */
+    private readonly EnvironmentInterface $rootEnvironment;
 
     public function __construct(
         private readonly Configuration $configuration,
@@ -83,6 +90,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         private EnvironmentInterface $environment,
     ) {
         $this->macroRegistry = $configuration->getMacroRegistry();
+        $this->rootEnvironment = $environment;
     }
 
     /**
@@ -452,11 +460,12 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
      */
     private function memberAccess(MemberAccessExpression $expression): Value
     {
-        // A dotted chain of plain identifiers may name a qualified type value
-        // (e.g. `google.protobuf.Timestamp`) when its root is not a bound variable.
-        $typeDenotation = $this->qualifiedTypeDenotation($expression);
-        if (null !== $typeDenotation) {
-            return $typeDenotation;
+        // A dotted chain of plain identifiers may name a qualified variable or
+        // type (e.g. `x.y` or `google.protobuf.Timestamp`, or an absolute `.y`
+        // reference). Resolve those before falling back to field selection.
+        $qualified = $this->resolveQualifiedChain($expression);
+        if (null !== $qualified) {
+            return $qualified;
         }
 
         $operand = $this->run($expression->operand);
@@ -477,12 +486,22 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             return $this->optionalSelect($operand, $field, $expression->getSpan());
         }
 
+        return $this->selectField($operand, $field, $expression->getSpan());
+    }
+
+    /**
+     * Selects a field from a concrete message or map value.
+     *
+     * @throws EvaluationException If the field is absent or the value is not selectable.
+     */
+    private function selectField(Value $operand, string $field, Span $span): Value
+    {
         if ($operand instanceof MessageValue) {
             $value = $operand->getField($field);
             if (null === $value) {
                 throw new NoSuchKeyException(
                     Str\format('Field `%s` does not exist on message of type `%s`', $field, $operand->message::class),
-                    $expression->getSpan(),
+                    $span,
                 );
             }
 
@@ -492,10 +511,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         if ($operand instanceof MapValue) {
             $value = $operand->get(MapKeyUtil::stringKey($field));
             if (null === $value) {
-                throw new NoSuchKeyException(
-                    Str\format('Key `%s` does not exist in map', $field),
-                    $expression->getSpan(),
-                );
+                throw new NoSuchKeyException(Str\format('Key `%s` does not exist in map', $field), $span);
             }
 
             return $value;
@@ -503,27 +519,34 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
         throw new NoSuchOverloadException(
             Str\format('Cannot access member `%s` on type `%s`', $field, $operand->getType()),
-            $expression->getSpan(),
+            $span,
         );
     }
 
     /**
-     * Resolves a chain of plain identifier selectors (e.g. `google.protobuf.Timestamp`)
-     * to the type value it denotes, or null when it is not such a chain, when its
-     * root is a bound variable, or when the assembled name is not a type.
+     * Resolves a chain of plain identifier selectors (e.g. `x.y`, `.y.z`,
+     * `google.protobuf.Timestamp`) using CEL's longest-prefix rule, or null when
+     * it is not such a chain or should be handled as ordinary field selection.
+     *
+     * A leading-dot (absolute) chain resolves against the root environment,
+     * ignoring comprehension-local bindings. A relative chain is only resolved
+     * here when its root is not a bound variable; otherwise a bound root (a
+     * message, or a comprehension variable) is left to field selection.
+     *
+     * @throws EvaluationException If an absolute reference cannot be resolved.
      */
-    private function qualifiedTypeDenotation(MemberAccessExpression $expression): null|TypeValue
+    private function resolveQualifiedChain(MemberAccessExpression $expression): null|Value
     {
         // Every link must be a plain (non-optional) field access so the whole
         // expression spells a qualified identifier.
-        $segments = [];
+        $fields = [];
         $current = $expression;
         while ($current instanceof MemberAccessExpression) {
             if (null !== $current->question) {
                 return null;
             }
 
-            $segments[] = $current->field->name;
+            $fields[] = $current->field->name;
             $current = $current->operand;
         }
 
@@ -531,13 +554,61 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             return null;
         }
 
-        // A bound variable at the root takes precedence over a type name.
-        $root = $current->identifier->name;
-        if (null !== $this->environment->getVariable($root)) {
+        // Root identifier first, then the field selectors in source order.
+        $segments = [$current->identifier->name, ...Vec\reverse($fields)];
+
+        if (null !== $current->leadingDot) {
+            // Absolute reference: resolve against the root namespace.
+            $resolved = $this->resolveQualifiedSegments($segments, $this->rootEnvironment, $expression->getSpan());
+            if (null !== $resolved) {
+                return $resolved;
+            }
+
+            throw new NoSuchVariableException(
+                Str\format('Variable `%s` is not defined in the environment', Str\join($segments, '.')),
+                $expression->getSpan(),
+            );
+        }
+
+        // A bound root variable (a message, or a comprehension variable) is
+        // resolved through ordinary field selection, not as a qualified name.
+        if (null !== $this->environment->getVariable($segments[0])) {
             return null;
         }
 
-        return TypeValue::denotation($root . '.' . Str\join(Vec\reverse($segments), '.'));
+        return $this->resolveQualifiedSegments($segments, $this->environment, $expression->getSpan());
+    }
+
+    /**
+     * Applies CEL's longest-prefix name resolution to a list of identifier
+     * segments: the longest prefix that names a bound variable or a type is the
+     * base, and any remaining segments are applied as field selections. Returns
+     * null when no prefix resolves.
+     *
+     * @param non-empty-list<string> $segments
+     *
+     * @throws EvaluationException If a remaining segment cannot be selected.
+     */
+    private function resolveQualifiedSegments(
+        array $segments,
+        EnvironmentInterface $environment,
+        Span $span,
+    ): null|Value {
+        for ($length = Iter\count($segments); $length >= 1; --$length) {
+            $name = Str\join(Vec\take($segments, $length), '.');
+            $base = $environment->getVariable($name) ?? TypeValue::denotation($name);
+            if (null === $base) {
+                continue;
+            }
+
+            foreach (Vec\slice($segments, $length) as $field) {
+                $base = $this->selectField($base, $field, $span);
+            }
+
+            return $base;
+        }
+
+        return null;
     }
 
     /**
@@ -766,7 +837,11 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
     {
         $name = $expression->identifier->name;
 
-        $value = $this->environment->getVariable($name);
+        // An absolute (leading-dot) reference resolves against the root
+        // namespace, bypassing any comprehension-local binding of the name.
+        $environment = null !== $expression->leadingDot ? $this->rootEnvironment : $this->environment;
+
+        $value = $environment->getVariable($name);
         if (null !== $value) {
             return $value;
         }

@@ -15,7 +15,7 @@ final class MapEntryNodeTest extends TestCase
 {
     public function testConstructorAndGetters(): void
     {
-        $key = new IdentifierExpression(new IdentifierNode('key', new Span(0, 3)));
+        $key = new IdentifierExpression(null, new IdentifierNode('key', new Span(0, 3)));
         $colon = new Span(3, 4);
         $value = new StringLiteralExpression('value', '"value"', new Span(5, 10));
 

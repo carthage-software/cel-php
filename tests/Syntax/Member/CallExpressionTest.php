@@ -18,7 +18,7 @@ final class CallExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void
     {
-        $target = new IdentifierExpression(new IdentifierNode('target', new Span(0, 6)));
+        $target = new IdentifierExpression(null, new IdentifierNode('target', new Span(0, 6)));
         $targetSeparator = new Span(6, 7);
         $function = new SelectorNode('func', new Span(7, 11));
         $open = new Span(11, 12);
@@ -43,12 +43,12 @@ final class CallExpressionTest extends TestCase
 
     public function testGetChildrenWithArgs(): void
     {
-        $target = new IdentifierExpression(new IdentifierNode('target', new Span(0, 6)));
+        $target = new IdentifierExpression(null, new IdentifierNode('target', new Span(0, 6)));
         $targetSeparator = new Span(6, 7);
         $function = new SelectorNode('func', new Span(7, 11));
         $open = new Span(11, 12);
-        $arg1 = new IdentifierExpression(new IdentifierNode('a', new Span(12, 13)));
-        $arg2 = new IdentifierExpression(new IdentifierNode('b', new Span(14, 15)));
+        $arg1 = new IdentifierExpression(null, new IdentifierNode('a', new Span(12, 13)));
+        $arg2 = new IdentifierExpression(null, new IdentifierNode('b', new Span(14, 15)));
         $args = new PunctuatedSequence([$arg1, $arg2], [new Span(13, 14)]);
         $close = new Span(15, 16);
 

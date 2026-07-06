@@ -37,8 +37,8 @@ final class ListExpressionTest extends TestCase
     public function testGetChildrenWithElements(): void
     {
         $open = new Span(0, 1);
-        $el1 = new ListElementNode(null, new IdentifierExpression(new IdentifierNode('a', new Span(1, 2))));
-        $el2 = new ListElementNode(null, new IdentifierExpression(new IdentifierNode('b', new Span(3, 4))));
+        $el1 = new ListElementNode(null, new IdentifierExpression(null, new IdentifierNode('a', new Span(1, 2))));
+        $el2 = new ListElementNode(null, new IdentifierExpression(null, new IdentifierNode('b', new Span(3, 4))));
         $elements = new PunctuatedSequence([$el1, $el2], [new Span(2, 3)]);
         $close = new Span(4, 5);
 

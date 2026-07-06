@@ -16,7 +16,7 @@ final class MemberAccessExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void
     {
-        $operand = new IdentifierExpression(new IdentifierNode('obj', new Span(0, 3)));
+        $operand = new IdentifierExpression(null, new IdentifierNode('obj', new Span(0, 3)));
         $dot = new Span(3, 4);
         $field = new SelectorNode('field', new Span(4, 9));
 

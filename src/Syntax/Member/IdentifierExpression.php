@@ -12,10 +12,14 @@ use Override;
 
 /**
  * Represents an identifier used as an expression, e.g., a variable name.
+ *
+ * A leading dot (`$leadingDot`) marks an absolute reference (`.y`), resolved
+ * from the root namespace rather than relative to the current scope.
  */
 final readonly class IdentifierExpression extends Expression
 {
     public function __construct(
+        public null|Span $leadingDot,
         public IdentifierNode $identifier,
     ) {}
 
@@ -34,6 +38,8 @@ final readonly class IdentifierExpression extends Expression
     #[Override]
     public function getSpan(): Span
     {
-        return $this->identifier->getSpan();
+        return null === $this->leadingDot
+            ? $this->identifier->getSpan()
+            : $this->leadingDot->join($this->identifier->getSpan());
     }
 }

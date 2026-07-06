@@ -17,9 +17,9 @@ final class BinaryExpressionTest extends TestCase
 {
     public function testConstructorAndGetters(): void
     {
-        $left = new IdentifierExpression(new IdentifierNode('a', new Span(0, 1)));
+        $left = new IdentifierExpression(null, new IdentifierNode('a', new Span(0, 1)));
         $op = new BinaryOperator(BinaryOperatorKind::Plus, new Span(2, 3));
-        $right = new IdentifierExpression(new IdentifierNode('b', new Span(4, 5)));
+        $right = new IdentifierExpression(null, new IdentifierNode('b', new Span(4, 5)));
 
         $expr = new BinaryExpression($left, $op, $right);
 

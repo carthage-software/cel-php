@@ -16,7 +16,7 @@ final class ParenthesizedExpressionTest extends TestCase
     public function testConstructorAndGetters(): void
     {
         $left = new Span(0, 1);
-        $inner = new IdentifierExpression(new IdentifierNode('a', new Span(1, 2)));
+        $inner = new IdentifierExpression(null, new IdentifierNode('a', new Span(1, 2)));
         $right = new Span(2, 3);
 
         $expr = new ParenthesizedExpression($left, $inner, $right);

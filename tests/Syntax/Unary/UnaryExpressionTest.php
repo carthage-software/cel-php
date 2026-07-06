@@ -18,7 +18,7 @@ final class UnaryExpressionTest extends TestCase
     public function testConstructorAndGetters(): void
     {
         $op = new UnaryOperator(UnaryOperatorKind::Not, new Span(0, 1));
-        $operand = new IdentifierExpression(new IdentifierNode('a', new Span(1, 2)));
+        $operand = new IdentifierExpression(null, new IdentifierNode('a', new Span(1, 2)));
 
         $expr = new UnaryExpression($op, $operand);
 

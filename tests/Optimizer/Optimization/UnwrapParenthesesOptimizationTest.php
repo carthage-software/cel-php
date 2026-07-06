@@ -26,7 +26,7 @@ final class UnwrapParenthesesOptimizationTest extends OptimizationTestCase
     #[Override]
     public static function provideOptimizationCases(): iterable
     {
-        $ident = new IdentifierExpression(new IdentifierNode('a', Span::zero()));
+        $ident = new IdentifierExpression(null, new IdentifierNode('a', Span::zero()));
 
         yield 'Unwraps parentheses' => [new ParenthesizedExpression(Span::zero(), $ident, Span::zero()), $ident];
         yield 'Does not affect other nodes' => [$ident, null];

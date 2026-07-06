@@ -368,13 +368,12 @@ final class Parser implements ParserInterface
                 );
             }
 
-            if (null !== $leadingDot) {
-                // A leading dot must be followed by a message literal or a function call.
-                // If it\'s just an identifier, it\'s a syntax error.
-                throw new UnexpectedTokenException($identToken);
-            }
-
-            return new IdentifierExpression(new IdentifierNode($identToken->value, $identToken->span));
+            // A leading dot marks an absolute reference (`.y`), resolved from the
+            // root namespace rather than relative to the current scope.
+            return new IdentifierExpression(
+                $leadingDot?->span,
+                new IdentifierNode($identToken->value, $identToken->span),
+            );
         }
 
         if (null !== $leadingDot) {
