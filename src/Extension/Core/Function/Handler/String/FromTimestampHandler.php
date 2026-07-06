@@ -12,7 +12,9 @@ use Cel\Value\StringValue;
 use Cel\Value\TimestampValue;
 use Cel\Value\Value;
 use Override;
-use Psl\DateTime\FormatPattern;
+use Psl\DateTime\DateTime;
+use Psl\DateTime\Timezone;
+use Psl\Str;
 
 /**
  * Handles string(timestamp) -> string
@@ -31,7 +33,28 @@ final readonly class FromTimestampHandler implements FunctionOverloadHandlerInte
     public function __invoke(CallExpression $call, array $arguments): Value
     {
         $value = ArgumentsUtil::get($arguments, 0, TimestampValue::class);
+        $datetime = DateTime::fromTimestamp($value->value, Timezone::UTC);
 
-        return new StringValue($value->value->format(FormatPattern::Rfc3339));
+        $formatted = Str\format(
+            '%04d-%02d-%02dT%02d:%02d:%02d%sZ',
+            $datetime->getYear(),
+            $datetime->getMonth(),
+            $datetime->getDay(),
+            $datetime->getHours(),
+            $datetime->getMinutes(),
+            $datetime->getSeconds(),
+            self::fraction($datetime->getNanoseconds()),
+        );
+
+        return new StringValue($formatted);
+    }
+
+    private static function fraction(int $nanoseconds): string
+    {
+        if (0 === $nanoseconds) {
+            return '';
+        }
+
+        return '.' . Str\trim_right(Str\pad_left((string) $nanoseconds, 9, '0'), '0');
     }
 }

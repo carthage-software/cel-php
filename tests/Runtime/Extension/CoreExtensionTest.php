@@ -204,6 +204,21 @@ final class CoreExtensionTest extends RuntimeTestCase
             ['t' => new TimestampValue(Timestamp::fromParts(1_757_766_605, 123_000_000))],
             new StringValue('2025-09-13T12:30:05.123Z'),
         ];
+        yield 'Core string: from timestamp without fraction' => [
+            'string(timestamp("2009-02-13T23:31:30Z"))',
+            [],
+            new StringValue('2009-02-13T23:31:30Z'),
+        ];
+        yield 'Core string: from timestamp trims trailing zeros' => [
+            'string(t)',
+            ['t' => new TimestampValue(Timestamp::fromParts(1_757_766_605, 100_000_000))],
+            new StringValue('2025-09-13T12:30:05.1Z'),
+        ];
+        yield 'Core string: from timestamp at the nanosecond boundary' => [
+            'string(timestamp("9999-12-31T23:59:59.999999999Z"))',
+            [],
+            new StringValue('9999-12-31T23:59:59.999999999Z'),
+        ];
 
         yield 'Core string: from bytes' => ['string(b"hello")', [], new StringValue('hello')];
 
