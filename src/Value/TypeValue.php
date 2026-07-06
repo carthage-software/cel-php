@@ -33,6 +33,10 @@ final readonly class TypeValue extends Value
         'null_type',
         'type',
         'optional_type',
+        // Well-known types that resolve to a runtime type value (unlike the
+        // wrapper types, which are not usable as bare type references).
+        'google.protobuf.Timestamp',
+        'google.protobuf.Duration',
     ];
 
     /**

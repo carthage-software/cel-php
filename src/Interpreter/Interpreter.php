@@ -57,6 +57,7 @@ use Cel\Value\TypeValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Cel\Value\ValueKind;
+use Cel\Value\WellKnownType;
 use Override;
 use Psl\Iter;
 use Psl\Str;
@@ -451,6 +452,13 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
      */
     private function memberAccess(MemberAccessExpression $expression): Value
     {
+        // A dotted chain of plain identifiers may name a qualified type value
+        // (e.g. `google.protobuf.Timestamp`) when its root is not a bound variable.
+        $typeDenotation = $this->qualifiedTypeDenotation($expression);
+        if (null !== $typeDenotation) {
+            return $typeDenotation;
+        }
+
         $operand = $this->run($expression->operand);
         $field = $expression->field->name;
 
@@ -497,6 +505,39 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             Str\format('Cannot access member `%s` on type `%s`', $field, $operand->getType()),
             $expression->getSpan(),
         );
+    }
+
+    /**
+     * Resolves a chain of plain identifier selectors (e.g. `google.protobuf.Timestamp`)
+     * to the type value it denotes, or null when it is not such a chain, when its
+     * root is a bound variable, or when the assembled name is not a type.
+     */
+    private function qualifiedTypeDenotation(MemberAccessExpression $expression): null|TypeValue
+    {
+        // Every link must be a plain (non-optional) field access so the whole
+        // expression spells a qualified identifier.
+        $segments = [];
+        $current = $expression;
+        while ($current instanceof MemberAccessExpression) {
+            if (null !== $current->question) {
+                return null;
+            }
+
+            $segments[] = $current->field->name;
+            $current = $current->operand;
+        }
+
+        if (!$current instanceof IdentifierExpression) {
+            return null;
+        }
+
+        // A bound variable at the root takes precedence over a type name.
+        $root = $current->identifier->name;
+        if (null !== $this->environment->getVariable($root)) {
+            return null;
+        }
+
+        return TypeValue::denotation($root . '.' . Str\join(Vec\reverse($segments), '.'));
     }
 
     /**
@@ -755,6 +796,15 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             $typename .= '.' . $selector->name;
         }
 
+        // Well-known protobuf types map onto native CEL values and are always
+        // constructible, independent of the message configuration.
+        if (Str\starts_with($typename, 'google.protobuf.')) {
+            $wellKnown = $this->constructWellKnownType($typename, $expression);
+            if (null !== $wellKnown) {
+                return $wellKnown;
+            }
+        }
+
         if ([] === $this->configuration->allowedMessageClasses) {
             throw new NoSuchTypeException(
                 Str\format('Message type `%s` does not exist or is not allowed per configuration.', $typename),
@@ -836,6 +886,36 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
                 $expression->getSpan(),
             );
         }
+    }
+
+    /**
+     * Constructs a `google.protobuf` well-known type from a message literal, or
+     * returns null when the type is not one cel-php represents natively (so the
+     * caller falls back to the ordinary message path).
+     *
+     * @throws EvaluationException If an initializer names a field the type does not define.
+     */
+    private function constructWellKnownType(string $typename, MessageExpression $expression): null|Value
+    {
+        $allowedFields = WellKnownType::allowedFields($typename);
+        if (null === $allowedFields) {
+            return null;
+        }
+
+        $fields = [];
+        foreach ($expression->initializers as $initializer) {
+            $name = $initializer->field->name;
+            if (!Iter\contains($allowedFields, $name)) {
+                throw new MessageConstructionException(
+                    Str\format('Field `%s` is not defined on message type `%s`.', $name, $typename),
+                    $initializer->field->getSpan(),
+                );
+            }
+
+            $fields[$name] = $this->run($initializer->value);
+        }
+
+        return WellKnownType::construct($typename, $fields);
     }
 
     /**

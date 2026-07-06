@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Tests\Runtime\Extension;
 
 use Cel\Exception\EvaluationException;
+use Cel\Exception\MessageConstructionException;
 use Cel\Exception\NoSuchOverloadException;
 use Cel\Exception\OverflowException;
 use Cel\Exception\TypeConversionException;
@@ -66,6 +67,29 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core type: equal types' => ['type(1) == type(2)', [], new BooleanValue(true)];
         yield 'Core type: unequal types' => ['type(1) == type(1u)', [], new BooleanValue(false)];
         yield 'Core type: denotation matches value type' => ['type(1) == int', [], new BooleanValue(true)];
+
+        yield 'Core type denotation: qualified timestamp' => [
+            'google.protobuf.Timestamp',
+            [],
+            new TypeValue('google.protobuf.Timestamp'),
+        ];
+        yield 'Core type denotation: qualified duration' => [
+            'google.protobuf.Duration',
+            [],
+            new TypeValue('google.protobuf.Duration'),
+        ];
+        yield 'Core type: qualified timestamp denotation matches value type' => [
+            'google.protobuf.Timestamp == type(timestamp(0))',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'Core type: qualified duration denotation matches value type' => [
+            'google.protobuf.Duration == type(duration("1000000s"))',
+            [],
+            new BooleanValue(true),
+        ];
+
+        yield from self::provideWellKnownTypeCases();
 
         yield 'Core dyn: integer' => ['dyn(1)', [], new IntegerValue(1)];
         yield 'Core dyn: string' => ['dyn("hello")', [], new StringValue('hello')];
@@ -280,6 +304,81 @@ final class CoreExtensionTest extends RuntimeTestCase
             [],
             new TypeConversionException('Cannot convert bytes "abc" to unsigned integer.', new Span(0, 12)),
         ];
+    }
+
+    /**
+     * The `google.protobuf` scalar wrapper types unwrap to their underlying
+     * primitive when constructed, an empty literal yields the primitive's zero
+     * value, a constructed wrapper is never null, and `Value` yields null.
+     *
+     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: BooleanValue|MessageConstructionException}>
+     */
+    private static function provideWellKnownTypeCases(): iterable
+    {
+        yield 'WKT wrapper: unknown field is rejected' => [
+            'google.protobuf.BoolValue{value: false, x: false}',
+            [],
+            new MessageConstructionException(
+                'Field `x` is not defined on message type `google.protobuf.BoolValue`.',
+                new Span(0, 0),
+            ),
+        ];
+        yield 'WKT wrapper: sole unknown field is rejected' => [
+            'google.protobuf.Int64Value{other: 1}',
+            [],
+            new MessageConstructionException(
+                'Field `other` is not defined on message type `google.protobuf.Int64Value`.',
+                new Span(0, 0),
+            ),
+        ];
+        yield 'WKT Value: any field is rejected' => [
+            'google.protobuf.Value{number_value: 1.0}',
+            [],
+            new MessageConstructionException(
+                'Field `number_value` is not defined on message type `google.protobuf.Value`.',
+                new Span(0, 0),
+            ),
+        ];
+
+        yield 'WKT BoolValue: set' => ['google.protobuf.BoolValue{value: true} == true', [], new BooleanValue(true)];
+        yield 'WKT BoolValue: empty' => ['google.protobuf.BoolValue{} == false', [], new BooleanValue(true)];
+        yield 'WKT BoolValue: not null' => ['google.protobuf.BoolValue{} != null', [], new BooleanValue(true)];
+        yield 'WKT BytesValue: set' => [
+            "google.protobuf.BytesValue{value: b'set'} == b'set'",
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'WKT BytesValue: empty' => ["google.protobuf.BytesValue{} == b''", [], new BooleanValue(true)];
+        yield 'WKT DoubleValue: set' => [
+            'google.protobuf.DoubleValue{value: -1.5} == -1.5',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'WKT DoubleValue: empty' => ['google.protobuf.DoubleValue{} == 0.0', [], new BooleanValue(true)];
+        yield 'WKT FloatValue: set' => ['google.protobuf.FloatValue{value: -1.5} == -1.5', [], new BooleanValue(true)];
+        yield 'WKT FloatValue: empty' => ['google.protobuf.FloatValue{} == 0.0', [], new BooleanValue(true)];
+        yield 'WKT Int32Value: set' => ['google.protobuf.Int32Value{value: 123} == 123', [], new BooleanValue(true)];
+        yield 'WKT Int32Value: empty' => ['google.protobuf.Int32Value{} == 0', [], new BooleanValue(true)];
+        yield 'WKT Int64Value: set' => [
+            'google.protobuf.Int64Value{value: 2147483650} == 2147483650',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'WKT Int64Value: not null' => ['google.protobuf.Int64Value{} != null', [], new BooleanValue(true)];
+        yield 'WKT StringValue: set' => [
+            "google.protobuf.StringValue{value: 'set'} == 'set'",
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'WKT StringValue: empty' => ["google.protobuf.StringValue{} == ''", [], new BooleanValue(true)];
+        yield 'WKT UInt32Value: set' => ['google.protobuf.UInt32Value{value: 42u} == 42u', [], new BooleanValue(true)];
+        yield 'WKT UInt64Value: set' => [
+            'google.protobuf.UInt64Value{value: 4294967296u} == 4294967296u',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'WKT UInt64Value: empty' => ['google.protobuf.UInt64Value{} == 0u', [], new BooleanValue(true)];
+        yield 'WKT Value: empty is null' => ['dyn(google.protobuf.Value{}) == null', [], new BooleanValue(true)];
     }
 
     public function testBoolFunctionIsIdempotent(): void
