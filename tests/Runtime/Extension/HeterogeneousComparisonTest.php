@@ -6,11 +6,11 @@ namespace Cel\Tests\Runtime\Extension;
 
 use Cel\Exception\EvaluationException;
 use Cel\Exception\NoSuchKeyException;
-use Cel\Exception\NoSuchOverloadException;
 use Cel\Exception\UnsupportedOperationException;
 use Cel\Span\Span;
 use Cel\Tests\Runtime\RuntimeTestCase;
 use Cel\Value\BooleanValue;
+use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
@@ -123,6 +123,9 @@ final class HeterogeneousComparisonTest extends RuntimeTestCase
         yield 'uint in int-keyed map' => ['1u in {1: "a"}', [], new BooleanValue(true)];
         yield 'string in string-keyed map' => ['"k" in {"k": 1}', [], new BooleanValue(true)];
         yield 'non-integral double not in map' => ['1.5 in {1: "a"}', [], new BooleanValue(false)];
+        yield 'bool in bool-keyed map' => ['true in {true: 1}', [], new BooleanValue(true)];
+        yield 'absent bool not in bool-keyed map' => ['false in {true: 1}', [], new BooleanValue(false)];
+        yield 'string not in integer-keyed map' => ['"1" in {1: "a"}', [], new BooleanValue(false)];
     }
 
     /**
@@ -144,13 +147,28 @@ final class HeterogeneousComparisonTest extends RuntimeTestCase
             [],
             new NoSuchKeyException('Key `double` does not exist in map', new Span(0, 0)),
         ];
-        yield 'boolean is not a valid key type' => [
+        yield 'boolean key is present' => ['{true: "yes", false: "no"}[true]', [], new StringValue('yes')];
+        yield 'boolean key does not collide with integer key' => [
+            'size({true: 1, false: 2, 1: 3, 0: 4})',
+            [],
+            new IntegerValue(4),
+        ];
+        yield 'absent boolean key' => [
             '{1: "x"}[true]',
             [],
-            new NoSuchOverloadException(
-                'Map keys must be string, integer, unsigned integer, or double, got `bool`',
-                new Span(0, 0),
-            ),
+            new NoSuchKeyException('Key `true` does not exist in map', new Span(0, 0)),
+        ];
+        yield 'string key does not collide with integer key' => [
+            'size({"1": "a", 1: "b"})',
+            [],
+            new IntegerValue(2),
+        ];
+        yield 'string index selects the string key' => ['{"1": "a", 1: "b"}["1"]', [], new StringValue('a')];
+        yield 'integer index selects the integer key' => ['{"1": "a", 1: "b"}[1]', [], new StringValue('b')];
+        yield 'unsigned key beyond int range is addressable' => [
+            '{18446744073709551615u: "big"}[18446744073709551615u]',
+            [],
+            new StringValue('big'),
         ];
     }
 

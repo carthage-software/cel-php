@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cel\Value;
 
 use Cel\Exception\UnsupportedOperationException;
+use Cel\Util\MapKeyUtil;
 use Override;
-use Psl\Dict;
 use Psl\Iter;
 
 /**
@@ -91,6 +91,11 @@ final readonly class MapValue extends Value
     #[Override]
     public function getRawValue(): array
     {
-        return Dict\map($this->value, static fn(Value $value): mixed => $value->getRawValue());
+        $raw = [];
+        foreach ($this->value as $key => $value) {
+            $raw[MapKeyUtil::keyToRaw($key)] = $value->getRawValue();
+        }
+
+        return $raw;
     }
 }

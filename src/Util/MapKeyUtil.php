@@ -4,30 +4,46 @@ declare(strict_types=1);
 
 namespace Cel\Util;
 
+use Cel\Value\BooleanValue;
 use Cel\Value\FloatValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Psl\Math;
+use Psl\Str\Byte;
 
 use function is_finite;
+use function is_int;
+use function is_numeric;
 
 use const PHP_INT_MAX;
 use const PHP_INT_MIN;
 
 /**
- * Resolves CEL values to native array keys for map access.
+ * Encodes CEL map keys as native PHP array keys, and decodes them back.
  *
- * Supports heterogeneous numeric map keys: an integer-valued numeric index
- * (an int, a uint, or an integral double) resolves to the same integer key, so
- * that `{1: x}[1.0]`, `{1: x}[1u]`, and `{1u: x}[1]` all address the same entry.
+ * Every key is stored as a string carrying a type tag behind an invalid-UTF-8
+ * byte (`\xFF`): booleans as `\xFFb:`, numbers as `\xFFn:`, strings as `\xFFs:`.
+ * Because a CEL `string` is always valid UTF-8, a tagged key can never collide
+ * with a real string key, and, being a string, PHP never coerces a numeric key
+ * (`"1"`) into an integer array key. This keeps CEL's distinct key types apart
+ * (`"1" != 1 != 1u != true`) while still supporting unsigned integers beyond
+ * `PHP_INT_MAX`, which are kept as their decimal digits.
  *
- * Because native PHP arrays cannot distinguish signed from unsigned integer keys
- * or hold boolean keys, those cel-go distinctions are not represented here.
+ * Numeric keys are normalized to a canonical decimal integer, so `1`, `1u`, and
+ * `1.0` (which are cross-type equal in CEL) address the same entry. That
+ * normalization is one-way: a numeric key decodes back to an int or a uint by
+ * magnitude, not to its original spelling.
  */
 final readonly class MapKeyUtil
 {
+    private const string BOOLEAN_TAG = "\xFFb:";
+
+    private const string NUMBER_TAG = "\xFFn:";
+
+    private const string STRING_TAG = "\xFFs:";
+
     private function __construct() {}
 
     /**
@@ -39,42 +55,145 @@ final readonly class MapKeyUtil
             $value instanceof StringValue
             || $value instanceof IntegerValue
             || $value instanceof UnsignedIntegerValue
+            || $value instanceof BooleanValue
             || $value instanceof FloatValue
         );
     }
 
     /**
-     * Resolves a value to the native array key it should look up, or null when no
-     * key could match (a non-integral or out-of-range double, or a non-key type).
+     * Encodes a plain string as the native array key that addresses its map
+     * entry. Field-name selection (`map.field`) resolves to a string key.
      *
-     * @return null|array-key
+     * @return non-empty-string
      */
-    public static function resolve(Value $value): null|int|string
+    public static function stringKey(string $value): string
+    {
+        return self::STRING_TAG . $value;
+    }
+
+    /**
+     * Encodes a value as the native array key that addresses its map entry, or
+     * null when it cannot be a key (a non-key type, or a non-integral or
+     * out-of-range double).
+     *
+     * @return null|non-empty-string
+     */
+    public static function resolve(Value $value): null|string
     {
         if ($value instanceof StringValue) {
-            return $value->value;
+            return self::stringKey($value->value);
         }
 
         if ($value instanceof IntegerValue) {
-            return $value->value;
+            return self::NUMBER_TAG . $value->value;
         }
 
         if ($value instanceof UnsignedIntegerValue) {
-            return $value->value;
+            return self::NUMBER_TAG . $value->value;
+        }
+
+        if ($value instanceof BooleanValue) {
+            return self::BOOLEAN_TAG . ($value->value ? '1' : '0');
         }
 
         if ($value instanceof FloatValue) {
-            return self::doubleToKey($value->value);
+            $integer = self::doubleToInt($value->value);
+
+            return null === $integer ? null : self::NUMBER_TAG . $integer;
         }
 
         return null;
     }
 
     /**
-     * Converts an integral double within the signed-integer range to an integer
-     * key. Returns null for non-integral, non-finite, or out-of-range doubles.
+     * Resolves a value to an integer position for list indexing (an int, a
+     * uint within range, or an integral double), or null when it is not a valid
+     * list index.
      */
-    private static function doubleToKey(float $value): null|int
+    public static function resolveIndex(Value $value): null|int
+    {
+        if ($value instanceof IntegerValue) {
+            return $value->value;
+        }
+
+        if ($value instanceof UnsignedIntegerValue) {
+            return is_int($value->value) ? $value->value : null;
+        }
+
+        if ($value instanceof FloatValue) {
+            return self::doubleToInt($value->value);
+        }
+
+        return null;
+    }
+
+    /**
+     * Reconstructs the CEL value a native map key was encoded from.
+     */
+    public static function keyToValue(int|string $key): Value
+    {
+        if (is_int($key)) {
+            return new IntegerValue($key);
+        }
+
+        if (Byte\starts_with($key, self::BOOLEAN_TAG)) {
+            return new BooleanValue(self::BOOLEAN_TAG . '1' === $key);
+        }
+
+        if (Byte\starts_with($key, self::STRING_TAG)) {
+            return new StringValue(Byte\slice($key, Byte\length(self::STRING_TAG)));
+        }
+
+        if (Byte\starts_with($key, self::NUMBER_TAG)) {
+            $decimal = Byte\slice($key, Byte\length(self::NUMBER_TAG));
+            $asInt = (int) $decimal;
+            if ((string) $asInt === $decimal) {
+                return new IntegerValue($asInt);
+            }
+
+            // A number that does not round-trip through an int is an unsigned
+            // integer beyond the signed range, preserved as its decimal digits.
+            return is_numeric($decimal) ? new UnsignedIntegerValue($decimal) : new StringValue($key);
+        }
+
+        return new StringValue($key);
+    }
+
+    /**
+     * Decodes a native map key into a plain PHP array key, for exporting a map
+     * as a native array. Booleans collapse to `1`/`0` and numbers to an int (or
+     * a decimal string when they exceed the integer range), mirroring how PHP
+     * itself would key such an array. Untagged keys are returned unchanged.
+     */
+    public static function keyToRaw(int|string $key): int|string
+    {
+        if (is_int($key)) {
+            return $key;
+        }
+
+        if (Byte\starts_with($key, self::BOOLEAN_TAG)) {
+            return self::BOOLEAN_TAG . '1' === $key ? 1 : 0;
+        }
+
+        if (Byte\starts_with($key, self::STRING_TAG)) {
+            return Byte\slice($key, Byte\length(self::STRING_TAG));
+        }
+
+        if (Byte\starts_with($key, self::NUMBER_TAG)) {
+            $decimal = Byte\slice($key, Byte\length(self::NUMBER_TAG));
+            $asInt = (int) $decimal;
+
+            return (string) $asInt === $decimal ? $asInt : $decimal;
+        }
+
+        return $key;
+    }
+
+    /**
+     * Converts an integral double within the signed-integer range to an integer.
+     * Returns null for non-integral, non-finite, or out-of-range doubles.
+     */
+    private static function doubleToInt(float $value): null|int
     {
         if (!is_finite($value) || Math\floor($value) !== $value) {
             return null;

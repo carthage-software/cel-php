@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Core\BinaryOperator;
 
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\BooleanListHandler;
+use Cel\Extension\Core\BinaryOperator\Handler\InOperator\BooleanMapHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\BytesListHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\DurationListHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\FloatListHandler;
@@ -47,6 +48,7 @@ final readonly class InOperator implements BinaryOperatorOverloadInterface
         yield [ValueKind::Timestamp, ValueKind::List] => new TimestampListHandler();
         yield [ValueKind::Duration, ValueKind::List] => new DurationListHandler();
         yield [ValueKind::String, ValueKind::Map] => new StringMapHandler();
+        yield [ValueKind::Boolean, ValueKind::Map] => new BooleanMapHandler();
 
         $numericMap = new NumericMapHandler();
         yield [ValueKind::Integer, ValueKind::Map] => $numericMap;

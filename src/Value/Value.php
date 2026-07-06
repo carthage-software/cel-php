@@ -7,11 +7,12 @@ namespace Cel\Value;
 use Cel\Exception\IncompatibleValueTypeException;
 use Cel\Exception\UnsupportedOperationException;
 use Cel\Message\MessageInterface;
-use Psl\Dict;
+use Cel\Util\MapKeyUtil;
 use Psl\Str;
 use Psl\Type;
 
 use function gettype;
+use function is_int;
 use function is_object;
 
 /**
@@ -163,6 +164,14 @@ abstract readonly class Value
             return new ListValue($items);
         }
 
-        return new MapValue(Dict\map($value, Value::from(...)));
+        // Encode the native keys the same way the interpreter does, so a map
+        // built from a PHP array is addressable by CEL expressions.
+        $entries = [];
+        foreach ($value as $key => $item) {
+            $keyValue = is_int($key) ? new IntegerValue($key) : new StringValue($key);
+            $entries[(string) MapKeyUtil::resolve($keyValue)] = self::from($item);
+        }
+
+        return new MapValue($entries);
     }
 }

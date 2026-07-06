@@ -7,6 +7,7 @@ namespace Cel\Interpreter\Macro;
 use Cel\Exception\InvalidMacroCallException;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Syntax\Member\MemberAccessExpression;
+use Cel\Util\MapKeyUtil;
 use Cel\Value\BooleanValue;
 use Cel\Value\MapValue;
 use Cel\Value\MessageValue;
@@ -81,6 +82,6 @@ final readonly class HasMacro implements MacroInterface
             return new BooleanValue($operand->hasField($argument->field->name));
         }
 
-        return new BooleanValue($operand->has($argument->field->name));
+        return new BooleanValue($operand->has(MapKeyUtil::stringKey($argument->field->name)));
     }
 }

@@ -7,6 +7,7 @@ namespace Cel\Interpreter\Macro;
 use Cel\Exception\InvalidMacroCallException;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Syntax\Member\IdentifierExpression;
+use Cel\Util\MapKeyUtil;
 use Cel\Value\BooleanValue;
 use Cel\Value\ListValue;
 use Cel\Value\MapValue;
@@ -65,7 +66,9 @@ final readonly class ExistsOneMacro implements MacroInterface
             );
         }
 
-        $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
+        $items = $target instanceof ListValue
+            ? $target->value
+            : Vec\map(Vec\keys($target->value), MapKeyUtil::keyToValue(...));
 
         $environment = $context->getEnvironment()->fork();
 

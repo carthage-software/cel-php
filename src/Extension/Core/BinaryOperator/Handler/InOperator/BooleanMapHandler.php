@@ -11,25 +11,27 @@ use Cel\Util\MapKeyUtil;
 use Cel\Util\OperandUtil;
 use Cel\Value\BooleanValue;
 use Cel\Value\MapValue;
-use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 
-final readonly class StringMapHandler implements BinaryOperatorOverloadHandlerInterface
+/**
+ * Handles `bool in map`, testing whether a boolean value is a key of the map.
+ */
+final readonly class BooleanMapHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**
      * @param BinaryExpression $expression The binary expression being evaluated.
-     * @param Value $left The evaluated left operand.
-     * @param Value $right The evaluated right operand.
+     * @param Value $left The evaluated left operand (the candidate key).
+     * @param Value $right The evaluated right operand (the map).
      *
-     * @return Value The result of the binary operation.
+     * @return Value True if the map contains a matching key.
      *
      * @throws InternalException If operand type assertion fails.
      */
     #[Override]
     public function __invoke(BinaryExpression $expression, Value $left, Value $right): Value
     {
-        $left = OperandUtil::assertLeft($left, StringValue::class);
+        $left = OperandUtil::assertLeft($left, BooleanValue::class);
         $right = OperandUtil::assertRight($right, MapValue::class);
 
         $key = MapKeyUtil::resolve($left);

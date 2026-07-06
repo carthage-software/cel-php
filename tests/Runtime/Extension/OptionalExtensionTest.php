@@ -256,7 +256,7 @@ final class OptionalExtensionTest extends RuntimeTestCase
             '{"a": 1}[?[1]].hasValue()',
             [],
             new NoSuchOverloadException(
-                'Map keys must be string, integer, unsigned integer, or double, got `list`',
+                'Map keys must be bool, string, integer, unsigned integer, or double, got `list`',
                 new Span(0, 0),
             ),
         ];

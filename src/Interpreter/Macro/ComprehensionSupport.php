@@ -9,6 +9,7 @@ use Cel\Exception\InvalidMacroCallException;
 use Cel\Syntax\Expression;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Syntax\Member\IdentifierExpression;
+use Cel\Util\MapKeyUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\MapValue;
@@ -71,7 +72,7 @@ trait ComprehensionSupport
         }
 
         foreach ($value->value as $key => $entryValue) {
-            $keyValue = Value::from($key);
+            $keyValue = MapKeyUtil::keyToValue($key);
             $bindings[] = null === $second ? [$first => $keyValue] : [$first => $keyValue, $second => $entryValue];
         }
 

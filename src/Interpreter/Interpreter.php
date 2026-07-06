@@ -64,8 +64,6 @@ use Psl\Str\Byte;
 use Psl\Vec;
 use Throwable;
 
-use function is_int;
-
 /**
  * A tree-walking interpreter that evaluates expressions by recursively
  * traversing the expression tree.
@@ -243,9 +241,19 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
                 !$key instanceof StringValue
                 && !$key instanceof IntegerValue
                 && !$key instanceof UnsignedIntegerValue
+                && !$key instanceof BooleanValue
             ) {
                 throw new UnexpectedMapKeyTypeException(
-                    Str\format('Map keys must be string, integer, or unsigned integer, got `%s`', $key->getType()),
+                    Str\format('Map keys must be bool, int, uint, or string, got `%s`', $key->getType()),
+                    $entry->key->getSpan(),
+                );
+            }
+
+            $mapKey = MapKeyUtil::resolve($key);
+            if (null === $mapKey) {
+                // Unreachable: the key type was validated above.
+                throw new UnexpectedMapKeyTypeException(
+                    Str\format('Map keys must be bool, int, uint, or string, got `%s`', $key->getType()),
                     $entry->key->getSpan(),
                 );
             }
@@ -261,13 +269,13 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
                 }
 
                 if (null !== $value->value) {
-                    $values[$key->value] = $value->value;
+                    $values[$mapKey] = $value->value;
                 }
 
                 continue;
             }
 
-            $values[$key->value] = $value;
+            $values[$mapKey] = $value;
         }
 
         return new MapValue($values);
@@ -474,7 +482,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         if ($operand instanceof MapValue) {
-            $value = $operand->get($field);
+            $value = $operand->get(MapKeyUtil::stringKey($field));
             if (null === $value) {
                 throw new NoSuchKeyException(
                     Str\format('Key `%s` does not exist in map', $field),
@@ -506,7 +514,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         if ($base instanceof MapValue) {
-            $value = $base->get($field);
+            $value = $base->get(MapKeyUtil::stringKey($field));
 
             return null === $value ? OptionalValue::none() : OptionalValue::of($value);
         }
@@ -608,9 +616,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
     private function resolveListIndex(Value $index): null|int
     {
-        $resolved = MapKeyUtil::resolve($index);
-
-        return is_int($resolved) ? $resolved : null;
+        return MapKeyUtil::resolveIndex($index);
     }
 
     /**
@@ -674,7 +680,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         if (!MapKeyUtil::isKeyType($index)) {
             throw new NoSuchOverloadException(
                 Str\format(
-                    'Map keys must be string, integer, unsigned integer, or double, got `%s`',
+                    'Map keys must be bool, string, integer, unsigned integer, or double, got `%s`',
                     $index->getType(),
                 ),
                 $indexSpan,
@@ -691,9 +697,25 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
      */
     private function mapKeyLabel(Value $index): string
     {
-        $key = MapKeyUtil::resolve($index);
+        if ($index instanceof BooleanValue) {
+            return $index->value ? 'true' : 'false';
+        }
 
-        return null === $key ? $index->getType() : (string) $key;
+        if ($index instanceof StringValue) {
+            return $index->value;
+        }
+
+        if ($index instanceof IntegerValue || $index instanceof UnsignedIntegerValue) {
+            return (string) $index->value;
+        }
+
+        if ($index instanceof FloatValue) {
+            $integer = MapKeyUtil::resolveIndex($index);
+
+            return null === $integer ? $index->getType() : (string) $integer;
+        }
+
+        return $index->getType();
     }
 
     /**

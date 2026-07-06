@@ -13,8 +13,6 @@ use Cel\Span\Span;
 use Cel\Value\BooleanValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
-use Cel\Value\MapValue;
-use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 
@@ -364,12 +362,12 @@ final class MacroTest extends RuntimeTestCase
         yield 'Macro transformMap: transform values' => [
             '{"foo": "bar"}.transformMap(k, v, k + v)',
             [],
-            new MapValue(['foo' => new StringValue('foobar')]),
+            Value::from(['foo' => 'foobar']),
         ];
         yield 'Macro transformMap: filter and transform' => [
             '{"a": 1, "b": 2}.transformMap(k, v, v > 1, v * 10)',
             [],
-            new MapValue(['b' => new IntegerValue(20)]),
+            Value::from(['b' => 20]),
         ];
     }
 }
