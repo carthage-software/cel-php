@@ -13,6 +13,7 @@ use Cel\Extension\Core\BinaryOperator\Handler\InOperator\ListListHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\MapListHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\MessageListHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\NullListHandler;
+use Cel\Extension\Core\BinaryOperator\Handler\InOperator\NumericMapHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\StringListHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\StringMapHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\InOperator\TimestampListHandler;
@@ -46,5 +47,10 @@ final readonly class InOperator implements BinaryOperatorOverloadInterface
         yield [ValueKind::Timestamp, ValueKind::List] => new TimestampListHandler();
         yield [ValueKind::Duration, ValueKind::List] => new DurationListHandler();
         yield [ValueKind::String, ValueKind::Map] => new StringMapHandler();
+
+        $numericMap = new NumericMapHandler();
+        yield [ValueKind::Integer, ValueKind::Map] => $numericMap;
+        yield [ValueKind::UnsignedInteger, ValueKind::Map] => $numericMap;
+        yield [ValueKind::Float, ValueKind::Map] => $numericMap;
     }
 }

@@ -49,13 +49,12 @@ final class BytesValueTest extends TestCase
         static::assertFalse($val1->isEqual($val2));
     }
 
-    public function testIsEqualWithNonBytesThrowsException(): void
+    public function testIsEqualWithNonBytesReturnsFalse(): void
     {
         $bytes = new BytesValue('test');
         $int = new IntegerValue(42);
 
-        $this->expectException(UnsupportedOperationException::class);
-        $bytes->isEqual($int);
+        static::assertFalse($bytes->isEqual($int));
     }
 
     public function testIsLessThan(): void

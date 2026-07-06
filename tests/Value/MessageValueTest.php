@@ -97,14 +97,13 @@ final class MessageValueTest extends TestCase
         static::assertFalse($val1->isEqual($val2));
     }
 
-    public function testIsEqualWithNonMessageThrowsException(): void
+    public function testIsEqualWithNonMessageReturnsFalse(): void
     {
         $message = $this->createMockMessage();
         $val = new MessageValue($message, []);
         $int = new IntegerValue(42);
 
-        $this->expectException(UnsupportedOperationException::class);
-        $val->isEqual($int);
+        static::assertFalse($val->isEqual($int));
     }
 
     public function testIsLessThanThrowsException(): void

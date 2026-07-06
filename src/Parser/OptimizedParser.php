@@ -10,6 +10,8 @@ use Cel\Optimizer\Optimizer;
 use Cel\Optimizer\OptimizerInterface;
 use Cel\Parser\Exception\UnexpectedEndOfFileException;
 use Cel\Parser\Exception\UnexpectedTokenException;
+use Cel\Runtime\Runtime;
+use Cel\Runtime\RuntimeInterface;
 use Cel\Syntax\Expression;
 use Override;
 
@@ -21,14 +23,25 @@ use Override;
  */
 final readonly class OptimizedParser implements ParserInterface
 {
+    private ParserInterface $parser;
+
+    private OptimizerInterface $optimizer;
+
     /**
-     * @param ParserInterface $parser The wrapped parser
-     * @param OptimizerInterface $optimizer The optimizer to apply to parsed expressions
+     * @param ParserInterface $parser The wrapped parser.
+     * @param null|OptimizerInterface $optimizer The optimizer to apply to parsed expressions; when null,
+     *                                           a default optimizer whose constant folding is bound to
+     *                                           `$runtime` is used.
+     * @param RuntimeInterface $runtime The runtime used by constant folding to honour registered extensions.
      */
     public function __construct(
-        private ParserInterface $parser = new Parser(),
-        private OptimizerInterface $optimizer = new Optimizer(),
-    ) {}
+        ParserInterface $parser = new Parser(),
+        null|OptimizerInterface $optimizer = null,
+        RuntimeInterface $runtime = new Runtime(),
+    ) {
+        $this->parser = $parser;
+        $this->optimizer = $optimizer ?? new Optimizer($runtime);
+    }
 
     #[Override]
     public static function default(): static

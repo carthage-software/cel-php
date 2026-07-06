@@ -49,13 +49,12 @@ final class StringValueTest extends TestCase
         static::assertFalse($val1->isEqual($val2));
     }
 
-    public function testIsEqualWithNonStringThrowsException(): void
+    public function testIsEqualWithNonStringReturnsFalse(): void
     {
         $str = new StringValue('test');
         $int = new IntegerValue(42);
 
-        $this->expectException(UnsupportedOperationException::class);
-        $str->isEqual($int);
+        static::assertFalse($str->isEqual($int));
     }
 
     public function testIsLessThan(): void

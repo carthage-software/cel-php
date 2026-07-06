@@ -51,15 +51,12 @@ final class TimestampValueTest extends TestCase
         ];
     }
 
-    public function testIsEqualThrowsExceptionForDifferentValueType(): void
+    public function testIsEqualWithDifferentValueTypeReturnsFalse(): void
     {
-        $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `timestamp` and `bool` for equality');
-
         $timestampValue = new TimestampValue(Timestamp::fromParts(1));
         $booleanValue = new BooleanValue(true);
 
-        $timestampValue->isEqual($booleanValue);
+        static::assertFalse($timestampValue->isEqual($booleanValue));
     }
 
     #[DataProvider('provideIsGreaterThanCases')]

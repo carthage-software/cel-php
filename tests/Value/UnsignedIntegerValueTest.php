@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Cel\Tests\Value;
 
 use Cel\Exception\UnsupportedOperationException;
+use Cel\Value\FloatValue;
 use Cel\Value\IntegerValue;
+use Cel\Value\StringValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\ValueKind;
 use PHPUnit\Framework\TestCase;
@@ -74,13 +76,20 @@ final class UnsignedIntegerValueTest extends TestCase
         static::assertFalse($val2->isLessThan($val1));
     }
 
-    public function testIsLessThanWithNonUnsignedIntegerThrowsException(): void
+    public function testIsLessThanAcrossNumericTypes(): void
+    {
+        static::assertTrue(new UnsignedIntegerValue(1)->isLessThan(new IntegerValue(2)));
+        static::assertTrue(new UnsignedIntegerValue(1)->isLessThan(new FloatValue(1.5)));
+        static::assertFalse(new UnsignedIntegerValue(2)->isLessThan(new IntegerValue(2)));
+    }
+
+    public function testIsLessThanWithNonNumericThrowsException(): void
     {
         $uint = new UnsignedIntegerValue(42);
-        $int = new IntegerValue(42);
+        $string = new StringValue('42');
 
         $this->expectException(UnsupportedOperationException::class);
-        $uint->isLessThan($int);
+        $uint->isLessThan($string);
     }
 
     public function testIsGreaterThan(): void
@@ -92,12 +101,19 @@ final class UnsignedIntegerValueTest extends TestCase
         static::assertFalse($val2->isGreaterThan($val1));
     }
 
-    public function testIsGreaterThanWithNonUnsignedIntegerThrowsException(): void
+    public function testIsGreaterThanAcrossNumericTypes(): void
+    {
+        static::assertTrue(new UnsignedIntegerValue(3)->isGreaterThan(new IntegerValue(2)));
+        static::assertTrue(new UnsignedIntegerValue(2)->isGreaterThan(new FloatValue(1.5)));
+        static::assertFalse(new UnsignedIntegerValue(2)->isGreaterThan(new IntegerValue(2)));
+    }
+
+    public function testIsGreaterThanWithNonNumericThrowsException(): void
     {
         $uint = new UnsignedIntegerValue(42);
-        $int = new IntegerValue(42);
+        $string = new StringValue('42');
 
         $this->expectException(UnsupportedOperationException::class);
-        $uint->isGreaterThan($int);
+        $uint->isGreaterThan($string);
     }
 }

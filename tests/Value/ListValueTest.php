@@ -59,13 +59,12 @@ final class ListValueTest extends TestCase
         static::assertFalse($val1->isEqual($val2));
     }
 
-    public function testIsEqualWithNonListThrowsException(): void
+    public function testIsEqualWithNonListReturnsFalse(): void
     {
         $list = new ListValue([]);
         $int = new IntegerValue(42);
 
-        $this->expectException(UnsupportedOperationException::class);
-        $list->isEqual($int);
+        static::assertFalse($list->isEqual($int));
     }
 
     public function testIsLessThanThrowsException(): void

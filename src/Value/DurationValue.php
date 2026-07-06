@@ -33,11 +33,7 @@ final readonly class DurationValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        if (!$other instanceof DurationValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
-        }
-
-        return $this->value->compare($other->value) === Order::Equal;
+        return $other instanceof DurationValue && $this->value->compare($other->value) === Order::Equal;
     }
 
     #[Override]

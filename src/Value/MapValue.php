@@ -37,7 +37,7 @@ final readonly class MapValue extends Value
     public function isEqual(Value $other): bool
     {
         if (!$other instanceof MapValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
+            return false;
         }
 
         if (Iter\count($this->value) !== Iter\count($other->value)) {

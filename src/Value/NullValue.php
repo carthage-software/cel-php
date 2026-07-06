@@ -33,11 +33,7 @@ final readonly class NullValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        if (!$other instanceof NullValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
-        }
-
-        return true;
+        return $other instanceof NullValue;
     }
 
     #[Override]

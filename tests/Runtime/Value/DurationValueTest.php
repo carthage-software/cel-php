@@ -56,15 +56,12 @@ final class DurationValueTest extends TestCase
         ];
     }
 
-    public function testIsEqualThrowsExceptionForDifferentValueType(): void
+    public function testIsEqualWithDifferentValueTypeReturnsFalse(): void
     {
-        $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `duration` and `bool` for equality');
-
         $durationValue = new DurationValue(Duration::hours(1));
         $booleanValue = new BooleanValue(true);
 
-        $durationValue->isEqual($booleanValue);
+        static::assertFalse($durationValue->isEqual($booleanValue));
     }
 
     #[DataProvider('provideIsGreaterThanCases')]

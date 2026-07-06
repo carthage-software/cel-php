@@ -42,6 +42,7 @@ use Cel\Syntax\Member\IndexExpression;
 use Cel\Syntax\Member\MemberAccessExpression;
 use Cel\Syntax\ParenthesizedExpression;
 use Cel\Syntax\Unary\UnaryExpression;
+use Cel\Util\MapKeyUtil;
 use Cel\Value\BooleanValue;
 use Cel\Value\BytesValue;
 use Cel\Value\FloatValue;
@@ -235,9 +236,13 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $values = [];
         foreach ($expression->entries as $entry) {
             $key = $this->run($entry->key);
-            if (!$key instanceof StringValue && !$key instanceof IntegerValue) {
+            if (
+                !$key instanceof StringValue
+                && !$key instanceof IntegerValue
+                && !$key instanceof UnsignedIntegerValue
+            ) {
                 throw new UnexpectedMapKeyTypeException(
-                    Str\format('Map keys must be string, or integer, got `%s`', $key->getType()),
+                    Str\format('Map keys must be string, integer, or unsigned integer, got `%s`', $key->getType()),
                     $entry->key->getSpan(),
                 );
             }
@@ -565,17 +570,10 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         if ($operand instanceof MapValue) {
-            if (!$index instanceof StringValue && !$index instanceof IntegerValue) {
-                throw new NoSuchOverloadException(
-                    Str\format('Map keys must be string or integer, got `%s`', $index->getType()),
-                    $expression->index->getSpan(),
-                );
-            }
-
-            $field = $operand->get($index->value);
+            $field = $this->mapGet($operand, $index, $expression->index->getSpan());
             if (null === $field) {
                 throw new NoSuchKeyException(
-                    Str\format('Key `%s` does not exist in map', $index->value),
+                    Str\format('Key `%s` does not exist in map', $this->mapKeyLabel($index)),
                     $expression->getSpan(),
                 );
             }
@@ -628,14 +626,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         if ($base instanceof MapValue) {
-            if (!$index instanceof StringValue && !$index instanceof IntegerValue) {
-                throw new NoSuchOverloadException(
-                    Str\format('Map keys must be string or integer, got `%s`', $index->getType()),
-                    $expression->index->getSpan(),
-                );
-            }
-
-            $value = $base->get($index->value);
+            $value = $this->mapGet($base, $index, $expression->index->getSpan());
 
             return null === $value ? OptionalValue::none() : OptionalValue::of($value);
         }
@@ -657,6 +648,40 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             Str\format('Indexing is only supported on lists, maps, and messages, got `%s`', $base->getType()),
             $expression->getSpan(),
         );
+    }
+
+    /**
+     * Looks up a value in a map by a string or numeric key, supporting heterogeneous
+     * numeric keys (an integer-valued numeric index matches an integer key). Returns
+     * null when the key is absent.
+     *
+     * @throws NoSuchOverloadException If the index type cannot be used as a map key.
+     */
+    private function mapGet(MapValue $map, Value $index, Span $indexSpan): null|Value
+    {
+        if (!MapKeyUtil::isKeyType($index)) {
+            throw new NoSuchOverloadException(
+                Str\format(
+                    'Map keys must be string, integer, unsigned integer, or double, got `%s`',
+                    $index->getType(),
+                ),
+                $indexSpan,
+            );
+        }
+
+        $key = MapKeyUtil::resolve($index);
+
+        return null === $key ? null : $map->get($key);
+    }
+
+    /**
+     * Produces a human-readable label for a map index, used in "no such key" errors.
+     */
+    private function mapKeyLabel(Value $index): string
+    {
+        $key = MapKeyUtil::resolve($index);
+
+        return null === $key ? $index->getType() : (string) $key;
     }
 
     /**

@@ -13,17 +13,6 @@ use Psl\Str;
  */
 final class UnsupportedOperationException extends EvaluationException
 {
-    public static function forEquality(
-        Value $that,
-        Value $other,
-        Span $span = new Span(0, 0),
-    ): UnsupportedOperationException {
-        return new static(
-            Str\format('Cannot compare values of type `%s` and `%s` for equality', $that->getType(), $other->getType()),
-            $span,
-        );
-    }
-
     public static function forComparison(
         Value $that,
         Value $other,
@@ -33,5 +22,10 @@ final class UnsupportedOperationException extends EvaluationException
             Str\format('Cannot compare values of type `%s` and `%s`', $that->getType(), $other->getType()),
             $span,
         );
+    }
+
+    public static function forNaN(Span $span = new Span(0, 0)): UnsupportedOperationException
+    {
+        return new static('NaN values cannot be ordered', $span);
     }
 }

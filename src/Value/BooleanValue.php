@@ -31,11 +31,7 @@ final readonly class BooleanValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        if (!$other instanceof BooleanValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
-        }
-
-        return $this->value === $other->value;
+        return $other instanceof BooleanValue && $this->value === $other->value;
     }
 
     #[Override]
