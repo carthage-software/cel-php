@@ -14,11 +14,14 @@ use Cel\Span\Span;
 use Cel\Tests\Fixture\CommentMessage;
 use Cel\Tests\Fixture\UserMessage;
 use Cel\Value\BooleanValue;
+use Cel\Value\FloatValue;
 use Cel\Value\MessageValue;
 use Cel\Value\StringValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
+
+use const INF;
 
 final class RuntimeTest extends RuntimeTestCase
 {
@@ -261,5 +264,17 @@ final class RuntimeTest extends RuntimeTestCase
             [],
             new EvaluationException('Failed to evaluate modulo: division by zero', new Span(0, 5)),
         ];
+
+        yield 'Double division: 7.0 / 2.0' => ['7.0 / 2.0', [], new FloatValue(3.5)];
+        yield 'Double division by zero: 1.0 / 0.0' => ['1.0 / 0.0', [], new FloatValue(INF)];
+        yield 'Double division by zero: -1.0 / 0.0' => ['-1.0 / 0.0', [], new FloatValue(-INF)];
+    }
+
+    public function testDoubleDivisionByZeroWithZeroDividendYieldsNan(): void
+    {
+        $result = $this->evaluate('0.0 / 0.0')->result;
+
+        static::assertInstanceOf(FloatValue::class, $result);
+        static::assertNan($result->value);
     }
 }

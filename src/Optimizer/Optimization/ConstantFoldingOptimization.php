@@ -27,6 +27,8 @@ use Cel\Value\UnsignedIntegerValue;
 use Override;
 use Throwable;
 
+use function is_finite;
+
 /**
  * Evaluates constant expressions at compile time.
  *
@@ -50,7 +52,7 @@ final readonly class ConstantFoldingOptimization implements OptimizationInterfac
     ) {}
 
     #[Override]
-    public function apply(Expression $expression): null|Expression
+    public function apply(Expression $expression): ?Expression
     {
         // Check if expression is a binary operation with both sides being literals
         if (
@@ -82,7 +84,7 @@ final readonly class ConstantFoldingOptimization implements OptimizationInterfac
         );
     }
 
-    private function fold(Expression $expression): null|Expression
+    private function fold(Expression $expression): ?Expression
     {
         try {
             $receipt = $this->runtime->run($expression, []);
@@ -100,7 +102,7 @@ final readonly class ConstantFoldingOptimization implements OptimizationInterfac
         return $this->valueToLiteral($receipt->result, $expression->getSpan());
     }
 
-    private function valueToLiteral(mixed $value, Span $span): null|Expression
+    private function valueToLiteral(mixed $value, Span $span): ?Expression
     {
         if ($value instanceof IntegerValue) {
             $nativeValue = $value->getRawValue();
@@ -113,6 +115,10 @@ final readonly class ConstantFoldingOptimization implements OptimizationInterfac
         }
 
         if ($value instanceof FloatValue) {
+            if (!is_finite($value->value)) {
+                return null;
+            }
+
             return new FloatLiteralExpression($value->value, (string) $value->value, $span);
         }
 

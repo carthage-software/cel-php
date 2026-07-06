@@ -13,6 +13,7 @@ use Cel\Value\BooleanValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
+use Psl\Iter;
 use Psl\Str;
 
 /**
@@ -33,13 +34,12 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
     public function __invoke(CallExpression $call, array $arguments): Value
     {
         $value = ArgumentsUtil::get($arguments, 0, StringValue::class);
-        $lowerValue = Str\lowercase($value->value);
 
-        if ('true' === $lowerValue) {
+        if (Iter\contains(['1', 't', 'true', 'TRUE', 'True'], $value->value)) {
             return new BooleanValue(true);
         }
 
-        if ('false' === $lowerValue) {
+        if (Iter\contains(['0', 'f', 'false', 'FALSE', 'False'], $value->value)) {
             return new BooleanValue(false);
         }
 

@@ -9,6 +9,7 @@ use Cel\Extension\Core\Function\Handler\Int\FromBytesHandler;
 use Cel\Extension\Core\Function\Handler\Int\FromFloatHandler;
 use Cel\Extension\Core\Function\Handler\Int\FromIntegerHandler;
 use Cel\Extension\Core\Function\Handler\Int\FromStringHandler;
+use Cel\Extension\Core\Function\Handler\Int\FromTimestampHandler;
 use Cel\Extension\Core\Function\Handler\Int\FromUnsignedIntegerHandler;
 use Cel\Function\FunctionInterface;
 use Cel\Function\FunctionOverloadHandlerInterface;
@@ -47,5 +48,6 @@ final readonly class IntFunction implements FunctionInterface
         yield [ValueKind::Boolean] => new FromBooleanHandler();
         yield [ValueKind::String] => new FromStringHandler();
         yield [ValueKind::Bytes] => new FromBytesHandler();
+        yield [ValueKind::Timestamp] => new FromTimestampHandler();
     }
 }

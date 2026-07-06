@@ -67,11 +67,11 @@ uint(42)       // 42u
 uint(b'42')    // 42u
 ```
 
-#### `double()` / `float()` - Convert to floating point
+#### `double()` - Convert to floating point
 
 ```php
 double('3.14') // 3.14
-float(3)       // 3.0
+double(3)      // 3.0
 ```
 
 #### `string()` - Convert to string
@@ -99,10 +99,24 @@ bool(1)        // true
 
 #### `type()` - Get the type of a value
 
+Returns a first-class type value. Bare type names (`int`, `uint`, `double`,
+`bool`, `string`, `bytes`, `list`, `map`, `null_type`, `type`) denote the same
+values, so a type can be compared against a literal type name.
+
 ```php
-type(42)       // 'int'
-type('hello')  // 'string'
-type([1, 2])   // 'list'
+type(42)          // the `int` type value
+type(42) == int   // true
+type('hello') == string   // true
+type(type(42))    // the `type` type value
+```
+
+#### `dyn()` - Mark a value as dynamically typed
+
+Returns its argument unchanged; a hint for the type checker with no runtime
+effect.
+
+```php
+dyn(42)  // 42
 ```
 
 #### `size()` - Get the size of a collection

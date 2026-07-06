@@ -1,3 +1,6 @@
 [files]
-extend-exclude = [".git/", "vendor"]
+extend-exclude = [".git/", "vendor", "tests/Conformance/testdata"]
 ignore-hidden = false
+
+[default]
+extend-ignore-re = ["TrUe", "FaLsE"]

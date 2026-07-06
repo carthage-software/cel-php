@@ -19,7 +19,7 @@ final class NullValueTest extends TestCase
     {
         $value = new NullValue();
         static::assertNull($value->getRawValue());
-        static::assertSame('null', $value->getType());
+        static::assertSame('null_type', $value->getType());
     }
 
     public function testGetKind(): void

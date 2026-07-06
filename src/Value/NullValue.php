@@ -24,6 +24,15 @@ final readonly class NullValue extends Value
         return ValueKind::Null;
     }
 
+    /**
+     * @return non-empty-string
+     */
+    #[Override]
+    public function getType(): string
+    {
+        return 'null_type';
+    }
+
     #[Override]
     public function isZeroValue(): bool
     {

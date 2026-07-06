@@ -12,13 +12,16 @@ use Cel\Span\Span;
 use Cel\Tests\Runtime\RuntimeTestCase;
 use Cel\Value\BooleanValue;
 use Cel\Value\BytesValue;
+use Cel\Value\DurationValue;
 use Cel\Value\FloatValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\TimestampValue;
+use Cel\Value\TypeValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
+use Psl\DateTime\Duration;
 use Psl\DateTime\Timestamp;
 
 /**
@@ -32,14 +35,36 @@ final class CoreExtensionTest extends RuntimeTestCase
     #[Override]
     public static function provideEvaluationCases(): iterable
     {
-        yield 'Core typeOf: boolean' => ['typeOf(true)', [], new StringValue('bool')];
-        yield 'Core typeOf: integer' => ['typeOf(1)', [], new StringValue('int')];
-        yield 'Core typeOf: float' => ['typeOf(1.0)', [], new StringValue('float')];
-        yield 'Core typeOf: string' => ['typeOf("hello")', [], new StringValue('string')];
-        yield 'Core typeOf: list' => ['typeOf([1, 2])', [], new StringValue('list')];
-        yield 'Core typeOf: map' => ['typeOf({"a": 1})', [], new StringValue('map')];
-        yield 'Core typeOf: null' => ['typeOf(null)', [], new StringValue('null')];
-        yield 'Core typeOf: unsigned integer' => ['typeOf(1u)', [], new StringValue('uint')];
+        yield 'Core type: boolean' => ['type(true)', [], new TypeValue('bool')];
+        yield 'Core type: integer' => ['type(1)', [], new TypeValue('int')];
+        yield 'Core type: double' => ['type(1.0)', [], new TypeValue('double')];
+        yield 'Core type: string' => ['type("hello")', [], new TypeValue('string')];
+        yield 'Core type: bytes' => ['type(b"x")', [], new TypeValue('bytes')];
+        yield 'Core type: list' => ['type([1, 2])', [], new TypeValue('list')];
+        yield 'Core type: map' => ['type({"a": 1})', [], new TypeValue('map')];
+        yield 'Core type: null' => ['type(null)', [], new TypeValue('null_type')];
+        yield 'Core type: unsigned integer' => ['type(1u)', [], new TypeValue('uint')];
+        yield 'Core type: type of a type is type' => ['type(type(1))', [], new TypeValue('type')];
+        yield 'Core type: type of a denotation is type' => ['type(int)', [], new TypeValue('type')];
+
+        yield 'Core type denotation: int' => ['int', [], new TypeValue('int')];
+        yield 'Core type denotation: uint' => ['uint', [], new TypeValue('uint')];
+        yield 'Core type denotation: double' => ['double', [], new TypeValue('double')];
+        yield 'Core type denotation: bool' => ['bool', [], new TypeValue('bool')];
+        yield 'Core type denotation: string' => ['string', [], new TypeValue('string')];
+        yield 'Core type denotation: bytes' => ['bytes', [], new TypeValue('bytes')];
+        yield 'Core type denotation: list' => ['list', [], new TypeValue('list')];
+        yield 'Core type denotation: map' => ['map', [], new TypeValue('map')];
+        yield 'Core type denotation: null_type' => ['null_type', [], new TypeValue('null_type')];
+        yield 'Core type denotation: type' => ['type', [], new TypeValue('type')];
+        yield 'Core type: equal types' => ['type(1) == type(2)', [], new BooleanValue(true)];
+        yield 'Core type: unequal types' => ['type(1) == type(1u)', [], new BooleanValue(false)];
+        yield 'Core type: denotation matches value type' => ['type(1) == int', [], new BooleanValue(true)];
+
+        yield 'Core dyn: integer' => ['dyn(1)', [], new IntegerValue(1)];
+        yield 'Core dyn: string' => ['dyn("hello")', [], new StringValue('hello')];
+        yield 'Core dyn: list identity' => ['dyn([1, 2]) == [1, 2]', [], new BooleanValue(true)];
+        yield 'Core dyn: preserves value' => ['dyn(3) + 4', [], new IntegerValue(7)];
 
         yield 'Core string: boolean' => ['string(true)', [], new StringValue('true')];
         yield 'Core string: integer' => ['string(123)', [], new StringValue('123')];
@@ -55,13 +80,13 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core int: string integer' => ['int("123")', [], new IntegerValue(123)];
         yield 'Core int: unsigned integer' => ['int(1u)', [], new IntegerValue(1)];
 
-        yield 'Core float: boolean true' => ['float(true)', [], new FloatValue(1.0)];
-        yield 'Core float: boolean false' => ['float(false)', [], new FloatValue(0.0)];
-        yield 'Core float: integer' => ['float(123)', [], new FloatValue(123.0)];
-        yield 'Core float: float' => ['float(1.23)', [], new FloatValue(1.23)];
-        yield 'Core float: string integer' => ['float("123")', [], new FloatValue(123.0)];
-        yield 'Core float: string float' => ['float("1.23")', [], new FloatValue(1.23)];
-        yield 'Core float: unsigned integer' => ['float(1u)', [], new FloatValue(1.0)];
+        yield 'Core double: boolean true' => ['double(true)', [], new FloatValue(1.0)];
+        yield 'Core double: boolean false' => ['double(false)', [], new FloatValue(0.0)];
+        yield 'Core double: integer' => ['double(123)', [], new FloatValue(123.0)];
+        yield 'Core double: double' => ['double(1.23)', [], new FloatValue(1.23)];
+        yield 'Core double: string integer' => ['double("123")', [], new FloatValue(123.0)];
+        yield 'Core double: string double' => ['double("1.23")', [], new FloatValue(1.23)];
+        yield 'Core double: unsigned integer' => ['double(1u)', [], new FloatValue(1.0)];
 
         yield 'Core bool: boolean true' => ['bool(true)', [], new BooleanValue(true)];
         yield 'Core bool: boolean false' => ['bool(false)', [], new BooleanValue(false)];
@@ -72,10 +97,25 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core bool: unsigned integer non-zero' => ['bool(1u)', [], new BooleanValue(true)];
         yield 'Core bool: unsigned integer zero' => ['bool(0u)', [], new BooleanValue(false)];
 
+        yield 'Core bool: string 1' => ['bool("1")', [], new BooleanValue(true)];
+        yield 'Core bool: string t' => ['bool("t")', [], new BooleanValue(true)];
+        yield 'Core bool: string true' => ['bool("true")', [], new BooleanValue(true)];
+        yield 'Core bool: string TRUE' => ['bool("TRUE")', [], new BooleanValue(true)];
+        yield 'Core bool: string True' => ['bool("True")', [], new BooleanValue(true)];
+        yield 'Core bool: string 0' => ['bool("0")', [], new BooleanValue(false)];
+        yield 'Core bool: string f' => ['bool("f")', [], new BooleanValue(false)];
+        yield 'Core bool: string false' => ['bool("false")', [], new BooleanValue(false)];
+        yield 'Core bool: string FALSE' => ['bool("FALSE")', [], new BooleanValue(false)];
+        yield 'Core bool: string False' => ['bool("False")', [], new BooleanValue(false)];
         yield 'Core bool: empty string error' => [
             'bool("")',
             [],
             new TypeConversionException('Cannot convert string "" to boolean.', new Span(0, 8)),
+        ];
+        yield 'Core bool: mixed-case string error' => [
+            'bool("TrUe")',
+            [],
+            new TypeConversionException('Cannot convert string "TrUe" to boolean.', new Span(0, 12)),
         ];
 
         yield 'Core bool: bytes true' => ['bool(b"true")', [], new BooleanValue(true)];
@@ -113,7 +153,7 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core bytes: from bytes' => ['bytes(b"hello")', [], new BytesValue('hello')];
         yield 'Core bytes: from string' => ['bytes("world")', [], new BytesValue('world')];
 
-        yield 'Core float: from bytes' => ['float(b"123.45")', [], new FloatValue(123.45)];
+        yield 'Core double: from bytes' => ['double(b"123.45")', [], new FloatValue(123.45)];
 
         yield 'Core int: float overflow high' => [
             'int(9.3e18)',
@@ -134,6 +174,24 @@ final class CoreExtensionTest extends RuntimeTestCase
         ];
 
         yield 'Core int: from bytes' => ['int(b"123")', [], new IntegerValue(123)];
+
+        yield 'Core int: from timestamp' => [
+            'int(timestamp("2004-09-16T23:59:59Z"))',
+            [],
+            new IntegerValue(1_095_379_199),
+        ];
+
+        yield 'Core duration: identity' => [
+            'duration(duration("100s"))',
+            [],
+            new DurationValue(Duration::fromParts(0, 0, 100)),
+        ];
+
+        yield 'Core timestamp: identity' => [
+            'timestamp(timestamp(1000000000))',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_000_000_000)),
+        ];
 
         yield 'Core string: from timestamp' => [
             'string(t)',
@@ -200,9 +258,16 @@ final class CoreExtensionTest extends RuntimeTestCase
         static::assertTrue($receipt->idempotent);
     }
 
-    public function testFloatFunctionIsIdempotent(): void
+    public function testDoubleFunctionIsIdempotent(): void
     {
-        $receipt = $this->evaluate('float(1.23)');
+        $receipt = $this->evaluate('double(1.23)');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testDynFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('dyn(1)');
 
         static::assertTrue($receipt->idempotent);
     }
@@ -221,9 +286,9 @@ final class CoreExtensionTest extends RuntimeTestCase
         static::assertTrue($receipt->idempotent);
     }
 
-    public function testTypeOfFunctionIsIdempotent(): void
+    public function testTypeFunctionIsIdempotent(): void
     {
-        $receipt = $this->evaluate('typeOf(true)');
+        $receipt = $this->evaluate('type(true)');
 
         static::assertTrue($receipt->idempotent);
     }

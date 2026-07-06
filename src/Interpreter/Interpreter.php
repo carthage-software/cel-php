@@ -53,6 +53,7 @@ use Cel\Value\MessageValue;
 use Cel\Value\NullValue;
 use Cel\Value\OptionalValue;
 use Cel\Value\StringValue;
+use Cel\Value\TypeValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Cel\Value\ValueKind;
@@ -657,7 +658,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
      *
      * @throws NoSuchOverloadException If the index type cannot be used as a map key.
      */
-    private function mapGet(MapValue $map, Value $index, Span $indexSpan): null|Value
+    private function mapGet(MapValue $map, Value $index, Span $indexSpan): ?Value
     {
         if (!MapKeyUtil::isKeyType($index)) {
             throw new NoSuchOverloadException(
@@ -689,15 +690,22 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
      */
     private function identifier(IdentifierExpression $expression): Value
     {
-        $value = $this->environment->getVariable($expression->identifier->name);
-        if (null === $value) {
-            throw new NoSuchVariableException(
-                Str\format('Variable `%s` is not defined in the environment', $expression->identifier->name),
-                $expression->getSpan(),
-            );
+        $name = $expression->identifier->name;
+
+        $value = $this->environment->getVariable($name);
+        if (null !== $value) {
+            return $value;
         }
 
-        return $value;
+        $type = TypeValue::denotation($name);
+        if (null !== $type) {
+            return $type;
+        }
+
+        throw new NoSuchVariableException(
+            Str\format('Variable `%s` is not defined in the environment', $name),
+            $expression->getSpan(),
+        );
     }
 
     /**
@@ -858,7 +866,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
      *
      * @throws EvaluationException
      */
-    private function namespacedCall(CallExpression $expression): null|Value
+    private function namespacedCall(CallExpression $expression): ?Value
     {
         $target = $expression->target;
         if (!$target instanceof IdentifierExpression) {

@@ -22,7 +22,7 @@ final class FloatValueTest extends TestCase
         static::assertSame(1.23, $value->value);
         static::assertSame(1.23, $value->getRawValue());
         static::assertSame(ValueKind::Float, $value->getKind());
-        static::assertSame('float', $value->getType());
+        static::assertSame('double', $value->getType());
     }
 
     #[DataProvider('provideEqualityCases')]
@@ -69,7 +69,7 @@ final class FloatValueTest extends TestCase
     public function testIsLessThanThrowsOnNonNumericType(): void
     {
         $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `float` and `bool`');
+        $this->expectExceptionMessage('Cannot compare values of type `double` and `bool`');
 
         new FloatValue(1.0)->isLessThan(new BooleanValue(true));
     }
@@ -77,7 +77,7 @@ final class FloatValueTest extends TestCase
     public function testIsGreaterThanThrowsOnNonNumericType(): void
     {
         $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `float` and `bool`');
+        $this->expectExceptionMessage('Cannot compare values of type `double` and `bool`');
 
         new FloatValue(1.0)->isGreaterThan(new BooleanValue(true));
     }

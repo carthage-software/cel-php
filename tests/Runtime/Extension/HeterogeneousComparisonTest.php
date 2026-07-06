@@ -142,7 +142,7 @@ final class HeterogeneousComparisonTest extends RuntimeTestCase
         yield 'non-integral double key is missing' => [
             '{1: "x"}[1.5]',
             [],
-            new NoSuchKeyException('Key `float` does not exist in map', new Span(0, 0)),
+            new NoSuchKeyException('Key `double` does not exist in map', new Span(0, 0)),
         ];
         yield 'boolean is not a valid key type' => [
             '{1: "x"}[true]',

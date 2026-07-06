@@ -23,6 +23,15 @@ final readonly class FloatValue extends Value
         return ValueKind::Float;
     }
 
+    /**
+     * @return non-empty-string
+     */
+    #[Override]
+    public function getType(): string
+    {
+        return 'double';
+    }
+
     #[Override]
     public function isZeroValue(): bool
     {

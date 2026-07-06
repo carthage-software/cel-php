@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Extension\DateTime\Function;
 
+use Cel\Extension\DateTime\Function\Handler\DurationFunction\FromDurationHandler;
 use Cel\Extension\DateTime\Function\Handler\DurationFunction\FromStringHandler;
 use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
@@ -27,5 +28,6 @@ final readonly class DurationFunction implements FunctionInterface
     public function getOverloads(): iterable
     {
         yield [ValueKind::String] => new FromStringHandler();
+        yield [ValueKind::Duration] => new FromDurationHandler();
     }
 }

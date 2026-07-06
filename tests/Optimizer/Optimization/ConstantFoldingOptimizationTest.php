@@ -15,11 +15,15 @@ use Cel\Syntax\Binary\BinaryOperatorKind;
 use Cel\Syntax\Expression;
 use Cel\Syntax\Literal\IntegerLiteralExpression;
 use Cel\Syntax\Literal\StringLiteralExpression;
+use Cel\Value\FloatValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Override;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+
+use const INF;
+use const NAN;
 
 final class ConstantFoldingOptimizationTest extends TestCase
 {
@@ -49,6 +53,20 @@ final class ConstantFoldingOptimizationTest extends TestCase
         );
 
         static::assertNull(new ConstantFoldingOptimization()->apply($expression));
+    }
+
+    public function testDoesNotFoldInfiniteDouble(): void
+    {
+        $runtime = self::runtimeReturning(new RuntimeReceipt(new FloatValue(INF), idempotent: true));
+
+        static::assertNull(new ConstantFoldingOptimization($runtime)->apply(self::additionOfOneAndTwo()));
+    }
+
+    public function testDoesNotFoldNanDouble(): void
+    {
+        $runtime = self::runtimeReturning(new RuntimeReceipt(new FloatValue(NAN), idempotent: true));
+
+        static::assertNull(new ConstantFoldingOptimization($runtime)->apply(self::additionOfOneAndTwo()));
     }
 
     public function testFoldsUsingTheProvidedRuntime(): void

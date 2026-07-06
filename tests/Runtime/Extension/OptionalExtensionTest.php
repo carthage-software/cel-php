@@ -19,6 +19,7 @@ use Cel\Value\BooleanValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\MessageValue;
 use Cel\Value\StringValue;
+use Cel\Value\TypeValue;
 use Cel\Value\Value;
 use Override;
 
@@ -140,7 +141,7 @@ final class OptionalExtensionTest extends RuntimeTestCase
             new StringValue('cel'),
         ];
 
-        yield 'typeOf optional' => ['typeOf(optional.of(1))', [], new StringValue('optional_type')];
+        yield 'type of optional' => ['type(optional.of(1))', [], new TypeValue('optional_type')];
     }
 
     /**

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Cel\Extension\Core\BinaryOperator\Handler\DivisionOperator;
 
-use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Util\OperandUtil;
 use Cel\Value\FloatValue;
 use Cel\Value\Value;
-use DivisionByZeroError;
 use Override;
+
+use function fdiv;
 
 final readonly class FloatFloatHandler implements BinaryOperatorOverloadHandlerInterface
 {
@@ -24,7 +24,6 @@ final readonly class FloatFloatHandler implements BinaryOperatorOverloadHandlerI
      * @return Value The result of the binary operation.
      *
      * @throws InternalException If operand type assertion fails.
-     * @throws EvaluationException If division by zero is attempted.
      */
     #[Override]
     public function __invoke(BinaryExpression $expression, Value $left, Value $right): Value
@@ -32,14 +31,8 @@ final readonly class FloatFloatHandler implements BinaryOperatorOverloadHandlerI
         $left = OperandUtil::assertLeft($left, FloatValue::class);
         $right = OperandUtil::assertRight($right, FloatValue::class);
 
-        try {
-            return new FloatValue($left->value / $right->value);
-        } catch (DivisionByZeroError $exception) { // @mago-expect analysis:avoid-catching-error
-            throw new EvaluationException(
-                'Failed to evaluate division: division by zero',
-                $expression->left->getSpan()->join($expression->right->getSpan()),
-                $exception,
-            );
-        }
+        // Double division follows IEEE 754: dividing by zero yields +-Inf or NaN
+        // rather than an error. Only integer and unsigned division error on zero.
+        return new FloatValue(fdiv($left->value, $right->value));
     }
 }
