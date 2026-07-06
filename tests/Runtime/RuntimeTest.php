@@ -268,6 +268,28 @@ final class RuntimeTest extends RuntimeTestCase
         yield 'Double division: 7.0 / 2.0' => ['7.0 / 2.0', [], new FloatValue(3.5)];
         yield 'Double division by zero: 1.0 / 0.0' => ['1.0 / 0.0', [], new FloatValue(INF)];
         yield 'Double division by zero: -1.0 / 0.0' => ['-1.0 / 0.0', [], new FloatValue(-INF)];
+
+        // Integer arithmetic raises an error rather than silently overflowing to a float.
+        yield 'Integer overflow on addition' => [
+            '9223372036854775807 + 1',
+            [],
+            new OverflowException('Integer overflow on addition', new Span(0, 23)),
+        ];
+        yield 'Integer overflow on subtraction' => [
+            '-9223372036854775808 - 1',
+            [],
+            new OverflowException('Integer overflow on subtraction', new Span(0, 24)),
+        ];
+        yield 'Integer overflow on multiplication' => [
+            '9223372036854775807 * 2',
+            [],
+            new OverflowException('Integer overflow on multiplication', new Span(0, 23)),
+        ];
+        yield 'Integer overflow on negation' => [
+            '-(-9223372036854775808)',
+            [],
+            new OverflowException('Integer overflow on negation', new Span(0, 23)),
+        ];
     }
 
     public function testDoubleDivisionByZeroWithZeroDividendYieldsNan(): void
