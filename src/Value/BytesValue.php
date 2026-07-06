@@ -31,11 +31,7 @@ final readonly class BytesValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        if (!$other instanceof BytesValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
-        }
-
-        return $this->value === $other->value;
+        return $other instanceof BytesValue && $this->value === $other->value;
     }
 
     #[Override]

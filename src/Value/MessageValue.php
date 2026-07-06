@@ -43,7 +43,7 @@ final readonly class MessageValue extends Value
     public function isEqual(Value $other): bool
     {
         if (!$other instanceof MessageValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
+            return false;
         }
 
         if ($this->message::class !== $other->message::class) {

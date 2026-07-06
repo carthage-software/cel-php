@@ -53,28 +53,40 @@ final class FloatValueTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{FloatValue, FloatValue, bool, bool}>
+     * @return iterable<string, array{FloatValue, Value, bool, bool}>
      */
     public static function provideComparisonCases(): iterable
     {
         yield '1.5 vs 1.6' => [new FloatValue(1.5), new FloatValue(1.6), true, false];
         yield '1.6 vs 1.5' => [new FloatValue(1.6), new FloatValue(1.5), false, true];
         yield '1.5 vs 1.5' => [new FloatValue(1.5), new FloatValue(1.5), false, false];
+        yield '1.5 vs int 2' => [new FloatValue(1.5), new IntegerValue(2), true, false];
+        yield '2.5 vs int 2' => [new FloatValue(2.5), new IntegerValue(2), false, true];
+        yield '1.0 vs int 1' => [new FloatValue(1.0), new IntegerValue(1), false, false];
+        yield '1.5 vs uint 2' => [new FloatValue(1.5), new UnsignedIntegerValue(2), true, false];
     }
 
-    public function testIsLessThanThrowsOnIncompatibleType(): void
+    public function testIsLessThanThrowsOnNonNumericType(): void
     {
         $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `float` and `int`');
+        $this->expectExceptionMessage('Cannot compare values of type `float` and `bool`');
 
-        new FloatValue(1.0)->isLessThan(new IntegerValue(1));
+        new FloatValue(1.0)->isLessThan(new BooleanValue(true));
     }
 
-    public function testIsGreaterThanThrowsOnIncompatibleType(): void
+    public function testIsGreaterThanThrowsOnNonNumericType(): void
     {
         $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `float` and `int`');
+        $this->expectExceptionMessage('Cannot compare values of type `float` and `bool`');
 
-        new FloatValue(1.0)->isGreaterThan(new IntegerValue(1));
+        new FloatValue(1.0)->isGreaterThan(new BooleanValue(true));
+    }
+
+    public function testNaNCannotBeOrdered(): void
+    {
+        $this->expectException(UnsupportedOperationException::class);
+        $this->expectExceptionMessage('NaN values cannot be ordered');
+
+        new FloatValue(NAN)->isLessThan(new FloatValue(1.0));
     }
 }

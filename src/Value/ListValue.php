@@ -37,7 +37,7 @@ final readonly class ListValue extends Value
     public function isEqual(Value $other): bool
     {
         if (!$other instanceof ListValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
+            return false;
         }
 
         if (Iter\count($this->value) !== Iter\count($other->value)) {

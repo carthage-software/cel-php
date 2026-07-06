@@ -40,12 +40,9 @@ final class BooleanValueTest extends TestCase
         yield 'false == true' => [false, new BooleanValue(false), new BooleanValue(true)];
     }
 
-    public function testIsEqualThrowsOnIncompatibleType(): void
+    public function testIsEqualWithIncompatibleTypeReturnsFalse(): void
     {
-        $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `bool` and `int` for equality');
-
-        new BooleanValue(true)->isEqual(new IntegerValue(1));
+        static::assertFalse(new BooleanValue(true)->isEqual(new IntegerValue(1)));
     }
 
     #[DataProvider('provideComparisonCases')]

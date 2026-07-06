@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cel\Optimizer;
 
+use Cel\Runtime\Runtime;
+use Cel\Runtime\RuntimeInterface;
 use Cel\Syntax\Aggregate\FieldInitializerNode;
 use Cel\Syntax\Aggregate\ListElementNode;
 use Cel\Syntax\Aggregate\ListExpression;
@@ -28,18 +30,22 @@ final class Optimizer implements OptimizerInterface
     private array $optimizations;
 
     /**
-     * @param list<Optimization\OptimizationInterface> $optimizations Initial list of optimizations to apply.
+     * @param RuntimeInterface $runtime The runtime used by constant folding to evaluate constant
+     *                                  sub-expressions, so folding honours the registered extensions.
+     * @param null|list<Optimization\OptimizationInterface> $optimizations Optimizations to apply; when
+     *                                  null, the default set (constant folding bound to `$runtime`, plus
+     *                                  the structural simplifications) is used.
      */
-    public function __construct(array $optimizations = [
-        new Optimization\ConstantFoldingOptimization(),
-        new Optimization\IdentityOperationOptimization(),
-        new Optimization\DoubleNegationOptimization(),
-        new Optimization\ConditionalSimplificationOptimization(),
-        new Optimization\ShortCircuitBooleanOptimization(),
-        new Optimization\UnwrapParenthesesOptimization(),
-    ])
+    public function __construct(RuntimeInterface $runtime = new Runtime(), null|array $optimizations = null)
     {
-        $this->optimizations = $optimizations;
+        $this->optimizations = $optimizations ?? [
+            new Optimization\ConstantFoldingOptimization($runtime),
+            new Optimization\IdentityOperationOptimization(),
+            new Optimization\DoubleNegationOptimization(),
+            new Optimization\ConditionalSimplificationOptimization(),
+            new Optimization\ShortCircuitBooleanOptimization(),
+            new Optimization\UnwrapParenthesesOptimization(),
+        ];
     }
 
     #[Override]

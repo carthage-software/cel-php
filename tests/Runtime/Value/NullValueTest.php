@@ -7,7 +7,10 @@ namespace Cel\Tests\Runtime\Value;
 use Cel\Exception\UnsupportedOperationException;
 use Cel\Value\IntegerValue;
 use Cel\Value\NullValue;
+use Cel\Value\StringValue;
+use Cel\Value\Value;
 use Cel\Value\ValueKind;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class NullValueTest extends TestCase
@@ -25,21 +28,20 @@ final class NullValueTest extends TestCase
         static::assertSame(ValueKind::Null, $value->getKind());
     }
 
-    public function testIsEqualWithNullValue(): void
+    #[DataProvider('provideEqualityCases')]
+    public function testIsEqual(bool $expected, Value $other): void
     {
-        $null1 = new NullValue();
-        $null2 = new NullValue();
-
-        static::assertTrue($null1->isEqual($null2));
+        static::assertSame($expected, new NullValue()->isEqual($other));
     }
 
-    public function testIsEqualWithNonNullValueThrowsException(): void
+    /**
+     * @return iterable<string, array{bool, Value}>
+     */
+    public static function provideEqualityCases(): iterable
     {
-        $null = new NullValue();
-        $int = new IntegerValue(42);
-
-        $this->expectException(UnsupportedOperationException::class);
-        $null->isEqual($int);
+        yield 'null == null' => [true, new NullValue()];
+        yield 'null == int' => [false, new IntegerValue(42)];
+        yield 'null == string' => [false, new StringValue('x')];
     }
 
     public function testIsLessThanThrowsException(): void

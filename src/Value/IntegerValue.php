@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Value;
 
 use Cel\Exception\UnsupportedOperationException;
+use Cel\Util\NumericComparator;
 use Override;
 
 /**
@@ -31,40 +32,31 @@ final readonly class IntegerValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        if ($other instanceof IntegerValue) {
-            return $this->value === $other->value;
+        if (!NumericComparator::isNumeric($other)) {
+            return false;
         }
 
-        if ($other instanceof FloatValue) {
-            return (float) $this->value === $other->value;
-        }
-
-        if ($other instanceof UnsignedIntegerValue) {
-            // Compare as strings to avoid PHP's integer overflow issues with large unsigned integers
-            return (string) $this->value === (string) $other->value;
-        }
-
-        return false;
+        return NumericComparator::equals($this, $other);
     }
 
     #[Override]
     public function isGreaterThan(Value $other): bool
     {
-        if (!$other instanceof IntegerValue) {
+        if (!NumericComparator::isNumeric($other)) {
             throw UnsupportedOperationException::forComparison($this, $other);
         }
 
-        return $this->value > $other->value;
+        return NumericComparator::order($this, $other) > 0;
     }
 
     #[Override]
     public function isLessThan(Value $other): bool
     {
-        if (!$other instanceof IntegerValue) {
+        if (!NumericComparator::isNumeric($other)) {
             throw UnsupportedOperationException::forComparison($this, $other);
         }
 
-        return $this->value < $other->value;
+        return NumericComparator::order($this, $other) < 0;
     }
 
     #[Override]

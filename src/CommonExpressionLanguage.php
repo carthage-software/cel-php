@@ -35,11 +35,26 @@ use Psr\SimpleCache\CacheInterface;
  */
 readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInterface, RuntimeInterface
 {
+    private ParserInterface $parser;
+
+    private OptimizerInterface $optimizer;
+
+    private RuntimeInterface $runtime;
+
+    /**
+     * The parser and optimizer default to instances bound to `$runtime`, so that constant folding
+     * evaluates constant sub-expressions with the same registry (including extensions registered
+     * later via {@see self::register()}) that executes the expression.
+     */
     final public function __construct(
-        private ParserInterface $parser = new OptimizedParser(),
-        private OptimizerInterface $optimizer = new Optimizer(),
-        private RuntimeInterface $runtime = new Runtime(),
-    ) {}
+        null|ParserInterface $parser = null,
+        null|OptimizerInterface $optimizer = null,
+        RuntimeInterface $runtime = new Runtime(),
+    ) {
+        $this->runtime = $runtime;
+        $this->optimizer = $optimizer ?? new Optimizer($runtime);
+        $this->parser = $parser ?? new OptimizedParser(runtime: $runtime);
+    }
 
     /**
      * @inheritDoc
@@ -47,11 +62,7 @@ readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInt
     #[Override]
     public static function default(): static
     {
-        return new static(
-            parser: OptimizedParser::default(),
-            optimizer: Optimizer::default(),
-            runtime: Runtime::default(),
-        );
+        return new static(runtime: Runtime::default());
     }
 
     /**
@@ -68,10 +79,12 @@ readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInt
      */
     public static function cached(CacheInterface $cache, null|int $cacheTtl = 3600): static
     {
+        $runtime = Runtime::default();
+
         return new static(
-            parser: new CachedParser(OptimizedParser::default(), $cache, $cacheTtl),
-            optimizer: Optimizer::default(),
-            runtime: new CachedRuntime(Runtime::default(), $cache, $cacheTtl),
+            parser: new CachedParser(new OptimizedParser(runtime: $runtime), $cache, $cacheTtl),
+            optimizer: new Optimizer($runtime),
+            runtime: new CachedRuntime($runtime, $cache, $cacheTtl),
         );
     }
 

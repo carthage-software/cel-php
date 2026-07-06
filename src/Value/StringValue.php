@@ -31,11 +31,7 @@ final readonly class StringValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        if (!$other instanceof StringValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
-        }
-
-        return $this->value === $other->value;
+        return $other instanceof StringValue && $this->value === $other->value;
     }
 
     #[Override]

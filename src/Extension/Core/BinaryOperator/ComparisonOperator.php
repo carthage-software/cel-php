@@ -8,11 +8,9 @@ use Cel\Exception\InternalException;
 use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\BooleanBooleanHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\BytesBytesHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\DurationDurationHandler;
-use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\FloatFloatHandler;
-use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\IntegerIntegerHandler;
+use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\NumericHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\StringStringHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\TimestampTimestampHandler;
-use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\UnsignedIntegerUnsignedIntegerHandler;
 use Cel\Operator\BinaryOperatorOverloadInterface;
 use Cel\Syntax\Binary\BinaryOperatorKind;
 use Cel\Value\Value;
@@ -46,11 +44,15 @@ final readonly class ComparisonOperator implements BinaryOperatorOverloadInterfa
             default => throw InternalException::forInvalidOperator($this->operator->getSymbol()),
         };
 
-        yield [ValueKind::Integer, ValueKind::Integer] => new IntegerIntegerHandler($comparator);
-        yield [ValueKind::UnsignedInteger, ValueKind::UnsignedInteger] => new UnsignedIntegerUnsignedIntegerHandler(
-            $comparator,
-        );
-        yield [ValueKind::Float, ValueKind::Float] => new FloatFloatHandler($comparator);
+        // Numeric comparisons work across int, uint, and double on a single number line.
+        $numeric = new NumericHandler($comparator);
+        $numericKinds = [ValueKind::Integer, ValueKind::UnsignedInteger, ValueKind::Float];
+        foreach ($numericKinds as $left) {
+            foreach ($numericKinds as $right) {
+                yield [$left, $right] => $numeric;
+            }
+        }
+
         yield [ValueKind::String, ValueKind::String] => new StringStringHandler($comparator);
         yield [ValueKind::Bytes, ValueKind::Bytes] => new BytesBytesHandler($comparator);
         yield [ValueKind::Boolean, ValueKind::Boolean] => new BooleanBooleanHandler($comparator);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Value;
 
 use Cel\Exception\UnsupportedOperationException;
+use Cel\Util\NumericComparator;
 use Override;
 
 use function bccomp;
@@ -36,39 +37,31 @@ final readonly class UnsignedIntegerValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        if ($other instanceof UnsignedIntegerValue) {
-            return bccomp((string) $this->value, (string) $other->value, 0) === 0;
+        if (!NumericComparator::isNumeric($other)) {
+            return false;
         }
 
-        if ($other instanceof IntegerValue) {
-            return bccomp((string) $this->value, (string) $other->value, 0) === 0;
-        }
-
-        if ($other instanceof FloatValue) {
-            return (float) $this->value === $other->value;
-        }
-
-        return false;
+        return NumericComparator::equals($this, $other);
     }
 
     #[Override]
     public function isGreaterThan(Value $other): bool
     {
-        if (!$other instanceof UnsignedIntegerValue) {
+        if (!NumericComparator::isNumeric($other)) {
             throw UnsupportedOperationException::forComparison($this, $other);
         }
 
-        return bccomp((string) $this->value, (string) $other->value, 0) === 1;
+        return NumericComparator::order($this, $other) > 0;
     }
 
     #[Override]
     public function isLessThan(Value $other): bool
     {
-        if (!$other instanceof UnsignedIntegerValue) {
+        if (!NumericComparator::isNumeric($other)) {
             throw UnsupportedOperationException::forComparison($this, $other);
         }
 
-        return bccomp((string) $this->value, (string) $other->value, 0) === -1;
+        return NumericComparator::order($this, $other) < 0;
     }
 
     /**

@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator;
 
-use Cel\Exception\InternalException;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
-use Cel\Util\OperandUtil;
 use Cel\Value\BooleanValue;
-use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
 
-final readonly class UnsignedIntegerUnsignedIntegerHandler implements BinaryOperatorOverloadHandlerInterface
+/**
+ * Handles ordering comparisons (`<`, `<=`, `>`, `>=`) between any two numeric
+ * values (int, uint, double), across types on a single number line.
+ *
+ * Comparisons involving NaN raise an error, as NaN cannot be ordered.
+ */
+final readonly class NumericHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**
      * @param callable(Value, Value): bool $comparator
@@ -27,16 +30,11 @@ final readonly class UnsignedIntegerUnsignedIntegerHandler implements BinaryOper
      * @param Value $left The evaluated left operand.
      * @param Value $right The evaluated right operand.
      *
-     * @return Value The result of the binary operation.
-     *
-     * @throws InternalException If operand type assertion fails.
+     * @return BooleanValue The result of the comparison.
      */
     #[Override]
-    public function __invoke(BinaryExpression $expression, Value $left, Value $right): Value
+    public function __invoke(BinaryExpression $expression, Value $left, Value $right): BooleanValue
     {
-        $left = OperandUtil::assertLeft($left, UnsignedIntegerValue::class);
-        $right = OperandUtil::assertRight($right, UnsignedIntegerValue::class);
-
         return new BooleanValue(($this->comparator)($left, $right));
     }
 }

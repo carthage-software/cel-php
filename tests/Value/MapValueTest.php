@@ -64,13 +64,12 @@ final class MapValueTest extends TestCase
         static::assertFalse($map1->isEqual($map2));
     }
 
-    public function testIsEqualWithNonMapThrowsException(): void
+    public function testIsEqualWithNonMapReturnsFalse(): void
     {
         $map = new MapValue([]);
         $int = new IntegerValue(42);
 
-        $this->expectException(UnsupportedOperationException::class);
-        $map->isEqual($int);
+        static::assertFalse($map->isEqual($int));
     }
 
     public function testIsLessThanThrowsException(): void

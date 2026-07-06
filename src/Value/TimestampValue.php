@@ -38,11 +38,7 @@ final readonly class TimestampValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        if (!$other instanceof TimestampValue) {
-            throw UnsupportedOperationException::forEquality($this, $other);
-        }
-
-        return $this->value->compare($other->value) === Order::Equal;
+        return $other instanceof TimestampValue && $this->value->compare($other->value) === Order::Equal;
     }
 
     #[Override]

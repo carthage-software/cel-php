@@ -222,7 +222,10 @@ final class OptionalExtensionTest extends RuntimeTestCase
         yield 'map optional index wrong key type' => [
             '{"a": 1}[?[1]].hasValue()',
             [],
-            new NoSuchOverloadException('Map keys must be string or integer, got `list`', new Span(0, 0)),
+            new NoSuchOverloadException(
+                'Map keys must be string, integer, unsigned integer, or double, got `list`',
+                new Span(0, 0),
+            ),
         ];
 
         // Optional message indexing.
