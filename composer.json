@@ -27,7 +27,17 @@
     "php": "~8.4 || ~8.5",
     "ext-bcmath": "*",
     "ext-intl": "*",
-    "php-standard-library/php-standard-library": "~5.0 || ~6.0",
+    "php-standard-library/str": "~5.0 || ~6.0",
+    "php-standard-library/iter": "~5.0 || ~6.0",
+    "php-standard-library/date-time": "~5.0 || ~6.0",
+    "php-standard-library/vec": "~5.0 || ~6.0",
+    "php-standard-library/dict": "~5.0 || ~6.0",
+    "php-standard-library/default": "~5.0 || ~6.0",
+    "php-standard-library/math": "~5.0 || ~6.0",
+    "php-standard-library/foundation": "~5.0 || ~6.0",
+    "php-standard-library/regex": "~5.0 || ~6.0",
+    "php-standard-library/comparison": "~5.0 || ~6.0",
+    "php-standard-library/async": "~5.0 || ~6.0",
     "psr/simple-cache": "^3.0"
   },
   "require-dev": {
@@ -37,7 +47,9 @@
     "php-coveralls/php-coveralls": "^2.8",
     "infection/infection": "^0.34.0",
     "phpbench/phpbench": "^1.4",
-    "symfony/expression-language": "^7.3 || ^8.0"
+    "symfony/expression-language": "^7.3 || ^8.0",
+    "php-standard-library/io": "~5.0 || ~6.0",
+    "php-standard-library/json": "~5.0 || ~6.0"
   },
   "config": {
     "allow-plugins": {
