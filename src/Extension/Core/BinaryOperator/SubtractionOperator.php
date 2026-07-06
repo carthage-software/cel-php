@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Cel\Extension\Core\BinaryOperator;
 
+use Cel\Extension\Core\BinaryOperator\Handler\SubtractionOperator\DurationDurationHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\SubtractionOperator\FloatFloatHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\SubtractionOperator\IntegerIntegerHandler;
+use Cel\Extension\Core\BinaryOperator\Handler\SubtractionOperator\TimestampDurationHandler;
+use Cel\Extension\Core\BinaryOperator\Handler\SubtractionOperator\TimestampTimestampHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\SubtractionOperator\UnsignedIntegerUnsignedIntegerHandler;
 use Cel\Operator\BinaryOperatorOverloadInterface;
 use Cel\Syntax\Binary\BinaryOperatorKind;
@@ -26,5 +29,8 @@ final readonly class SubtractionOperator implements BinaryOperatorOverloadInterf
         yield [ValueKind::Integer, ValueKind::Integer] => new IntegerIntegerHandler();
         yield [ValueKind::UnsignedInteger, ValueKind::UnsignedInteger] => new UnsignedIntegerUnsignedIntegerHandler();
         yield [ValueKind::Float, ValueKind::Float] => new FloatFloatHandler();
+        yield [ValueKind::Timestamp, ValueKind::Duration] => new TimestampDurationHandler();
+        yield [ValueKind::Timestamp, ValueKind::Timestamp] => new TimestampTimestampHandler();
+        yield [ValueKind::Duration, ValueKind::Duration] => new DurationDurationHandler();
     }
 }

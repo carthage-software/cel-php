@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Cel\Extension\Core\BinaryOperator;
 
 use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\BytesBytesHandler;
+use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\DurationDurationHandler;
+use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\DurationTimestampHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\FloatFloatHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\IntegerIntegerHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\ListListHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\StringStringHandler;
+use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\TimestampDurationHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\AdditionOperator\UnsignedIntegerUnsignedIntegerHandler;
 use Cel\Operator\BinaryOperatorOverloadInterface;
 use Cel\Syntax\Binary\BinaryOperatorKind;
@@ -32,5 +35,8 @@ final readonly class AdditionOperator implements BinaryOperatorOverloadInterface
         yield [ValueKind::String, ValueKind::String] => new StringStringHandler();
         yield [ValueKind::Bytes, ValueKind::Bytes] => new BytesBytesHandler();
         yield [ValueKind::List, ValueKind::List] => new ListListHandler();
+        yield [ValueKind::Timestamp, ValueKind::Duration] => new TimestampDurationHandler();
+        yield [ValueKind::Duration, ValueKind::Timestamp] => new DurationTimestampHandler();
+        yield [ValueKind::Duration, ValueKind::Duration] => new DurationDurationHandler();
     }
 }

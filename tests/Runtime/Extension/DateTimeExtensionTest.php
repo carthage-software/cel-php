@@ -341,6 +341,65 @@ final class DateTimeExtensionTest extends RuntimeTestCase
             [],
             new EvaluationException('Duration "-320000000000s" is outside the valid range.', new Span(0, 28)),
         ];
+
+        yield from self::provideArithmeticCases();
+    }
+
+    /**
+     * @return iterable<string, array{0: string, 1: array<string, mixed>, 2: TimestampValue|DurationValue|EvaluationException}>
+     */
+    private static function provideArithmeticCases(): iterable
+    {
+        yield 'DateTime arithmetic: timestamp plus duration' => [
+            'timestamp("2009-02-13T23:00:00Z") + duration("240s")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_234_566_240)),
+        ];
+        yield 'DateTime arithmetic: duration plus timestamp' => [
+            'duration("120s") + timestamp("2009-02-13T23:01:00Z")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_234_566_180)),
+        ];
+        yield 'DateTime arithmetic: duration plus duration' => [
+            'duration("600s") + duration("50s")',
+            [],
+            new DurationValue(Duration::fromParts(0, 0, 650)),
+        ];
+        yield 'DateTime arithmetic: timestamp minus duration' => [
+            'timestamp("2009-02-13T23:10:00Z") - duration("600s")',
+            [],
+            new TimestampValue(Timestamp::fromParts(1_234_566_000)),
+        ];
+        yield 'DateTime arithmetic: timestamp minus timestamp' => [
+            'timestamp("2009-02-13T23:31:00Z") - timestamp("2009-02-13T23:29:00Z")',
+            [],
+            new DurationValue(Duration::fromParts(0, 0, 120)),
+        ];
+        yield 'DateTime arithmetic: duration minus duration' => [
+            'duration("900s") - duration("42s")',
+            [],
+            new DurationValue(Duration::fromParts(0, 0, 858)),
+        ];
+        yield 'DateTime arithmetic: sub-second precision is preserved' => [
+            'timestamp("2009-02-13T23:31:30.5Z") - timestamp("2009-02-13T23:31:30Z")',
+            [],
+            new DurationValue(Duration::fromParts(0, 0, 0, 500_000_000)),
+        ];
+        yield 'DateTime arithmetic: timestamp addition beyond range errors' => [
+            'timestamp("9999-12-31T23:59:59Z") + duration("1s")',
+            [],
+            new EvaluationException('Timestamp is outside the valid range', new Span(0, 52)),
+        ];
+        yield 'DateTime arithmetic: duration sum beyond range errors' => [
+            'duration("200000000000s") + duration("200000000000s")',
+            [],
+            new EvaluationException('Duration is outside the valid range', new Span(0, 53)),
+        ];
+        yield 'DateTime arithmetic: timestamp difference beyond duration range errors' => [
+            'timestamp("9999-12-31T23:59:59Z") - timestamp("2000-01-01T00:00:00Z")',
+            [],
+            new EvaluationException('Duration is outside the valid range', new Span(0, 68)),
+        ];
     }
 
     public function testNowFunctionReturnsCurrentTimestamp(): void
