@@ -418,7 +418,7 @@ final class Parser implements ParserInterface
      *
      * @throws UnexpectedEndOfFileException
      */
-    private function eatOptionalMarker(): ?Span
+    private function eatOptionalMarker(): null|Span
     {
         if ($this->stream->isAt(TokenKind::Question)) {
             return $this->stream->eat(TokenKind::Question)->span;
@@ -459,7 +459,7 @@ final class Parser implements ParserInterface
      * @throws UnexpectedEndOfFileException
      * @throws UnexpectedTokenException
      */
-    private function parseMessageLiteral(?Span $leadingDot): MessageExpression
+    private function parseMessageLiteral(null|Span $leadingDot): MessageExpression
     {
         $firstIdent = $this->stream->eat(TokenKind::Identifier);
         $selector = new SelectorNode($firstIdent->value, $firstIdent->span);

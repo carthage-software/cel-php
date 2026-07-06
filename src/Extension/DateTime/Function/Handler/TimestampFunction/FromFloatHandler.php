@@ -9,6 +9,7 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\TimestampRange;
 use Cel\Value\FloatValue;
 use Cel\Value\TimestampValue;
 use Cel\Value\Value;
@@ -17,6 +18,8 @@ use Psl\DateTime;
 use Psl\DateTime\Timestamp;
 use Psl\Exception\ExceptionInterface;
 use Psl\Str;
+
+use function is_finite;
 
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {
@@ -33,6 +36,14 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
     public function __invoke(CallExpression $call, array $arguments): Value
     {
         $seconds = ArgumentsUtil::get($arguments, 0, FloatValue::class);
+
+        if (
+            !is_finite($seconds->value)
+            || $seconds->value < (float) TimestampRange::MIN_SECONDS
+            || $seconds->value >= ((float) TimestampRange::MAX_SECONDS + 1.0)
+        ) {
+            throw new EvaluationException('Timestamp is outside the valid range', $call->getSpan());
+        }
 
         $wholeSeconds = (int) $seconds->value;
         $nanoseconds = (int) (($seconds->value - $wholeSeconds) * DateTime\NANOSECONDS_PER_SECOND);

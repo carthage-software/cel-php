@@ -17,6 +17,7 @@ use Override;
 use Psl\DateTime;
 use Psl\DateTime\Duration;
 use Psl\Exception\ExceptionInterface;
+use Psl\Math;
 use Psl\Regex;
 use Psl\Str;
 
@@ -24,6 +25,9 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
 {
     // Regex to parse CEL duration format, e.g., "-1h30m5.5s"
     private const string DURATION_PATTERN = '/^([+-])?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+(?:\.\d*)?)s)?(?:(\d+)ms)?(?:(\d+)us)?(?:(\d+)ns)?$/';
+
+    /** The maximum magnitude, in seconds, of a CEL duration (about 10000 years). */
+    private const int MAX_SECONDS = 315_576_000_000;
 
     /**
      * @param CallExpression $call The call expression.
@@ -72,6 +76,13 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             }
 
             $duration = Duration::fromParts($hours, $minutes, (int) $secondsWithFraction, $totalNanoseconds);
+
+            if (Math\abs($duration->getTotalSeconds()) > self::MAX_SECONDS) {
+                throw new EvaluationException(
+                    Str\format('Duration "%s" is outside the valid range.', $value->value),
+                    $call->getSpan(),
+                );
+            }
 
             return new DurationValue($duration);
         } catch (ExceptionInterface $e) {

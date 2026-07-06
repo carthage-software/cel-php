@@ -9,6 +9,7 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\TimestampRange;
 use Cel\Value\IntegerValue;
 use Cel\Value\TimestampValue;
 use Cel\Value\Value;
@@ -32,6 +33,10 @@ final readonly class FromIntegerHandler implements FunctionOverloadHandlerInterf
     public function __invoke(CallExpression $call, array $arguments): Value
     {
         $seconds = ArgumentsUtil::get($arguments, 0, IntegerValue::class);
+
+        if (!TimestampRange::isValidSeconds($seconds->value)) {
+            throw new EvaluationException('Timestamp is outside the valid range', $call->getSpan());
+        }
 
         try {
             return new TimestampValue(Timestamp::fromParts($seconds->value));

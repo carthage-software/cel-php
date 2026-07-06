@@ -50,6 +50,13 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
                 );
             }
 
+            if ((int) Str\slice($parts[1], 0, 4) < 1) {
+                throw new TypeConversionException(
+                    Str\format('Timestamp "%s" is outside the valid range.', $timestampString),
+                    $call->getSpan(),
+                );
+            }
+
             $mainPart = $parts[1] . ($parts[3] ?? '');
             $fractionalPart = $parts[2] ?? '0';
 

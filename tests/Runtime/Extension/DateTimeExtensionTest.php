@@ -291,6 +291,56 @@ final class DateTimeExtensionTest extends RuntimeTestCase
             [],
             new TimestampValue(Timestamp::fromParts(1_757_766_605, 123_456_001)),
         ];
+
+        yield 'DateTime timestamp(): minimum second is valid' => [
+            'timestamp(-62135596800)',
+            [],
+            new TimestampValue(Timestamp::fromParts(-62_135_596_800)),
+        ];
+        yield 'DateTime timestamp(): maximum second is valid' => [
+            'timestamp(253402300799)',
+            [],
+            new TimestampValue(Timestamp::fromParts(253_402_300_799)),
+        ];
+        yield 'DateTime timestamp(): below the minimum second errors' => [
+            'timestamp(-62135596801)',
+            [],
+            new EvaluationException('Timestamp is outside the valid range', new Span(0, 24)),
+        ];
+        yield 'DateTime timestamp(): above the maximum second errors' => [
+            'timestamp(253402300800)',
+            [],
+            new EvaluationException('Timestamp is outside the valid range', new Span(0, 23)),
+        ];
+        yield 'DateTime timestamp(): out-of-range float errors' => [
+            'timestamp(253402300800.0)',
+            [],
+            new EvaluationException('Timestamp is outside the valid range', new Span(0, 25)),
+        ];
+        yield 'DateTime timestamp(): year before 0001 errors' => [
+            'timestamp("0000-01-01T00:00:00Z")',
+            [],
+            new TypeConversionException(
+                'Timestamp "0000-01-01T00:00:00Z" is outside the valid range.',
+                new Span(0, 33),
+            ),
+        ];
+
+        yield 'DateTime duration(): within range' => [
+            'duration("200000000000s")',
+            [],
+            new DurationValue(Duration::fromParts(0, 0, 200_000_000_000)),
+        ];
+        yield 'DateTime duration(): above the range errors' => [
+            'duration("320000000000s")',
+            [],
+            new EvaluationException('Duration "320000000000s" is outside the valid range.', new Span(0, 27)),
+        ];
+        yield 'DateTime duration(): below the range errors' => [
+            'duration("-320000000000s")',
+            [],
+            new EvaluationException('Duration "-320000000000s" is outside the valid range.', new Span(0, 28)),
+        ];
     }
 
     public function testNowFunctionReturnsCurrentTimestamp(): void

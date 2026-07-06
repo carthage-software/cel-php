@@ -169,19 +169,31 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core int: float overflow high' => [
             'int(9.3e18)',
             [],
-            new OverflowException(
-                'Float value 9.3E+18 overflows maximum integer value 9223372036854775807',
-                new Span(0, 11),
-            ),
+            new OverflowException('Double value 9.3E+18 overflows the integer range', new Span(0, 11)),
         ];
 
         yield 'Core int: float overflow low' => [
             'int(-9.3e18)',
             [],
-            new OverflowException(
-                'Float value -9.3E+18 overflows maximum integer value 9223372036854775807',
-                new Span(0, 12),
-            ),
+            new OverflowException('Double value -9.3E+18 overflows the integer range', new Span(0, 12)),
+        ];
+
+        yield 'Core int: double at the positive boundary overflows' => [
+            'int(9223372036854775807.0)',
+            [],
+            new OverflowException('Double value 9.2233720368548E+18 overflows the integer range', new Span(0, 26)),
+        ];
+
+        yield 'Core int: double at the negative boundary overflows' => [
+            'int(-9223372036854775808.0)',
+            [],
+            new OverflowException('Double value -9.2233720368548E+18 overflows the integer range', new Span(0, 27)),
+        ];
+
+        yield 'Core int: NaN cannot convert to an integer' => [
+            'int(0.0 / 0.0)',
+            [],
+            new OverflowException('Double value NaN or infinity overflows the integer range', new Span(0, 14)),
         ];
 
         yield 'Core int: from bytes' => ['int(b"123")', [], new IntegerValue(123)];

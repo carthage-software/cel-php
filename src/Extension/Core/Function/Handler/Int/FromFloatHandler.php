@@ -16,6 +16,8 @@ use Override;
 use Psl\Math;
 use Psl\Str;
 
+use function is_finite;
+
 /**
  * Handles int(float) -> integer
  */
@@ -36,9 +38,12 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
         $value = ArgumentsUtil::get($arguments, 0, FloatValue::class);
         $floatValue = $value->value;
 
-        if ($floatValue > Math\INT64_MAX || $floatValue < Math\INT64_MIN) {
+        if (!is_finite($floatValue) || $floatValue >= (float) Math\INT64_MAX || $floatValue <= (float) Math\INT64_MIN) {
             throw new OverflowException(
-                Str\format('Float value %s overflows maximum integer value %d', $floatValue, Math\INT64_MAX),
+                Str\format(
+                    'Double value %s overflows the integer range',
+                    is_finite($floatValue) ? (string) $floatValue : 'NaN or infinity',
+                ),
                 $call->getSpan(),
             );
         }

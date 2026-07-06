@@ -290,6 +290,19 @@ final class RuntimeTest extends RuntimeTestCase
             [],
             new OverflowException('Integer overflow on negation', new Span(0, 23)),
         ];
+
+        yield 'Unsigned integer sum in range' => ['10u + 20u', [], new UnsignedIntegerValue('30')];
+        yield 'Unsigned integer overflow on addition' => [
+            '18446744073709551615u + 1u',
+            [],
+            new OverflowException('Unsigned integer overflow on addition', new Span(0, 25)),
+        ];
+        yield 'Unsigned integer product in range' => ['3000000000u * 3u', [], new UnsignedIntegerValue('9000000000')];
+        yield 'Unsigned integer overflow on multiplication' => [
+            '5000000000u * 5000000000u',
+            [],
+            new OverflowException('Unsigned integer overflow on multiplication', new Span(0, 25)),
+        ];
     }
 
     public function testDoubleDivisionByZeroWithZeroDividendYieldsNan(): void
