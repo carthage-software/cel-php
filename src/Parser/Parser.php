@@ -50,10 +50,13 @@ use Psl\Math;
 use Psl\Str;
 use Psl\Str\Byte;
 
+use function is_numeric;
+
 /**
  * A recursive-descent parser for the Common Expression Language (CEL).
  *
  * @mago-expect lint:too-many-methods
+ * @mago-expect lint:kan-defect
  */
 final class Parser implements ParserInterface
 {
@@ -415,7 +418,7 @@ final class Parser implements ParserInterface
      *
      * @throws UnexpectedEndOfFileException
      */
-    private function eatOptionalMarker(): null|Span
+    private function eatOptionalMarker(): ?Span
     {
         if ($this->stream->isAt(TokenKind::Question)) {
             return $this->stream->eat(TokenKind::Question)->span;
@@ -456,7 +459,7 @@ final class Parser implements ParserInterface
      * @throws UnexpectedEndOfFileException
      * @throws UnexpectedTokenException
      */
-    private function parseMessageLiteral(null|Span $leadingDot): MessageExpression
+    private function parseMessageLiteral(?Span $leadingDot): MessageExpression
     {
         $firstIdent = $this->stream->eat(TokenKind::Identifier);
         $selector = new SelectorNode($firstIdent->value, $firstIdent->span);
@@ -519,7 +522,7 @@ final class Parser implements ParserInterface
                 $token->span,
             ),
             TokenKind::LiteralUInt => new UnsignedIntegerLiteralExpression(
-                self::integerLiteralValue(Byte\trim_right($token->value, 'uU')),
+                self::unsignedIntegerLiteralValue(Byte\trim_right($token->value, 'uU')),
                 $token->value,
                 $token->span,
             ),
@@ -555,6 +558,41 @@ final class Parser implements ParserInterface
         }
 
         return $negative ? -$magnitude : $magnitude;
+    }
+
+    /**
+     * Converts an unsigned integer literal to its value. Magnitudes beyond the
+     * signed-int range (up to the unsigned 64-bit maximum) are preserved as a
+     * numeric string so that no precision is lost.
+     *
+     * @return int|numeric-string
+     */
+    private static function unsignedIntegerLiteralValue(string $text): int|string
+    {
+        $body = Byte\lowercase($text);
+
+        if (Byte\starts_with($body, '0x')) {
+            return self::fromBase(Byte\slice($body, 2), 16);
+        }
+
+        if (Byte\starts_with($body, '0o')) {
+            return self::fromBase(Byte\slice($body, 2), 8);
+        }
+
+        if (Byte\starts_with($body, '0b')) {
+            return self::fromBase(Byte\slice($body, 2), 2);
+        }
+
+        $digits = Byte\trim_left($body, '0');
+        if ('' === $digits || !is_numeric($digits)) {
+            return 0;
+        }
+
+        // A magnitude that no longer round-trips through a native int has
+        // overflowed the signed range and is kept as a string.
+        $asInt = (int) $digits;
+
+        return (string) $asInt === $digits ? $asInt : $digits;
     }
 
     /**

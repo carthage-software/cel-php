@@ -93,6 +93,11 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core double: string integer' => ['double("123")', [], new FloatValue(123.0)];
         yield 'Core double: string double' => ['double("1.23")', [], new FloatValue(1.23)];
         yield 'Core double: unsigned integer' => ['double(1u)', [], new FloatValue(1.0)];
+        yield 'Core double: unsigned integer maximum keeps magnitude' => [
+            'double(18446744073709551615u)',
+            [],
+            new FloatValue(18_446_744_073_709_551_615.0),
+        ];
 
         yield 'Core bool: boolean true' => ['bool(true)', [], new BooleanValue(true)];
         yield 'Core bool: boolean false' => ['bool(false)', [], new BooleanValue(false)];

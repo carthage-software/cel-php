@@ -286,6 +286,30 @@ final class ParserTest extends TestCase
             },
         ];
 
+        yield 'zero uint literal' => [
+            '0u',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(UnsignedIntegerLiteralExpression::class, $expr);
+                $test->assertSame(0, $expr->value);
+            },
+        ];
+
+        yield 'uint literal beyond the signed range keeps precision' => [
+            '18446744073709551615u',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(UnsignedIntegerLiteralExpression::class, $expr);
+                $test->assertSame('18446744073709551615', $expr->value);
+            },
+        ];
+
+        yield 'uint literal just above the signed maximum' => [
+            '9223372036854775808u',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(UnsignedIntegerLiteralExpression::class, $expr);
+                $test->assertSame('9223372036854775808', $expr->value);
+            },
+        ];
+
         yield 'octal integer literal' => [
             '0o17',
             static function (TestCase $test, Expression $expr): void {
