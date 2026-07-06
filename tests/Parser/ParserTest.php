@@ -262,6 +262,62 @@ final class ParserTest extends TestCase
             },
         ];
 
+        yield 'hex integer literal' => [
+            '0x55555555',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr);
+                $test->assertSame(1_431_655_765, $expr->value);
+            },
+        ];
+
+        yield 'negative hex integer literal' => [
+            '-0x55555555',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr);
+                $test->assertSame(-1_431_655_765, $expr->value);
+            },
+        ];
+
+        yield 'hex uint literal' => [
+            '0xffu',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(UnsignedIntegerLiteralExpression::class, $expr);
+                $test->assertSame(255, $expr->value);
+            },
+        ];
+
+        yield 'octal integer literal' => [
+            '0o17',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr);
+                $test->assertSame(15, $expr->value);
+            },
+        ];
+
+        yield 'binary integer literal' => [
+            '0b101',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr);
+                $test->assertSame(5, $expr->value);
+            },
+        ];
+
+        yield 'prefix without digits is zero' => [
+            '0x',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr);
+                $test->assertSame(0, $expr->value);
+            },
+        ];
+
+        yield 'decimal int64 minimum' => [
+            '-9223372036854775808',
+            static function (TestCase $test, Expression $expr): void {
+                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr);
+                $test->assertSame(PHP_INT_MIN, $expr->value);
+            },
+        ];
+
         yield 'float literal' => [
             '1.23',
             static function (TestCase $test, Expression $expr): void {

@@ -46,6 +46,7 @@ use Error;
 use Override;
 use Psl;
 use Psl\Exception\ExceptionInterface;
+use Psl\Math;
 use Psl\Str;
 use Psl\Str\Byte;
 
@@ -512,9 +513,13 @@ final class Parser implements ParserInterface
     {
         $token = $this->stream->consume();
         return match ($token->kind) {
-            TokenKind::LiteralInt => new IntegerLiteralExpression((int) $token->value, $token->value, $token->span),
+            TokenKind::LiteralInt => new IntegerLiteralExpression(
+                self::integerLiteralValue($token->value),
+                $token->value,
+                $token->span,
+            ),
             TokenKind::LiteralUInt => new UnsignedIntegerLiteralExpression(
-                (int) Byte\trim_right($token->value, 'uU'),
+                self::integerLiteralValue(Byte\trim_right($token->value, 'uU')),
                 $token->value,
                 $token->span,
             ),
@@ -526,6 +531,38 @@ final class Parser implements ParserInterface
             TokenKind::Null => new NullLiteralExpression($token->value, $token->span),
             default => throw new UnexpectedTokenException($token),
         };
+    }
+
+    /**
+     * Converts an integer literal to its value, honouring the `0x`, `0o`, and
+     * `0b` base prefixes (a plain `(int)` cast reads `0x55` as `0`).
+     */
+    private static function integerLiteralValue(string $text): int
+    {
+        $negative = Byte\starts_with($text, '-');
+        $body = Byte\lowercase($negative ? Byte\slice($text, 1) : $text);
+
+        if (Byte\starts_with($body, '0x')) {
+            $magnitude = self::fromBase(Byte\slice($body, 2), 16);
+        } elseif (Byte\starts_with($body, '0o')) {
+            $magnitude = self::fromBase(Byte\slice($body, 2), 8);
+        } elseif (Byte\starts_with($body, '0b')) {
+            $magnitude = self::fromBase(Byte\slice($body, 2), 2);
+        } else {
+            // Decimal: cast the whole signed literal so that INT64_MIN, whose
+            // magnitude alone overflows a signed 64-bit integer, round-trips.
+            return (int) $text;
+        }
+
+        return $negative ? -$magnitude : $magnitude;
+    }
+
+    /**
+     * @param int<2, 36> $base
+     */
+    private static function fromBase(string $digits, int $base): int
+    {
+        return '' === $digits ? 0 : Math\from_base($digits, $base);
     }
 
     /**
