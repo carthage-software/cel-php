@@ -11,7 +11,8 @@ use Cel\Value\BooleanValue;
 use Cel\Value\MapValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Implements the two-variable `transformMap()` macro.
@@ -71,7 +72,7 @@ final readonly class TransformMapMacro implements MacroInterface
                     $keep = $context->evaluate($filter);
                     if (!$keep instanceof BooleanValue) {
                         throw new InvalidMacroCallException(
-                            Str\format(
+                            sprintf(
                                 'The `transformMap` macro filter must result in a boolean, got `%s`',
                                 $keep->getType(),
                             ),

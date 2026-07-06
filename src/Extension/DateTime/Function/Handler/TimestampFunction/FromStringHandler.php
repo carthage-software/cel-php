@@ -18,9 +18,14 @@ use Override;
 use Psl\DateTime;
 use Psl\DateTime\Timestamp;
 use Psl\Regex;
-use Psl\Str;
 
 use function checkdate;
+use function mb_substr;
+use function sprintf;
+use function str_pad;
+use function str_starts_with;
+
+use const STR_PAD_RIGHT;
 
 /**
  * Parses an RFC3339 timestamp string.
@@ -48,7 +53,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
         $matches = Regex\first_match($string, self::RFC3339_PATTERN);
         if (null === $matches) {
             throw new TypeConversionException(
-                Str\format('Failed to parse timestamp string "%s".', $string),
+                sprintf('Failed to parse timestamp string "%s".', $string),
                 $call->getSpan(),
             );
         }
@@ -64,14 +69,14 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
         // rather than as a malformed date (checkdate would reject year 0 outright).
         if ($year < 1) {
             throw new TypeConversionException(
-                Str\format('Timestamp "%s" is outside the valid range.', $string),
+                sprintf('Timestamp "%s" is outside the valid range.', $string),
                 $call->getSpan(),
             );
         }
 
         if (!checkdate($month, $day, $year) || $hour > 23 || $minute > 59 || $second > 59) {
             throw new TypeConversionException(
-                Str\format('Failed to parse timestamp string "%s".', $string),
+                sprintf('Failed to parse timestamp string "%s".', $string),
                 $call->getSpan(),
             );
         }
@@ -85,7 +90,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
 
         if (!TimestampRange::isValidSeconds($seconds)) {
             throw new TypeConversionException(
-                Str\format('Timestamp "%s" is outside the valid range.', $string),
+                sprintf('Timestamp "%s" is outside the valid range.', $string),
                 $call->getSpan(),
             );
         }
@@ -119,10 +124,10 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
         }
 
         $magnitude =
-            (self::toInt(Str\slice($timezone, 1, 2)) * DateTime\SECONDS_PER_HOUR)
-            + (self::toInt(Str\slice($timezone, 4, 2)) * DateTime\SECONDS_PER_MINUTE);
+            (self::toInt(mb_substr($timezone, 1, 2)) * DateTime\SECONDS_PER_HOUR)
+            + (self::toInt(mb_substr($timezone, 4, 2)) * DateTime\SECONDS_PER_MINUTE);
 
-        return Str\starts_with($timezone, '-') ? -$magnitude : $magnitude;
+        return str_starts_with($timezone, '-') ? -$magnitude : $magnitude;
     }
 
     /**
@@ -135,12 +140,11 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             return 0;
         }
 
-        return self::toInt(Str\slice(Str\pad_right($fraction, 9, '0'), 0, 9));
+        return self::toInt(mb_substr(str_pad($fraction, 9, '0', STR_PAD_RIGHT), 0, 9));
     }
 
     /**
-     * Parses a run of decimal digits, tolerating leading zeros (unlike
-     * `Str\to_int()`, which rejects them).
+     * Parses a run of decimal digits, tolerating leading zeros.
      */
     private static function toInt(string $digits): int
     {

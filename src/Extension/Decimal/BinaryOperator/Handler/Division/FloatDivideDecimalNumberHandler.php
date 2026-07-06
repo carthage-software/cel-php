@@ -14,10 +14,10 @@ use Cel\Value\FloatValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles division of a Float by a DecimalNumber.
@@ -44,7 +44,7 @@ final readonly class FloatDivideDecimalNumberHandler implements BinaryOperatorOv
         try {
             $result = DecimalFactory::from((string) $left->value)->div($right->message->getInner());
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal division failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal division failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

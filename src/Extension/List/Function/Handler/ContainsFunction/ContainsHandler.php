@@ -12,7 +12,8 @@ use Cel\Value\BooleanValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Iter;
+
+use function array_any;
 
 final readonly class ContainsHandler implements FunctionOverloadHandlerInterface
 {
@@ -30,6 +31,6 @@ final readonly class ContainsHandler implements FunctionOverloadHandlerInterface
         $list = ArgumentsUtil::get($arguments, 0, ListValue::class);
         $element = ArgumentsUtil::get($arguments, 1, Value::class);
 
-        return new BooleanValue(Iter\any($list->value, static fn(Value $item): bool => $item->isEqual($element)));
+        return new BooleanValue(array_any($list->value, static fn(Value $item): bool => $item->isEqual($element)));
     }
 }

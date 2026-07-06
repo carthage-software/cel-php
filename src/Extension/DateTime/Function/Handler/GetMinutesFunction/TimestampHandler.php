@@ -17,7 +17,8 @@ use Cel\Value\Value;
 use Override;
 use Psl\DateTime\DateTime;
 use Psl\DateTime\Timezone;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Handles getMinutes(timestamp) and getMinutes(timestamp, string) -> int
@@ -45,7 +46,7 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
             $datetime = TimezoneUtil::localize($timestamp->value, $timezoneArg->value);
             if (null === $datetime) {
                 throw new EvaluationException(
-                    Str\format('getMinutes: timezone `%s` is not valid', $timezoneArg->value),
+                    sprintf('getMinutes: timezone `%s` is not valid', $timezoneArg->value),
                     $call->getSpan(),
                 );
             }

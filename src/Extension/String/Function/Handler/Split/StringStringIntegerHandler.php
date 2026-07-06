@@ -9,14 +9,16 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\StringSplit;
 use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
-use Psl\Str;
-use Psl\Vec;
+
+use function array_map;
+use function explode;
+use function sprintf;
 
 final readonly class StringStringIntegerHandler implements FunctionOverloadHandlerInterface
 {
@@ -38,21 +40,15 @@ final readonly class StringStringIntegerHandler implements FunctionOverloadHandl
 
         if ($limit->value < 1) {
             throw new EvaluationException(
-                Str\format('split: limit %d is less than 1, only positive integers are supported', $limit->value),
+                sprintf('split: limit %d is less than 1, only positive integers are supported', $limit->value),
                 $call->getSpan(),
             );
         }
 
-        try {
-            $parts = Str\split($haystack->value, $delimiter->value, $limit->value);
+        $parts = '' === $delimiter->value
+            ? StringSplit::characters($haystack->value, $limit->value, false)
+            : explode($delimiter->value, $haystack->value, $limit->value);
 
-            return new ListValue(Vec\map($parts, static fn(string $p): StringValue => new StringValue($p)));
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new ListValue(array_map(static fn(string $p): StringValue => new StringValue($p), $parts));
     }
 }

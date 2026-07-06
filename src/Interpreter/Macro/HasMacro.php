@@ -14,7 +14,8 @@ use Cel\Value\MessageValue;
 use Cel\Value\OptionalValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Implements the `has()` macro.
@@ -73,7 +74,7 @@ final readonly class HasMacro implements MacroInterface
 
         if (!$operand instanceof MessageValue && !$operand instanceof MapValue) {
             throw new InvalidMacroCallException(
-                Str\format('The `has` macro requires a message or map operand, got `%s`', $operand->getType()),
+                sprintf('The `has` macro requires a message or map operand, got `%s`', $operand->getType()),
                 $argument->operand->getSpan(),
             );
         }

@@ -10,7 +10,8 @@ use Cel\Tests\ResourceProviderTrait;
 use Cel\Token\TokenKind;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Psl\Iter;
+
+use function count;
 
 final class LexerTest extends TestCase
 {
@@ -50,7 +51,7 @@ final class LexerTest extends TestCase
             $tokens[] = $token;
         }
 
-        static::assertCount(Iter\count($expectedTokens), $tokens);
+        static::assertCount(count($expectedTokens), $tokens);
 
         foreach ($expectedTokens as $i => $expected) {
             if (!isset($tokens[$i])) {

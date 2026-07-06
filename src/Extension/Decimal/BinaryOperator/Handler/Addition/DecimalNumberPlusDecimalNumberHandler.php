@@ -12,10 +12,10 @@ use Cel\Util\OperandUtil;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles addition of two DecimalNumber values.
@@ -43,7 +43,7 @@ final readonly class DecimalNumberPlusDecimalNumberHandler implements BinaryOper
         try {
             $result = $left->message->getInner()->add($right->message->getInner());
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal addition failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal addition failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

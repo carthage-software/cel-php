@@ -12,7 +12,8 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Iter;
+
+use function count;
 
 /**
  * Handles size(list) -> integer
@@ -32,6 +33,6 @@ final readonly class FromListHandler implements FunctionOverloadHandlerInterface
     {
         $value = ArgumentsUtil::get($arguments, 0, ListValue::class);
 
-        return new IntegerValue(Iter\count($value->value));
+        return new IntegerValue(count($value->value));
     }
 }

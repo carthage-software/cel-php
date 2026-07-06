@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace Cel\Parser;
 
 use Cel\Exception\InternalException;
-use Psl\Math;
+use Cel\Util\NumberBase;
+use InvalidArgumentException;
 use Psl\Ref;
-use Psl\Str;
-use Psl\Str\Byte;
+
+use function chr;
+use function mb_chr;
+use function sprintf;
+use function strlen;
+use function substr;
 
 /**
  * Utility class for unescaping CEL string and bytes literals.
@@ -39,7 +44,7 @@ final readonly class StringUnescaper
     public static function unescapeString(string $value): string
     {
         $result = '';
-        $length = Byte\length($value);
+        $length = strlen($value);
         /** @var Ref<int<0, max>> */
         $position = new Ref(0);
 
@@ -81,7 +86,7 @@ final readonly class StringUnescaper
                 'x', 'X' => self::unescapeHex($value, $position, true),
                 // Octal escape (Unicode code point in strings)
                 '0', '1', '2', '3', '4', '5', '6', '7' => self::unescapeOctal($value, $position, true),
-                default => throw InternalException::forMessage(Str\format('Invalid escape sequence \\%s', $next)),
+                default => throw InternalException::forMessage(sprintf('Invalid escape sequence \\%s', $next)),
             };
         }
 
@@ -103,7 +108,7 @@ final readonly class StringUnescaper
     public static function unescapeBytes(string $value): string
     {
         $result = '';
-        $length = Byte\length($value);
+        $length = strlen($value);
         /** @var Ref<int<0, max>> $position */
         $position = new Ref(0);
 
@@ -144,7 +149,7 @@ final readonly class StringUnescaper
                 'x', 'X' => self::unescapeHex($value, $position, false),
                 // Octal escape (raw octet in bytes)
                 '0', '1', '2', '3', '4', '5', '6', '7' => self::unescapeOctal($value, $position, false),
-                default => throw InternalException::forMessage(Str\format(
+                default => throw InternalException::forMessage(sprintf(
                     'Invalid escape sequence \\%s in bytes literal',
                     $next,
                 )),
@@ -182,10 +187,10 @@ final readonly class StringUnescaper
     private static function unescapeUnicode(string $value, Ref $position, int $hexDigits): string
     {
         $start = $position->value + 2; // Skip \u or \U
-        $hexString = Byte\slice($value, $start, $hexDigits);
+        $hexString = substr($value, $start, $hexDigits);
 
-        if ('' === $hexString || Byte\length($hexString) < $hexDigits) {
-            throw InternalException::forMessage(Str\format(
+        if ('' === $hexString || strlen($hexString) < $hexDigits) {
+            throw InternalException::forMessage(sprintf(
                 'Invalid Unicode escape: expected %d hex digits after \\%s',
                 $hexDigits,
                 $hexDigits === 4 ? 'u' : 'U',
@@ -193,20 +198,17 @@ final readonly class StringUnescaper
         }
 
         try {
-            $codePoint = (int) Math\base_convert($hexString, 16, 10);
-        } catch (Math\Exception\InvalidArgumentException $e) {
+            $codePoint = (int) NumberBase::baseConvert($hexString, 16, 10);
+        } catch (InvalidArgumentException $e) {
             throw InternalException::forMessage(
-                Str\format(
-                    'Invalid Unicode escape: expected valid hex digits after \\%s',
-                    $hexDigits === 4 ? 'u' : 'U',
-                ),
+                sprintf('Invalid Unicode escape: expected valid hex digits after \\%s', $hexDigits === 4 ? 'u' : 'U'),
                 $e,
             );
         }
 
         // Validate code point range
         if ($codePoint > 0x10_FFFF) {
-            throw InternalException::forMessage(Str\format(
+            throw InternalException::forMessage(sprintf(
                 'Invalid Unicode code point: U+%X is out of range',
                 $codePoint,
             ));
@@ -214,15 +216,12 @@ final readonly class StringUnescaper
 
         // Check for surrogate pairs (U+D800 to U+DFFF are invalid)
         if ($codePoint >= 0xD800 && $codePoint <= 0xDFFF) {
-            throw InternalException::forMessage(Str\format(
-                'Invalid Unicode code point: U+%X is a surrogate',
-                $codePoint,
-            ));
+            throw InternalException::forMessage(sprintf('Invalid Unicode code point: U+%X is a surrogate', $codePoint));
         }
 
         $position->value += 2 + $hexDigits;
 
-        return Str\chr($codePoint);
+        return mb_chr($codePoint);
     }
 
     /**
@@ -239,15 +238,15 @@ final readonly class StringUnescaper
     private static function unescapeHex(string $value, Ref $position, bool $isString): string
     {
         $start = $position->value + 2; // Skip \x or \X
-        $hexString = Byte\slice($value, $start, 2);
+        $hexString = substr($value, $start, 2);
 
-        if ('' === $hexString || Byte\length($hexString) !== 2) {
+        if ('' === $hexString || strlen($hexString) !== 2) {
             throw InternalException::forMessage('Invalid hex escape: expected 2 hex digits after \\x');
         }
 
         try {
-            $byteValue = (int) Math\base_convert($hexString, 16, 10);
-        } catch (Math\Exception\InvalidArgumentException $e) {
+            $byteValue = (int) NumberBase::baseConvert($hexString, 16, 10);
+        } catch (InvalidArgumentException $e) {
             throw InternalException::forMessage('Invalid hex escape: expected valid hex digits after \\x', $e);
         }
 
@@ -255,11 +254,11 @@ final readonly class StringUnescaper
 
         if ($isString) {
             // For strings, treat as Unicode code point and encode as UTF-8
-            return Str\chr($byteValue);
+            return mb_chr($byteValue);
         }
 
         // For bytes, return raw octet
-        return Byte\chr($byteValue);
+        return chr($byteValue);
     }
 
     /**
@@ -297,21 +296,21 @@ final readonly class StringUnescaper
             throw InternalException::forMessage('Invalid octal escape: expected octal digits');
         }
 
-        $octalValue = (int) Math\base_convert($octalString, 8, 10);
+        $octalValue = (int) NumberBase::baseConvert($octalString, 8, 10);
 
         // Octal must be in range 000-377 (0-255)
         if ($octalValue > 255) {
-            throw InternalException::forMessage(Str\format('Invalid octal escape: \\%s exceeds 377', $octalString));
+            throw InternalException::forMessage(sprintf('Invalid octal escape: \\%s exceeds 377', $octalString));
         }
 
-        $position->value += 1 + Byte\length($octalString); // Update position
+        $position->value += 1 + strlen($octalString); // Update position
 
         if ($isString) {
             // For strings, treat as Unicode code point
-            return Str\chr($octalValue);
+            return mb_chr($octalValue);
         }
 
         // For bytes, return raw octet
-        return Byte\chr($octalValue);
+        return chr($octalValue);
     }
 }

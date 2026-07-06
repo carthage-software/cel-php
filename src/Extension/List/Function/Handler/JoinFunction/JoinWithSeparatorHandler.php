@@ -13,7 +13,8 @@ use Cel\Value\ListValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function implode;
 
 final readonly class JoinWithSeparatorHandler implements FunctionOverloadHandlerInterface
 {
@@ -41,6 +42,6 @@ final readonly class JoinWithSeparatorHandler implements FunctionOverloadHandler
             $strings[] = $item->value;
         }
 
-        return new StringValue(Str\join($strings, $separator->value));
+        return new StringValue(implode($separator->value, $strings));
     }
 }

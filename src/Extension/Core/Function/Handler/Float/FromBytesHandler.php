@@ -13,8 +13,9 @@ use Cel\Value\BytesValue;
 use Cel\Value\FloatValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Psl\Type;
+
+use function sprintf;
 
 /**
  * Handles float(bytes) -> float
@@ -39,7 +40,7 @@ final readonly class FromBytesHandler implements FunctionOverloadHandlerInterfac
             $float = Type\float()->coerce($value->value);
         } catch (Type\Exception\CoercionException) {
             throw new TypeConversionException(
-                Str\format('Cannot convert bytes "%s" to float.', $value->value),
+                sprintf('Cannot convert bytes "%s" to float.', $value->value),
                 $call->getSpan(),
             );
         }

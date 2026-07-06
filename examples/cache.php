@@ -21,7 +21,6 @@ use Cel\Runtime\Runtime;
 use Psl\DateTime\Duration;
 use Psl\DateTime\Timestamp;
 use Psl\Io;
-use Psl\Str;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Psr16Cache;
 
@@ -69,14 +68,14 @@ $celWithCache = new CommonExpressionLanguage(
 );
 
 Io\write_error_line('CEL Caching Benchmark');
-Io\write_error_line(Str\repeat('=', 80));
+Io\write_error_line(str_repeat('=', 80));
 Io\write_error_line('');
 Io\write_error_line("Running {$iterations} iterations per test...");
 Io\write_error_line('');
 
 foreach ($expressions as $name => $test) {
-    Io\write_error_line(Str\uppercase($name) . ' EXPRESSION');
-    Io\write_error_line(Str\repeat('-', 80));
+    Io\write_error_line(mb_strtoupper($name) . ' EXPRESSION');
+    Io\write_error_line(str_repeat('-', 80));
 
     // Benchmark WITHOUT cache
     $start = Timestamp::monotonic();
@@ -119,9 +118,9 @@ foreach ($expressions as $name => $test) {
     Io\write_error_line('');
 }
 
-Io\write_error_line(Str\repeat('=', 80));
+Io\write_error_line(str_repeat('=', 80));
 Io\write_error_line('IMPORTANT NOTES:');
-Io\write_error_line(Str\repeat('=', 80));
+Io\write_error_line(str_repeat('=', 80));
 Io\write_error_line('1. This benchmark uses ArrayAdapter (in-memory cache)');
 Io\write_error_line('2. Real-world caches (filesystem, Redis) may be slower');
 Io\write_error_line('3. APCu cache would be much faster than filesystem/network caches');

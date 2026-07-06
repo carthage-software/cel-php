@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Cel\Span;
 
 use Override;
-use Psl\Str;
 use Stringable;
+
+use function sprintf;
 
 /**
  * Represents a segment of the source code, defined by a start and end position.
@@ -93,6 +94,6 @@ final readonly class Span implements Stringable
     #[Override]
     public function __toString(): string
     {
-        return Str\format('[%d..%d]', $this->start, $this->end);
+        return sprintf('[%d..%d]', $this->start, $this->end);
     }
 }

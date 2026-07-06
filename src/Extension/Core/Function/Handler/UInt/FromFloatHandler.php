@@ -13,8 +13,12 @@ use Cel\Value\FloatValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Str;
+
+use function sprintf;
+
+use const INF;
+use const NAN;
+use const PHP_INT_MAX;
 
 /**
  * Handles uint(float) -> unsigned_integer
@@ -36,14 +40,9 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
         $value = ArgumentsUtil::get($arguments, 0, FloatValue::class);
         $floatValue = $value->value;
 
-        if (
-            $floatValue < 0.0
-            || Math\INFINITY === $floatValue
-            || Math\NAN === $floatValue
-            || $floatValue > (float) Math\INT64_MAX
-        ) {
+        if ($floatValue < 0.0 || INF === $floatValue || NAN === $floatValue || $floatValue > (float) PHP_INT_MAX) {
             throw new OverflowException(
-                Str\format('Float value %f overflows unsigned integer', $floatValue),
+                sprintf('Float value %f overflows unsigned integer', $floatValue),
                 $call->getSpan(),
             );
         }

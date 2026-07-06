@@ -10,12 +10,14 @@ use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
-use Psl\Math;
-use Psl\Str\Byte;
 
+use function floor;
 use function is_finite;
 use function is_int;
 use function is_numeric;
+use function str_starts_with;
+use function strlen;
+use function substr;
 
 use const PHP_INT_MAX;
 use const PHP_INT_MIN;
@@ -136,16 +138,16 @@ final readonly class MapKeyUtil
             return new IntegerValue($key);
         }
 
-        if (Byte\starts_with($key, self::BOOLEAN_TAG)) {
+        if (str_starts_with($key, self::BOOLEAN_TAG)) {
             return new BooleanValue(self::BOOLEAN_TAG . '1' === $key);
         }
 
-        if (Byte\starts_with($key, self::STRING_TAG)) {
-            return new StringValue(Byte\slice($key, Byte\length(self::STRING_TAG)));
+        if (str_starts_with($key, self::STRING_TAG)) {
+            return new StringValue(substr($key, strlen(self::STRING_TAG)));
         }
 
-        if (Byte\starts_with($key, self::NUMBER_TAG)) {
-            $decimal = Byte\slice($key, Byte\length(self::NUMBER_TAG));
+        if (str_starts_with($key, self::NUMBER_TAG)) {
+            $decimal = substr($key, strlen(self::NUMBER_TAG));
             $asInt = (int) $decimal;
             if ((string) $asInt === $decimal) {
                 return new IntegerValue($asInt);
@@ -171,16 +173,16 @@ final readonly class MapKeyUtil
             return $key;
         }
 
-        if (Byte\starts_with($key, self::BOOLEAN_TAG)) {
+        if (str_starts_with($key, self::BOOLEAN_TAG)) {
             return self::BOOLEAN_TAG . '1' === $key ? 1 : 0;
         }
 
-        if (Byte\starts_with($key, self::STRING_TAG)) {
-            return Byte\slice($key, Byte\length(self::STRING_TAG));
+        if (str_starts_with($key, self::STRING_TAG)) {
+            return substr($key, strlen(self::STRING_TAG));
         }
 
-        if (Byte\starts_with($key, self::NUMBER_TAG)) {
-            $decimal = Byte\slice($key, Byte\length(self::NUMBER_TAG));
+        if (str_starts_with($key, self::NUMBER_TAG)) {
+            $decimal = substr($key, strlen(self::NUMBER_TAG));
             $asInt = (int) $decimal;
 
             return (string) $asInt === $decimal ? $asInt : $decimal;
@@ -195,7 +197,7 @@ final readonly class MapKeyUtil
      */
     private static function doubleToInt(float $value): null|int
     {
-        if (!is_finite($value) || Math\floor($value) !== $value) {
+        if (!is_finite($value) || floor($value) !== $value) {
             return null;
         }
 

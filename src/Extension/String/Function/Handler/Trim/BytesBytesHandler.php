@@ -13,8 +13,9 @@ use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Exception\InvariantViolationException;
-use Psl\Str;
-use Psl\Str\Byte;
+
+use function sprintf;
+use function trim;
 
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
@@ -34,10 +35,10 @@ final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterfa
         $characters = ArgumentsUtil::get($arguments, 1, BytesValue::class);
 
         try {
-            return new BytesValue(Byte\trim($target->value, $characters->value));
+            return new BytesValue(trim($target->value, $characters->value));
         } catch (InvariantViolationException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

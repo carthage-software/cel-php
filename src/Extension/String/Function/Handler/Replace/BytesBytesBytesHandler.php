@@ -13,8 +13,11 @@ use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Exception\InvariantViolationException;
-use Psl\Str;
-use Psl\Str\Byte;
+
+use function implode;
+use function sprintf;
+use function str_replace;
+use function str_split;
 
 final readonly class BytesBytesBytesHandler implements FunctionOverloadHandlerInterface
 {
@@ -37,7 +40,7 @@ final readonly class BytesBytesBytesHandler implements FunctionOverloadHandlerIn
         try {
             if ('' === $needle->value) {
                 // If the needle is an empty string, we insert the replacement between every character.
-                $result = Str\join(Byte\chunk($haystack->value), $replacement->value) . $replacement->value;
+                $result = implode($replacement->value, str_split($haystack->value)) . $replacement->value;
                 if ('' !== $haystack->value) {
                     $result = $replacement->value . $result;
                 }
@@ -45,10 +48,10 @@ final readonly class BytesBytesBytesHandler implements FunctionOverloadHandlerIn
                 return new BytesValue($result);
             }
 
-            return new BytesValue(Byte\replace($haystack->value, $needle->value, $replacement->value));
+            return new BytesValue(str_replace($needle->value, $replacement->value, $haystack->value));
         } catch (InvariantViolationException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

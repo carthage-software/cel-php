@@ -11,7 +11,8 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Vec;
+
+use function array_reverse;
 
 final readonly class ReverseHandler implements FunctionOverloadHandlerInterface
 {
@@ -28,6 +29,6 @@ final readonly class ReverseHandler implements FunctionOverloadHandlerInterface
     {
         $list = ArgumentsUtil::get($arguments, 0, ListValue::class);
 
-        return new ListValue(Vec\reverse($list->value));
+        return new ListValue(array_reverse($list->value));
     }
 }

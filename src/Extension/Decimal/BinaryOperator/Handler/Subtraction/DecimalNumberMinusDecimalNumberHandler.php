@@ -12,10 +12,10 @@ use Cel\Util\OperandUtil;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles subtraction of two DecimalNumber values.
@@ -43,7 +43,7 @@ final readonly class DecimalNumberMinusDecimalNumberHandler implements BinaryOpe
         try {
             $result = $left->message->getInner()->sub($right->message->getInner());
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal subtraction failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal subtraction failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

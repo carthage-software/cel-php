@@ -12,7 +12,8 @@ use Cel\Value\DurationValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Handles string(duration) -> string
@@ -33,6 +34,6 @@ final readonly class FromDurationHandler implements FunctionOverloadHandlerInter
         $value = ArgumentsUtil::get($arguments, 0, DurationValue::class);
         $totalSeconds = (int) $value->value->getTotalSeconds();
 
-        return new StringValue(Str\format('%ds', $totalSeconds));
+        return new StringValue(sprintf('%ds', $totalSeconds));
     }
 }

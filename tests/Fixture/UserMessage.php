@@ -10,8 +10,9 @@ use Cel\Value\MessageValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Psl\Type;
+
+use function sprintf;
 
 final readonly class UserMessage implements MessageInterface
 {
@@ -44,7 +45,7 @@ final readonly class UserMessage implements MessageInterface
                 'email' => Type\instance_of(StringValue::class),
             ])->assert($fields);
         } catch (Type\Exception\ExceptionInterface) {
-            throw new InvalidMessageFieldsException(Str\format(
+            throw new InvalidMessageFieldsException(sprintf(
                 'Invalid fields for `UserMessage`, expected `name` and `email` of type `string`',
             ));
         }

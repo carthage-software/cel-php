@@ -17,9 +17,10 @@ use Override;
 use Psl\DateTime;
 use Psl\DateTime\Duration;
 use Psl\Exception\ExceptionInterface;
-use Psl\Math;
 use Psl\Regex;
-use Psl\Str;
+
+use function abs;
+use function sprintf;
 
 final readonly class FromStringHandler implements FunctionOverloadHandlerInterface
 {
@@ -48,7 +49,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             $matches = Regex\first_match($durationStr, self::DURATION_PATTERN);
             if (null === $matches) {
                 throw new TypeConversionException(
-                    Str\format('Invalid duration format: "%s"', $durationStr),
+                    sprintf('Invalid duration format: "%s"', $durationStr),
                     $call->getSpan(),
                 );
             }
@@ -77,9 +78,9 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
 
             $duration = Duration::fromParts($hours, $minutes, (int) $secondsWithFraction, $totalNanoseconds);
 
-            if (Math\abs($duration->getTotalSeconds()) > self::MAX_SECONDS) {
+            if (abs($duration->getTotalSeconds()) > self::MAX_SECONDS) {
                 throw new EvaluationException(
-                    Str\format('Duration "%s" is outside the valid range.', $value->value),
+                    sprintf('Duration "%s" is outside the valid range.', $value->value),
                     $call->getSpan(),
                 );
             }
@@ -87,7 +88,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             return new DurationValue($duration);
         } catch (ExceptionInterface $e) {
             try {
-                $message = Str\format('Operation failed: %s', $e->getMessage());
+                $message = sprintf('Operation failed: %s', $e->getMessage());
             } catch (ExceptionInterface) {
                 $message = 'Operation failed.';
             }

@@ -13,7 +13,9 @@ use Cel\Value\BooleanValue;
 use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function mb_strtolower;
+use function sprintf;
 
 /**
  * Handles bool(bytes) -> boolean
@@ -33,7 +35,7 @@ final readonly class FromBytesHandler implements FunctionOverloadHandlerInterfac
     public function __invoke(CallExpression $call, array $arguments): Value
     {
         $value = ArgumentsUtil::get($arguments, 0, BytesValue::class);
-        $lowerValue = Str\Byte\lowercase($value->value);
+        $lowerValue = mb_strtolower($value->value);
 
         if ('true' === $lowerValue) {
             return new BooleanValue(true);
@@ -44,7 +46,7 @@ final readonly class FromBytesHandler implements FunctionOverloadHandlerInterfac
         }
 
         throw new TypeConversionException(
-            Str\format('Cannot convert bytes "%s" to boolean.', $value->value),
+            sprintf('Cannot convert bytes "%s" to boolean.', $value->value),
             $call->getSpan(),
         );
     }

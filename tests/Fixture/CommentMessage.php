@@ -10,8 +10,9 @@ use Cel\Value\MessageValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Psl\Type;
+
+use function sprintf;
 
 final readonly class CommentMessage implements MessageInterface
 {
@@ -41,7 +42,7 @@ final readonly class CommentMessage implements MessageInterface
                 'content' => Type\instance_of(StringValue::class),
             ])->assert($fields);
         } catch (Type\Exception\ExceptionInterface $e) {
-            throw new InvalidMessageFieldsException(Str\format(
+            throw new InvalidMessageFieldsException(sprintf(
                 'Invalid fields for `CommentMessage`: %s',
                 $e->getMessage(),
             ));

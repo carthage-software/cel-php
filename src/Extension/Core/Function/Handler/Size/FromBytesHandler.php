@@ -12,7 +12,8 @@ use Cel\Value\BytesValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function mb_strlen;
 
 /**
  * Handles size(bytes) -> integer
@@ -32,6 +33,6 @@ final readonly class FromBytesHandler implements FunctionOverloadHandlerInterfac
     {
         $value = ArgumentsUtil::get($arguments, 0, BytesValue::class);
 
-        return new IntegerValue(Str\Byte\length($value->value));
+        return new IntegerValue(mb_strlen($value->value));
     }
 }

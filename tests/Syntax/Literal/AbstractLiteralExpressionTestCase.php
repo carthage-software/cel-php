@@ -8,7 +8,8 @@ use Cel\Span\Span;
 use Cel\Syntax\ExpressionKind;
 use Cel\Syntax\Literal\LiteralExpression;
 use PHPUnit\Framework\TestCase;
-use Psl\Str\Byte;
+
+use function strlen;
 
 /**
  * @template T
@@ -25,7 +26,7 @@ abstract class AbstractLiteralExpressionTestCase extends TestCase
     public function testLiteral(): void
     {
         [$value, $raw] = $this->getTestValue();
-        $span = new Span(0, Byte\length($raw));
+        $span = new Span(0, strlen($raw));
 
         [$literal, $expectedValue, $expectedRaw, $expectedSpan, $expectedKind] = $this->createLiteral(
             $value,

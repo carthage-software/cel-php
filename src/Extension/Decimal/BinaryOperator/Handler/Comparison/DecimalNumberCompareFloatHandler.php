@@ -17,10 +17,10 @@ use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use LogicException;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles comparison of a DecimalNumber and a Float.
@@ -51,7 +51,7 @@ final readonly class DecimalNumberCompareFloatHandler implements BinaryOperatorO
         try {
             $comparison = $left->message->getInner()->compareTo(DecimalFactory::from((string) $right->value));
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal comparison failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal comparison failed: %s', $e->getMessage()), $e);
         }
         $result = $this->compareResult($comparison);
 

@@ -13,8 +13,9 @@ use Cel\Value\FloatValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Psl\Type;
+
+use function sprintf;
 
 /**
  * Handles float(string) -> float
@@ -39,7 +40,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             $float = Type\float()->coerce($value->value);
         } catch (Type\Exception\CoercionException) {
             throw new TypeConversionException(
-                Str\format('Cannot convert string "%s" to float.', $value->value),
+                sprintf('Cannot convert string "%s" to float.', $value->value),
                 $call->getSpan(),
             );
         }

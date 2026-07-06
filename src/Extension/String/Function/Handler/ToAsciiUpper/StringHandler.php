@@ -13,7 +13,11 @@ use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Exception\InvariantViolationException;
-use Psl\Str;
+
+use function mb_ord;
+use function mb_str_split;
+use function mb_strtoupper;
+use function sprintf;
 
 final readonly class StringHandler implements FunctionOverloadHandlerInterface
 {
@@ -33,16 +37,16 @@ final readonly class StringHandler implements FunctionOverloadHandlerInterface
 
         try {
             $result = '';
-            foreach (Str\chunk($target->value) as $char) {
-                $ord = Str\ord($char);
+            foreach (mb_str_split($target->value) as $char) {
+                $ord = mb_ord($char);
                 // a = 97, z = 122
-                $result .= $ord >= 97 && $ord <= 122 ? Str\uppercase($char) : $char;
+                $result .= $ord >= 97 && $ord <= 122 ? mb_strtoupper($char) : $char;
             }
 
             return new StringValue($result);
         } catch (InvariantViolationException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

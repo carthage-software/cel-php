@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Cel\Util;
 
 use Psl\DateTime\Duration;
-use Psl\Math;
+
+use function abs;
 
 final readonly class DurationRange
 {
@@ -25,6 +26,6 @@ final readonly class DurationRange
      */
     public static function isValid(Duration $duration): bool
     {
-        return Math\abs($duration->getTotalSeconds()) <= self::MAX_SECONDS;
+        return abs($duration->getTotalSeconds()) <= self::MAX_SECONDS;
     }
 }

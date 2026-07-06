@@ -11,7 +11,8 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Vec;
+
+use function usort;
 
 final readonly class SortHandler implements FunctionOverloadHandlerInterface
 {
@@ -28,7 +29,8 @@ final readonly class SortHandler implements FunctionOverloadHandlerInterface
     {
         $list = ArgumentsUtil::get($arguments, 0, ListValue::class);
 
-        $sorted_list = Vec\sort($list->value, static function (Value $a, Value $b): int {
+        $sorted_list = $list->value;
+        usort($sorted_list, static function (Value $a, Value $b): int {
             if ($a->isEqual($b)) {
                 return 0;
             }

@@ -7,7 +7,8 @@ namespace Cel\Value;
 use Cel\Exception\UnsupportedOperationException;
 use Cel\Util\MapKeyUtil;
 use Override;
-use Psl\Iter;
+
+use function count;
 
 /**
  * Represents a map value.
@@ -40,7 +41,7 @@ final readonly class MapValue extends Value
             return false;
         }
 
-        if (Iter\count($this->value) !== Iter\count($other->value)) {
+        if (count($this->value) !== count($other->value)) {
             return false;
         }
 

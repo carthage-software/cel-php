@@ -13,8 +13,9 @@ use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Str;
+
+use function mb_strlen;
+use function mb_strrpos;
 
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {
@@ -34,27 +35,11 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
         $needle = ArgumentsUtil::get($arguments, 1, StringValue::class);
 
         if ('' === $needle->value) {
-            try {
-                return new IntegerValue(Str\length($haystack->value));
-            } catch (ExceptionInterface $e) {
-                throw new EvaluationException(
-                    Str\format('String operation failed: %s', $e->getMessage()),
-                    $call->getSpan(),
-                    $e,
-                );
-            }
+            return new IntegerValue(mb_strlen($haystack->value));
         }
 
-        try {
-            $pos = Str\search_last($haystack->value, $needle->value);
+        $pos = mb_strrpos($haystack->value, $needle->value);
 
-            return new IntegerValue($pos ?? -1);
-        } catch (ExceptionInterface $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new IntegerValue(false === $pos ? -1 : $pos);
     }
 }

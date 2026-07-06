@@ -20,17 +20,17 @@ const EXPRESSION = <<<CEL
     CEL;
 
 try {
-    $withNickname = Cel\evaluate(EXPRESSION, [
+    $withNickname = Cel\evaluate(namespace\EXPRESSION, [
         'user' => ['name' => 'Jane Doe', 'nickname' => 'jd'],
     ]);
     IO\write_line('With nickname: %s', var_export($withNickname->getRawValue(), true)); // "jd"
 
-    $withoutNickname = Cel\evaluate(EXPRESSION, [
+    $withoutNickname = Cel\evaluate(namespace\EXPRESSION, [
         'user' => ['name' => 'Jane Doe'],
     ]);
     IO\write_line('Without nickname: %s', var_export($withoutNickname->getRawValue(), true)); // "Jane Doe"
 
-    $anonymous = Cel\evaluate(EXPRESSION, [
+    $anonymous = Cel\evaluate(namespace\EXPRESSION, [
         'user' => ['id' => 7],
     ]);
     IO\write_line('Anonymous: %s', var_export($anonymous->getRawValue(), true)); // "anonymous"

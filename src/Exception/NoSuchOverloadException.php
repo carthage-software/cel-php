@@ -6,11 +6,12 @@ namespace Cel\Exception;
 
 use Cel\Syntax\Member\CallExpression;
 use Cel\Value\ValueKind;
-use Psl\Iter;
-use Psl\Str;
-use Psl\Vec;
 
+use function array_map;
 use function array_pop;
+use function count;
+use function implode;
+use function sprintf;
 
 /**
  * Exception thrown when a function is called with an invalid set of argument types.
@@ -27,7 +28,7 @@ final class NoSuchOverloadException extends EvaluationException
         array $availableSignatures,
         array $providedArgumentKinds,
     ): static {
-        $message = Str\format(
+        $message = sprintf(
             'Invalid arguments for function "%s". Got `%s`, but expected one of: %s',
             $expression->function->name,
             self::formatKinds($providedArgumentKinds),
@@ -45,14 +46,14 @@ final class NoSuchOverloadException extends EvaluationException
      */
     private static function formatSignatures(array $signatures): string
     {
-        $formatted = Vec\map($signatures, self::formatKinds(...));
-        if (Iter\count($formatted) === 1) {
-            return '`' . Str\join($formatted, '') . '`';
+        $formatted = array_map(self::formatKinds(...), $signatures);
+        if (count($formatted) === 1) {
+            return '`' . implode('', $formatted) . '`';
         }
 
         $last = array_pop($formatted);
 
-        return Str\format('`%s`, or `%s`', Str\join($formatted, '`, `'), $last);
+        return sprintf('`%s`, or `%s`', implode('`, `', $formatted), $last);
     }
 
     /**
@@ -63,6 +64,6 @@ final class NoSuchOverloadException extends EvaluationException
      */
     private static function formatKinds(array $kinds): string
     {
-        return Str\format('(%s)', Str\join(Vec\map($kinds, static fn(ValueKind $kind): string => $kind->value), ', '));
+        return sprintf('(%s)', implode(', ', array_map(static fn(ValueKind $kind): string => $kind->value, $kinds)));
     }
 }

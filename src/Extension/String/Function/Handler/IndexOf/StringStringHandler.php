@@ -13,8 +13,8 @@ use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Str;
+
+use function mb_strpos;
 
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {
@@ -37,16 +37,8 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
             return new IntegerValue(0);
         }
 
-        try {
-            $pos = Str\search($haystack->value, $needle->value);
+        $pos = mb_strpos($haystack->value, $needle->value);
 
-            return new IntegerValue($pos ?? -1);
-        } catch (ExceptionInterface $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new IntegerValue(false === $pos ? -1 : $pos);
     }
 }

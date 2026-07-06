@@ -13,7 +13,8 @@ use Cel\Value\ListValue;
 use Cel\Value\TimestampValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Iter;
+
+use function array_any;
 
 final readonly class TimestampListHandler implements BinaryOperatorOverloadHandlerInterface
 {
@@ -32,6 +33,6 @@ final readonly class TimestampListHandler implements BinaryOperatorOverloadHandl
         $left = OperandUtil::assertLeft($left, TimestampValue::class);
         $right = OperandUtil::assertRight($right, ListValue::class);
 
-        return new BooleanValue(Iter\any($right->value, static fn(Value $item): bool => $item->isEqual($left)));
+        return new BooleanValue(array_any($right->value, static fn(Value $item): bool => $item->isEqual($left)));
     }
 }

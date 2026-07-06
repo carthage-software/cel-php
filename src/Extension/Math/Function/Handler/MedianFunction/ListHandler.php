@@ -14,8 +14,11 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Str;
+
+use function count;
+use function intdiv;
+use function sort;
+use function sprintf;
 
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
@@ -38,7 +41,7 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
         foreach ($list->value as $item) {
             if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
                 throw new EvaluationException(
-                    Str\format('median() only supports lists of integers and floats, got `%s`', $item->getType()),
+                    sprintf('median() only supports lists of integers and floats, got `%s`', $item->getType()),
                     $call->getSpan(),
                 );
             }
@@ -46,10 +49,18 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
             $numbers[] = $item->getRawValue();
         }
 
-        $result = Math\median($numbers);
-        if (null === $result) {
+        if ([] === $numbers) {
             throw new EvaluationException('median() requires a non-empty list', $call->getSpan());
         }
+
+        sort($numbers);
+        $count = count($numbers);
+        $middle = intdiv($count, 2);
+        // For an even count, average the two middle values the same way the mean
+        // is computed, to preserve the previous floating-point behaviour.
+        $result = 0 === ($count % 2)
+            ? ((float) $numbers[$middle] / 2) + ((float) $numbers[$middle - 1] / 2)
+            : (float) $numbers[$middle];
 
         return new FloatValue($result);
     }

@@ -13,7 +13,11 @@ use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Exception\InvariantViolationException;
-use Psl\Str;
+
+use function implode;
+use function mb_str_split;
+use function sprintf;
+use function str_replace;
 
 final readonly class StringStringStringHandler implements FunctionOverloadHandlerInterface
 {
@@ -36,7 +40,7 @@ final readonly class StringStringStringHandler implements FunctionOverloadHandle
         try {
             if ('' === $needle->value) {
                 // If the needle is an empty string, we insert the replacement between every character.
-                $result = Str\join(Str\chunk($haystack->value), $replacement->value) . $replacement->value;
+                $result = implode($replacement->value, mb_str_split($haystack->value)) . $replacement->value;
                 if ('' !== $haystack->value) {
                     $result = $replacement->value . $result;
                 }
@@ -44,10 +48,10 @@ final readonly class StringStringStringHandler implements FunctionOverloadHandle
                 return new StringValue($result);
             }
 
-            return new StringValue(Str\replace($haystack->value, $needle->value, $replacement->value));
+            return new StringValue(str_replace($needle->value, $replacement->value, $haystack->value));
         } catch (InvariantViolationException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

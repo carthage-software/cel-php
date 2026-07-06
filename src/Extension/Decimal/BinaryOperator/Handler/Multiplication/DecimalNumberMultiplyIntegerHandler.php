@@ -14,10 +14,10 @@ use Cel\Value\IntegerValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles multiplication of a DecimalNumber and an Integer.
@@ -44,7 +44,7 @@ final readonly class DecimalNumberMultiplyIntegerHandler implements BinaryOperat
         try {
             $result = $left->message->getInner()->mul(DecimalFactory::from((string) $right->value));
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal multiplication failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal multiplication failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

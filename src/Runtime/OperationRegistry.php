@@ -19,8 +19,11 @@ use Cel\Value\Value;
 use Cel\Value\ValueKind;
 use Override;
 use Psl\Default\DefaultInterface;
-use Psl\Str;
-use Psl\Vec;
+
+use function array_map;
+use function array_values;
+use function implode;
+use function sprintf;
 
 final class OperationRegistry implements DefaultInterface
 {
@@ -100,7 +103,7 @@ final class OperationRegistry implements DefaultInterface
             $signatureHash = self::hashSignature($signature);
 
             if (isset($this->functionOverloads[$name][$signatureHash])) {
-                throw new ConflictingFunctionSignatureException(Str\format(
+                throw new ConflictingFunctionSignatureException(sprintf(
                     'A function with the name "%s" and signature "(%s)" is already registered.',
                     $name,
                     $signatureHash,
@@ -177,7 +180,7 @@ final class OperationRegistry implements DefaultInterface
             return null;
         }
 
-        $providedArgumentKinds = Vec\map($arguments, static fn(Value $v): ValueKind => $v->getKind());
+        $providedArgumentKinds = array_map(static fn(Value $v): ValueKind => $v->getKind(), $arguments);
         $signatureHash = self::hashSignature($providedArgumentKinds);
         $function = $candidates[$signatureHash] ?? null;
         if (null === $function) {
@@ -231,15 +234,15 @@ final class OperationRegistry implements DefaultInterface
             return null;
         }
 
-        $signatures = Vec\map(
-            $candidates,
+        $signatures = array_values(array_map(
             /**
              * @param array{signature: list<ValueKind>, ...} $overload
              *
              * @return list<ValueKind>
              */
             static fn(array $overload): array => $overload['signature'],
-        );
+            $candidates,
+        ));
 
         if ([] === $signatures) {
             return null;
@@ -257,6 +260,6 @@ final class OperationRegistry implements DefaultInterface
             return '<no-args>';
         }
 
-        return Str\join(Vec\map($signature, static fn(ValueKind $kind): string => $kind->value), ',');
+        return implode(',', array_map(static fn(ValueKind $kind): string => $kind->value, $signature));
     }
 }

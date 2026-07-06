@@ -17,8 +17,9 @@ use Cel\Value\Value;
 use Override;
 use Psl\DateTime\DateTime;
 use Psl\DateTime\Timezone;
-use Psl\Math;
-use Psl\Str;
+
+use function intdiv;
+use function sprintf;
 
 /**
  * Handles getMilliseconds(timestamp) and getMilliseconds(timestamp, string) -> int
@@ -46,12 +47,12 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
             $datetime = TimezoneUtil::localize($timestamp->value, $timezoneArg->value);
             if (null === $datetime) {
                 throw new EvaluationException(
-                    Str\format('getMilliseconds: timezone `%s` is not valid', $timezoneArg->value),
+                    sprintf('getMilliseconds: timezone `%s` is not valid', $timezoneArg->value),
                     $call->getSpan(),
                 );
             }
         }
 
-        return new IntegerValue(Math\div($datetime->getNanoseconds(), 1_000_000));
+        return new IntegerValue(intdiv($datetime->getNanoseconds(), 1_000_000));
     }
 }

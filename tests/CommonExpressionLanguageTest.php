@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Tests;
 
 use Cel\CommonExpressionLanguage;
+use Cel\Extension\ExtensionInterface;
 use Cel\Input\Input;
 use Cel\Input\InputInterface;
 use Cel\Lexer\Lexer;
@@ -15,6 +16,7 @@ use Cel\Parser\ParserInterface;
 use Cel\Runtime\RuntimeInterface;
 use Cel\Syntax\Expression;
 use Cel\Value\IntegerValue;
+use Override;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Psr16Cache;
@@ -75,7 +77,7 @@ final class CommonExpressionLanguageTest extends TestCase
         $cel = new CommonExpressionLanguage();
 
         $optimization = new class implements OptimizationInterface {
-            #[\Override]
+            #[Override]
             public function apply(Expression $expression): null|Expression
             {
                 return null;
@@ -104,32 +106,32 @@ final class CommonExpressionLanguageTest extends TestCase
     {
         $cel = new CommonExpressionLanguage();
 
-        $extension = new class implements \Cel\Extension\ExtensionInterface {
-            #[\Override]
+        $extension = new class implements ExtensionInterface {
+            #[Override]
             public function getFunctions(): array
             {
                 return [];
             }
 
-            #[\Override]
+            #[Override]
             public function getBinaryOperatorOverloads(): array
             {
                 return [];
             }
 
-            #[\Override]
+            #[Override]
             public function getUnaryOperatorOverloads(): array
             {
                 return [];
             }
 
-            #[\Override]
+            #[Override]
             public function getMessageTypes(): array
             {
                 return [];
             }
 
-            #[\Override]
+            #[Override]
             public function getValueResolvers(): array
             {
                 return [];

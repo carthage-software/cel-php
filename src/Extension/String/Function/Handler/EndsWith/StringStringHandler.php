@@ -14,7 +14,9 @@ use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Exception\InvariantViolationException;
-use Psl\Str;
+
+use function sprintf;
+use function str_ends_with;
 
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {
@@ -38,10 +40,10 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
         }
 
         try {
-            return new BooleanValue(Str\ends_with($target->value, $suffix->value));
+            return new BooleanValue(str_ends_with($target->value, $suffix->value));
         } catch (InvariantViolationException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

@@ -14,10 +14,10 @@ use Cel\Value\IntegerValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles division of a DecimalNumber by an Integer.
@@ -44,7 +44,7 @@ final readonly class DecimalNumberDivideIntegerHandler implements BinaryOperator
         try {
             $result = $left->message->getInner()->div(DecimalFactory::from((string) $right->value));
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal division failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal division failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

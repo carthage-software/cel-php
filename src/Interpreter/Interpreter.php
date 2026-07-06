@@ -59,11 +59,18 @@ use Cel\Value\Value;
 use Cel\Value\ValueKind;
 use Cel\Value\WellKnownType;
 use Override;
-use Psl\Iter;
-use Psl\Str;
-use Psl\Str\Byte;
-use Psl\Vec;
 use Throwable;
+
+use function array_key_exists;
+use function array_map;
+use function array_reverse;
+use function array_slice;
+use function count;
+use function implode;
+use function in_array;
+use function sprintf;
+use function str_starts_with;
+use function strcasecmp;
 
 /**
  * A tree-walking interpreter that evaluates expressions by recursively
@@ -203,7 +210,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         throw new UnsupportedOperationException(
-            Str\format('Unsupported expression of type `%s`', $expression::class),
+            sprintf('Unsupported expression of type `%s`', $expression::class),
             $expression->getSpan(),
         );
     }
@@ -220,7 +227,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             if ($element->isOptional()) {
                 if (!$value instanceof OptionalValue) {
                     throw new InvalidOptionalConstructionException(
-                        Str\format('Optional list element requires an optional value, got `%s`', $value->getType()),
+                        sprintf('Optional list element requires an optional value, got `%s`', $value->getType()),
                         $element->getSpan(),
                     );
                 }
@@ -253,7 +260,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
                 && !$key instanceof BooleanValue
             ) {
                 throw new UnexpectedMapKeyTypeException(
-                    Str\format('Map keys must be bool, int, uint, or string, got `%s`', $key->getType()),
+                    sprintf('Map keys must be bool, int, uint, or string, got `%s`', $key->getType()),
                     $entry->key->getSpan(),
                 );
             }
@@ -262,7 +269,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             if (null === $mapKey) {
                 // Unreachable: the key type was validated above.
                 throw new UnexpectedMapKeyTypeException(
-                    Str\format('Map keys must be bool, int, uint, or string, got `%s`', $key->getType()),
+                    sprintf('Map keys must be bool, int, uint, or string, got `%s`', $key->getType()),
                     $entry->key->getSpan(),
                 );
             }
@@ -272,7 +279,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             if ($entry->isOptional()) {
                 if (!$value instanceof OptionalValue) {
                     throw new InvalidOptionalConstructionException(
-                        Str\format('Optional map entry requires an optional value, got `%s`', $value->getType()),
+                        sprintf('Optional map entry requires an optional value, got `%s`', $value->getType()),
                         $entry->value->getSpan(),
                     );
                 }
@@ -304,7 +311,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             StringLiteralExpression::class => new StringValue($expression->value),
             UnsignedIntegerLiteralExpression::class => new UnsignedIntegerValue($expression->value),
             default => throw new UnsupportedOperationException(
-                Str\format('Unsupported literal of type `%s`', $expression::class),
+                sprintf('Unsupported literal of type `%s`', $expression::class),
                 $expression->getSpan(),
             ),
         };
@@ -320,11 +327,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $handler = $this->registry->getUnaryOperator($expression->operator->kind, $operand->getKind());
         if (null === $handler) {
             throw new NoSuchOverloadException(
-                Str\format(
-                    'No such overload for %s`%s`',
-                    $expression->operator->kind->getSymbol(),
-                    $operand->getType(),
-                ),
+                sprintf('No such overload for %s`%s`', $expression->operator->kind->getSymbol(), $operand->getType()),
                 $expression->getSpan(),
             );
         }
@@ -370,7 +373,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
             // Fallback error for AND
             throw new NoSuchOverloadException(
-                Str\format(
+                sprintf(
                     'No such overload for `%s` %s `%s`',
                     $left->getType(),
                     $operator->getSymbol(),
@@ -409,7 +412,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
             // Fallback error for OR
             throw new NoSuchOverloadException(
-                Str\format(
+                sprintf(
                     'No such overload for `%s` %s `%s`',
                     $left->getType(),
                     $operator->getSymbol(),
@@ -426,7 +429,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $handler = $this->registry->getBinaryOperator($operator, $left->getKind(), $right->getKind());
         if (null === $handler) {
             throw new NoSuchOverloadException(
-                Str\format(
+                sprintf(
                     'No such overload for `%s` %s `%s`',
                     $left->getType(),
                     $operator->getSymbol(),
@@ -447,7 +450,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $condition = $this->run($expression->condition);
         if (!$condition instanceof BooleanValue) {
             throw new InvalidConditionTypeException(
-                Str\format('Condition must be boolean, got `%s`', $condition->getType()),
+                sprintf('Condition must be boolean, got `%s`', $condition->getType()),
                 $expression->condition->getSpan(),
             );
         }
@@ -500,7 +503,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             $value = $operand->getField($field);
             if (null === $value) {
                 throw new NoSuchKeyException(
-                    Str\format('Field `%s` does not exist on message of type `%s`', $field, $operand->message::class),
+                    sprintf('Field `%s` does not exist on message of type `%s`', $field, $operand->message::class),
                     $span,
                 );
             }
@@ -511,14 +514,14 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         if ($operand instanceof MapValue) {
             $value = $operand->get(MapKeyUtil::stringKey($field));
             if (null === $value) {
-                throw new NoSuchKeyException(Str\format('Key `%s` does not exist in map', $field), $span);
+                throw new NoSuchKeyException(sprintf('Key `%s` does not exist in map', $field), $span);
             }
 
             return $value;
         }
 
         throw new NoSuchOverloadException(
-            Str\format('Cannot access member `%s` on type `%s`', $field, $operand->getType()),
+            sprintf('Cannot access member `%s` on type `%s`', $field, $operand->getType()),
             $span,
         );
     }
@@ -555,7 +558,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         // Root identifier first, then the field selectors in source order.
-        $segments = [$current->identifier->name, ...Vec\reverse($fields)];
+        $segments = [$current->identifier->name, ...array_reverse($fields)];
 
         if (null !== $current->leadingDot) {
             // Absolute reference: resolve against the root namespace.
@@ -565,7 +568,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             }
 
             throw new NoSuchVariableException(
-                Str\format('Variable `%s` is not defined in the environment', Str\join($segments, '.')),
+                sprintf('Variable `%s` is not defined in the environment', implode('.', $segments)),
                 $expression->getSpan(),
             );
         }
@@ -594,14 +597,14 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         EnvironmentInterface $environment,
         Span $span,
     ): null|Value {
-        for ($length = Iter\count($segments); $length >= 1; --$length) {
-            $name = Str\join(Vec\take($segments, $length), '.');
+        for ($length = count($segments); $length >= 1; --$length) {
+            $name = implode('.', array_slice($segments, 0, $length));
             $base = $environment->getVariable($name) ?? TypeValue::denotation($name);
             if (null === $base) {
                 continue;
             }
 
-            foreach (Vec\slice($segments, $length) as $field) {
+            foreach (array_slice($segments, $length) as $field) {
                 $base = $this->selectField($base, $field, $span);
             }
 
@@ -632,7 +635,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         throw new NoSuchOverloadException(
-            Str\format('Cannot access member `%s` on type `%s`', $field, $base->getType()),
+            sprintf('Cannot access member `%s` on type `%s`', $field, $base->getType()),
             $span,
         );
     }
@@ -661,7 +664,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
         if (!$operand instanceof ListValue && !$operand instanceof MapValue && !$operand instanceof MessageValue) {
             throw new NoSuchOverloadException(
-                Str\format('Indexing is only supported on lists, maps, and messages, got `%s`', $operand->getType()),
+                sprintf('Indexing is only supported on lists, maps, and messages, got `%s`', $operand->getType()),
                 $expression->getSpan(),
             );
         }
@@ -671,7 +674,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         if ($operand instanceof MessageValue) {
             if (!$index instanceof StringValue) {
                 throw new NoSuchOverloadException(
-                    Str\format('Message fields must be accessed by string, got `%s`', $index->getType()),
+                    sprintf('Message fields must be accessed by string, got `%s`', $index->getType()),
                     $expression->index->getSpan(),
                 );
             }
@@ -680,7 +683,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
             if (null === $field) {
                 throw new NoSuchKeyException(
-                    Str\format(
+                    sprintf(
                         'Field `%s` does not exist on message of type `%s`',
                         $index->value,
                         $operand->message::class,
@@ -696,7 +699,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             $field = $this->mapGet($operand, $index, $expression->index->getSpan());
             if (null === $field) {
                 throw new NoSuchKeyException(
-                    Str\format('Key `%s` does not exist in map', $this->mapKeyLabel($index)),
+                    sprintf('Key `%s` does not exist in map', $this->mapKeyLabel($index)),
                     $expression->getSpan(),
                 );
             }
@@ -707,18 +710,14 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $position = $this->resolveListIndex($index);
         if (null === $position) {
             throw new NoSuchOverloadException(
-                Str\format('List indices must be an integer or integral double, got `%s`', $index->getType()),
+                sprintf('List indices must be an integer or integral double, got `%s`', $index->getType()),
                 $expression->index->getSpan(),
             );
         }
 
-        if ($position < 0 || $position >= Iter\count($operand->value)) {
+        if ($position < 0 || $position >= count($operand->value)) {
             throw new NoSuchKeyException(
-                Str\format(
-                    'Index `%d` is out of bounds for list of length `%d`',
-                    $position,
-                    Iter\count($operand->value),
-                ),
+                sprintf('Index `%d` is out of bounds for list of length `%d`', $position, count($operand->value)),
                 $expression->getSpan(),
             );
         }
@@ -743,12 +742,12 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             $position = $this->resolveListIndex($index);
             if (null === $position) {
                 throw new NoSuchOverloadException(
-                    Str\format('List indices must be an integer or integral double, got `%s`', $index->getType()),
+                    sprintf('List indices must be an integer or integral double, got `%s`', $index->getType()),
                     $expression->index->getSpan(),
                 );
             }
 
-            if ($position < 0 || $position >= Iter\count($base->value)) {
+            if ($position < 0 || $position >= count($base->value)) {
                 return OptionalValue::none();
             }
 
@@ -764,7 +763,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         if ($base instanceof MessageValue) {
             if (!$index instanceof StringValue) {
                 throw new NoSuchOverloadException(
-                    Str\format('Message fields must be accessed by string, got `%s`', $index->getType()),
+                    sprintf('Message fields must be accessed by string, got `%s`', $index->getType()),
                     $expression->index->getSpan(),
                 );
             }
@@ -775,7 +774,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         throw new NoSuchOverloadException(
-            Str\format('Indexing is only supported on lists, maps, and messages, got `%s`', $base->getType()),
+            sprintf('Indexing is only supported on lists, maps, and messages, got `%s`', $base->getType()),
             $expression->getSpan(),
         );
     }
@@ -791,7 +790,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
     {
         if (!MapKeyUtil::isKeyType($index)) {
             throw new NoSuchOverloadException(
-                Str\format(
+                sprintf(
                     'Map keys must be bool, string, integer, unsigned integer, or double, got `%s`',
                     $index->getType(),
                 ),
@@ -852,7 +851,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         throw new NoSuchVariableException(
-            Str\format('Variable `%s` is not defined in the environment', $name),
+            sprintf('Variable `%s` is not defined in the environment', $name),
             $expression->getSpan(),
         );
     }
@@ -873,7 +872,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
         // Well-known protobuf types map onto native CEL values and are always
         // constructible, independent of the message configuration.
-        if (Str\starts_with($typename, 'google.protobuf.')) {
+        if (str_starts_with($typename, 'google.protobuf.')) {
             $wellKnown = $this->constructWellKnownType($typename, $expression);
             if (null !== $wellKnown) {
                 return $wellKnown;
@@ -882,7 +881,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
         if ([] === $this->configuration->allowedMessageClasses) {
             throw new NoSuchTypeException(
-                Str\format('Message type `%s` does not exist or is not allowed per configuration.', $typename),
+                sprintf('Message type `%s` does not exist or is not allowed per configuration.', $typename),
                 $expression->getSpan(),
             );
         }
@@ -890,7 +889,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $foundClassname = null;
         $usingAlias = false;
         foreach ($this->configuration->messageClassAliases as $typeAlias => $targetClassname) {
-            if (Byte\compare_ci($typename, $typeAlias) !== 0) {
+            if (strcasecmp($typename, $typeAlias) !== 0) {
                 continue;
             }
 
@@ -900,7 +899,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
         if (null === $foundClassname) {
             foreach ($this->configuration->allowedMessageClasses as $allowedClassname) {
-                if (Byte\compare_ci($classname, $allowedClassname) !== 0) {
+                if (strcasecmp($classname, $allowedClassname) !== 0) {
                     continue;
                 }
 
@@ -911,11 +910,11 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             if (
                 null !== $foundClassname
                 && $this->configuration->enforceMessageClassAliases
-                && Iter\contains_key($this->configuration->messageClassesToAliases, $foundClassname)
+                && array_key_exists($foundClassname, $this->configuration->messageClassesToAliases)
             ) {
                 // Pretend the class does not exist if using an alias is enforced
                 throw new NoSuchTypeException(
-                    Str\format('Message type `%s` does not exist or is not allowed per configuration.', $typename),
+                    sprintf('Message type `%s` does not exist or is not allowed per configuration.', $typename),
                     $expression->getSpan(),
                 );
             }
@@ -923,7 +922,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
         if (null === $foundClassname) {
             throw new NoSuchTypeException(
-                Str\format('Message type `%s` does not exist or is not allowed per configuration.', $typename),
+                sprintf('Message type `%s` does not exist or is not allowed per configuration.', $typename),
                 $expression->getSpan(),
             );
         }
@@ -935,10 +934,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             if ($initializer->isOptional()) {
                 if (!$value instanceof OptionalValue) {
                     throw new InvalidOptionalConstructionException(
-                        Str\format(
-                            'Optional field initializer requires an optional value, got `%s`',
-                            $value->getType(),
-                        ),
+                        sprintf('Optional field initializer requires an optional value, got `%s`', $value->getType()),
                         $initializer->value->getSpan(),
                     );
                 }
@@ -957,7 +953,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             return new MessageValue($foundClassname::fromCelFields($fields), $fields);
         } catch (Throwable $e) {
             throw new MessageConstructionException(
-                Str\format('Failed to create message of type `%s`: %s', $typename, $e->getMessage()),
+                sprintf('Failed to create message of type `%s`: %s', $typename, $e->getMessage()),
                 $expression->getSpan(),
             );
         }
@@ -980,9 +976,9 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         $fields = [];
         foreach ($expression->initializers as $initializer) {
             $name = $initializer->field->name;
-            if (!Iter\contains($allowedFields, $name)) {
+            if (!in_array($name, $allowedFields, true)) {
                 throw new MessageConstructionException(
-                    Str\format('Field `%s` is not defined on message type `%s`.', $name, $typename),
+                    sprintf('Field `%s` is not defined on message type `%s`.', $name, $typename),
                     $initializer->field->getSpan(),
                 );
             }
@@ -1027,12 +1023,12 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             $available_signatures = $this->registry->getFunctionSignatures($expression);
             if (null === $available_signatures) {
                 throw new NoSuchFunctionException(
-                    Str\format('Function `%s` is not defined', $expression->function->name),
+                    sprintf('Function `%s` is not defined', $expression->function->name),
                     $expression->getSpan(),
                 );
             }
 
-            $argument_kinds = Vec\map($arguments, static fn(Value $arg): ValueKind => $arg->getKind());
+            $argument_kinds = array_map(static fn(Value $arg): ValueKind => $arg->getKind(), $arguments);
 
             throw NoSuchOverloadException::forCall($expression, $available_signatures, $argument_kinds);
         }
@@ -1080,7 +1076,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
 
         $function = $this->registry->getFunctionByName($name, $arguments);
         if (null === $function) {
-            $argument_kinds = Vec\map($arguments, static fn(Value $arg): ValueKind => $arg->getKind());
+            $argument_kinds = array_map(static fn(Value $arg): ValueKind => $arg->getKind(), $arguments);
 
             throw NoSuchOverloadException::forCall($expression, $signatures, $argument_kinds);
         }

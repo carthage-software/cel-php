@@ -14,9 +14,10 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Str;
 use Psl\Type;
+
+use function max;
+use function sprintf;
 
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
@@ -39,7 +40,7 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
         foreach ($list->value as $item) {
             if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
                 throw new EvaluationException(
-                    Str\format('max() only supports lists of integers and floats, got `%s`', $item->getType()),
+                    sprintf('max() only supports lists of integers and floats, got `%s`', $item->getType()),
                     $call->getSpan(),
                 );
             }
@@ -47,11 +48,11 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
             $numbers[] = $item->value;
         }
 
-        /** @var float|int|null $result */
-        $result = Math\max($numbers);
-        if (null === $result) {
+        if ([] === $numbers) {
             throw new EvaluationException('max() requires a non-empty list', $call->getSpan());
         }
+
+        $result = max($numbers);
 
         if (Type\int()->matches($result)) {
             return new IntegerValue($result);

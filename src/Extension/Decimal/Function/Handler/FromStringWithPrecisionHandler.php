@@ -14,11 +14,11 @@ use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function restore_error_handler;
 use function set_error_handler;
+use function sprintf;
 
 /**
  * Handles decimal(string, int) -> DecimalNumber (with precision)
@@ -48,7 +48,7 @@ final readonly class FromStringWithPrecisionHandler implements FunctionOverloadH
         } catch (Throwable $e) {
             restore_error_handler();
             throw InternalException::forMessage(
-                Str\format(
+                sprintf(
                     'Failed to create decimal from string "%s" with precision %d: %s',
                     $valueArg->value,
                     $precisionArg->value,

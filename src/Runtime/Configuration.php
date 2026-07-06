@@ -30,8 +30,9 @@ use Cel\Message\MessageInterface;
 use Cel\Value\Resolver\ValueResolverInterface;
 use Override;
 use Psl\Default\DefaultInterface;
-use Psl\Iter;
-use Psl\Str;
+
+use function in_array;
+use function sprintf;
 
 /**
  * Encapsulates the configuration for a CEL runtime environment.
@@ -75,11 +76,11 @@ final class Configuration implements DefaultInterface
         bool $enableStandardExtensions = true,
     ) {
         foreach ($this->messageClassAliases as $messageAlias => $messageClassAlias) {
-            if (Iter\contains($this->allowedMessageClasses, $messageClassAlias)) {
+            if (in_array($messageClassAlias, $this->allowedMessageClasses, true)) {
                 continue;
             }
 
-            throw new MisconfigurationException(Str\format(
+            throw new MisconfigurationException(sprintf(
                 'Message class alias "%s" ( `%s` ) does not map to an allowed message class. '
                 . 'All aliases in $messageClassAliases must map to classes in $allowedMessageClasses.',
                 $messageAlias,

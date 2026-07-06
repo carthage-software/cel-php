@@ -13,7 +13,8 @@ use Cel\Value\FloatValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Iter;
+
+use function array_any;
 
 final readonly class FloatListHandler implements BinaryOperatorOverloadHandlerInterface
 {
@@ -32,6 +33,6 @@ final readonly class FloatListHandler implements BinaryOperatorOverloadHandlerIn
         $left = OperandUtil::assertLeft($left, FloatValue::class);
         $right = OperandUtil::assertRight($right, ListValue::class);
 
-        return new BooleanValue(Iter\any($right->value, static fn(Value $item): bool => $item->isEqual($left)));
+        return new BooleanValue(array_any($right->value, static fn(Value $item): bool => $item->isEqual($left)));
     }
 }

@@ -16,10 +16,10 @@ use Cel\Value\IntegerValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles equality comparison of an Integer and a DecimalNumber.
@@ -51,7 +51,7 @@ final readonly class IntegerEqualsDecimalNumberHandler implements BinaryOperator
             $equals = DecimalFactory::from((string) $left->value)->equals($right->message->getInner());
         } catch (Throwable $e) {
             throw InternalException::forMessage(
-                Str\format('Decimal equality comparison failed: %s', $e->getMessage()),
+                sprintf('Decimal equality comparison failed: %s', $e->getMessage()),
                 $e,
             );
         }

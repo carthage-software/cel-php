@@ -14,10 +14,10 @@ use Cel\Value\MessageValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles addition of a DecimalNumber and an UnsignedInteger.
@@ -44,7 +44,7 @@ final readonly class DecimalNumberPlusUnsignedIntegerHandler implements BinaryOp
         try {
             $result = $left->message->getInner()->add(DecimalFactory::from((string) $right->value));
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal addition failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal addition failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

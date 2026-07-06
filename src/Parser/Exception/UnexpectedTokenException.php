@@ -6,10 +6,11 @@ namespace Cel\Parser\Exception;
 
 use Cel\Token\Token;
 use Cel\Token\TokenKind;
-use Psl\Iter;
-use Psl\Str;
-use Psl\Vec;
 use RuntimeException;
+
+use function array_map;
+use function count;
+use function implode;
 
 final class UnexpectedTokenException extends RuntimeException implements ExceptionInterface
 {
@@ -22,10 +23,10 @@ final class UnexpectedTokenException extends RuntimeException implements Excepti
         public readonly array $expected = [],
     ) {
         $message = "Unexpected token `{$this->found->kind->name}` with value '{$this->found->value}'";
-        if (0 !== Iter\count($this->expected)) {
-            $expectedNames = Vec\map($this->expected, static fn(TokenKind $k): string => $k->name);
+        if (0 !== count($this->expected)) {
+            $expectedNames = array_map(static fn(TokenKind $k): string => $k->name, $this->expected);
 
-            $message .= ', expected one of: `' . Str\join($expectedNames, '`, `') . '`';
+            $message .= ', expected one of: `' . implode('`, `', $expectedNames) . '`';
         }
 
         parent::__construct($message . " at span [{$this->found->span->start}, {$this->found->span->end}].");

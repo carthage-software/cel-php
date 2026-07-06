@@ -9,7 +9,8 @@ use Cel\Syntax\Member\CallExpression;
 use Cel\Value\BooleanValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Implements the two-variable `existsOne()` macro.
@@ -61,7 +62,7 @@ final readonly class ExistsOneTwoVarMacro implements MacroInterface
                 $result = $context->evaluate($callback);
                 if (!$result instanceof BooleanValue) {
                     throw new InvalidMacroCallException(
-                        Str\format(
+                        sprintf(
                             'The `existsOne` macro predicate must result in a boolean, got `%s`',
                             $result->getType(),
                         ),

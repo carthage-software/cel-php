@@ -12,10 +12,10 @@ use Cel\Util\OperandUtil;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 final readonly class DecimalNumberHandler implements UnaryOperatorOverloadHandlerInterface
 {
@@ -36,7 +36,7 @@ final readonly class DecimalNumberHandler implements UnaryOperatorOverloadHandle
         try {
             $result = $operand->message->getInner()->negate();
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal negation failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal negation failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

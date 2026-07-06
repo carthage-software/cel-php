@@ -13,10 +13,12 @@ use Cel\Value\FloatValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Str;
 
 use function is_finite;
+use function sprintf;
+
+use const PHP_INT_MAX;
+use const PHP_INT_MIN;
 
 /**
  * Handles int(float) -> integer
@@ -38,9 +40,9 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
         $value = ArgumentsUtil::get($arguments, 0, FloatValue::class);
         $floatValue = $value->value;
 
-        if (!is_finite($floatValue) || $floatValue >= (float) Math\INT64_MAX || $floatValue <= (float) Math\INT64_MIN) {
+        if (!is_finite($floatValue) || $floatValue >= (float) PHP_INT_MAX || $floatValue <= (float) PHP_INT_MIN) {
             throw new OverflowException(
-                Str\format(
+                sprintf(
                     'Double value %s overflows the integer range',
                     is_finite($floatValue) ? (string) $floatValue : 'NaN or infinity',
                 ),

@@ -8,12 +8,12 @@ use Cel\Exception\IncompatibleValueTypeException;
 use Cel\Exception\UnsupportedOperationException;
 use Cel\Message\MessageInterface;
 use Cel\Util\MapKeyUtil;
-use Psl\Str;
 use Psl\Type;
 
 use function gettype;
 use function is_int;
 use function is_object;
+use function sprintf;
 
 /**
  * Represents a value in the CEL runtime.
@@ -133,14 +133,14 @@ abstract readonly class Value
         }
 
         if (is_object($value)) {
-            throw new IncompatibleValueTypeException(Str\format(
+            throw new IncompatibleValueTypeException(sprintf(
                 'Incompatible object of class "%s", only classes implementing "%s" are supported',
                 $value::class,
                 MessageInterface::class,
             ));
         }
 
-        throw new IncompatibleValueTypeException(Str\format('Incompatible PHP type "%s"', gettype($value)));
+        throw new IncompatibleValueTypeException(sprintf('Incompatible PHP type "%s"', gettype($value)));
     }
 
     /**

@@ -13,8 +13,9 @@ use Cel\Value\BooleanValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Iter;
-use Psl\Str;
+
+use function in_array;
+use function sprintf;
 
 /**
  * Handles bool(string) -> boolean
@@ -35,16 +36,16 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
     {
         $value = ArgumentsUtil::get($arguments, 0, StringValue::class);
 
-        if (Iter\contains(['1', 't', 'true', 'TRUE', 'True'], $value->value)) {
+        if (in_array($value->value, ['1', 't', 'true', 'TRUE', 'True'], true)) {
             return new BooleanValue(true);
         }
 
-        if (Iter\contains(['0', 'f', 'false', 'FALSE', 'False'], $value->value)) {
+        if (in_array($value->value, ['0', 'f', 'false', 'FALSE', 'False'], true)) {
             return new BooleanValue(false);
         }
 
         throw new TypeConversionException(
-            Str\format('Cannot convert string "%s" to boolean.', $value->value),
+            sprintf('Cannot convert string "%s" to boolean.', $value->value),
             $call->getSpan(),
         );
     }

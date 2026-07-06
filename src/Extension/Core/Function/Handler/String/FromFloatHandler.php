@@ -12,7 +12,8 @@ use Cel\Value\FloatValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Handles string(float) -> string
@@ -32,6 +33,6 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
     {
         $value = ArgumentsUtil::get($arguments, 0, FloatValue::class);
 
-        return new StringValue(Str\format('%g', $value->value));
+        return new StringValue(sprintf('%g', $value->value));
     }
 }

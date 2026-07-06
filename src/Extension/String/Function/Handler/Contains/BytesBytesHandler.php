@@ -13,9 +13,8 @@ use Cel\Value\BooleanValue;
 use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Str;
-use Psl\Str\Byte;
+
+use function str_contains;
 
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
@@ -34,14 +33,6 @@ final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterfa
         $target = ArgumentsUtil::get($arguments, 0, BytesValue::class);
         $substring = ArgumentsUtil::get($arguments, 1, BytesValue::class);
 
-        try {
-            return new BooleanValue(Byte\contains($target->value, $substring->value));
-        } catch (ExceptionInterface $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new BooleanValue(str_contains($target->value, $substring->value));
     }
 }

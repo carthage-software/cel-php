@@ -6,8 +6,9 @@ namespace Cel\Value;
 
 use Cel\Exception\UnsupportedOperationException;
 use Override;
-use Psl\Iter;
-use Psl\Vec;
+
+use function array_map;
+use function count;
 
 /**
  * Represents a list value.
@@ -40,7 +41,7 @@ final readonly class ListValue extends Value
             return false;
         }
 
-        if (Iter\count($this->value) !== Iter\count($other->value)) {
+        if (count($this->value) !== count($other->value)) {
             return false;
         }
 
@@ -72,6 +73,6 @@ final readonly class ListValue extends Value
     #[Override]
     public function getRawValue(): array
     {
-        return Vec\map($this->value, static fn(Value $item): mixed => $item->getRawValue());
+        return array_map(static fn(Value $item): mixed => $item->getRawValue(), $this->value);
     }
 }

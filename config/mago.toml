@@ -24,12 +24,17 @@ class-name = { psr = false }
 strict-types = { enabled = true }
 no-else-clause = { enabled = false }
 ambiguous-function-call = { enabled = true }
+ambiguous-constant-access = { enabled = true }
+no-fully-qualified-global-function = { enabled = true, namespaced = true }
+no-fully-qualified-global-constant = { enabled = true }
+no-fully-qualified-global-class-like = { enabled = true }
 # Noisy Rules (disabled)
 literal-named-argument = { enabled = false }
 no-boolean-flag-parameter = { enabled = false }
 no-isset = { enabled = false }
 # Exceptions
 file-name = { exclude = ["examples/"] }
+
 
 [analyzer]
 plugins = ["php-standard-library"]

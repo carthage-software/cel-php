@@ -13,9 +13,9 @@ use Cel\Value\BytesValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Str;
-use Psl\Str\Byte;
+
+use function mb_strlen;
+use function strrpos;
 
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
@@ -35,27 +35,11 @@ final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterfa
         $needle = ArgumentsUtil::get($arguments, 1, BytesValue::class);
 
         if ('' === $needle->value) {
-            try {
-                return new IntegerValue(Str\length($haystack->value));
-            } catch (ExceptionInterface $e) {
-                throw new EvaluationException(
-                    Str\format('String operation failed: %s', $e->getMessage()),
-                    $call->getSpan(),
-                    $e,
-                );
-            }
+            return new IntegerValue(mb_strlen($haystack->value));
         }
 
-        try {
-            $pos = Byte\search_last($haystack->value, $needle->value);
+        $pos = strrpos($haystack->value, $needle->value);
 
-            return new IntegerValue($pos ?? -1);
-        } catch (ExceptionInterface $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new IntegerValue(false === $pos ? -1 : $pos);
     }
 }

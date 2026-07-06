@@ -12,7 +12,8 @@ use Cel\Value\DurationValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
+
+use function intdiv;
 
 final readonly class DurationHandler implements FunctionOverloadHandlerInterface
 {
@@ -29,6 +30,6 @@ final readonly class DurationHandler implements FunctionOverloadHandlerInterface
     {
         $duration = ArgumentsUtil::get($arguments, 0, DurationValue::class);
 
-        return new IntegerValue(Math\div($duration->value->getNanoseconds(), 1_000_000));
+        return new IntegerValue(intdiv($duration->value->getNanoseconds(), 1_000_000));
     }
 }

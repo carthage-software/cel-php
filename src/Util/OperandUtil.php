@@ -6,7 +6,8 @@ namespace Cel\Util;
 
 use Cel\Exception\InternalException;
 use Cel\Value\Value;
-use Psl\Str;
+
+use function sprintf;
 
 final readonly class OperandUtil
 {
@@ -29,7 +30,7 @@ final readonly class OperandUtil
     public static function assert(Value $value, string $expectedType): Value
     {
         if (!$value instanceof $expectedType) {
-            throw InternalException::forMessage(Str\format(
+            throw InternalException::forMessage(sprintf(
                 'Operand is not of expected type %s, got %s',
                 $expectedType,
                 $value::class,
@@ -56,7 +57,7 @@ final readonly class OperandUtil
     public static function assertLeft(Value $value, string $expectedType): Value
     {
         if (!$value instanceof $expectedType) {
-            throw InternalException::forMessage(Str\format(
+            throw InternalException::forMessage(sprintf(
                 'Left operand is not of expected type %s, got %s',
                 $expectedType,
                 $value::class,
@@ -83,7 +84,7 @@ final readonly class OperandUtil
     public static function assertRight(Value $value, string $expectedType): Value
     {
         if (!$value instanceof $expectedType) {
-            throw InternalException::forMessage(Str\format(
+            throw InternalException::forMessage(sprintf(
                 'Right operand is not of expected type %s, got %s',
                 $expectedType,
                 $value::class,

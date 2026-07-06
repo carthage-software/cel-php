@@ -13,7 +13,8 @@ use Cel\Value\IntegerValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Handles uint(integer) -> unsigned_integer
@@ -37,7 +38,7 @@ final readonly class FromIntegerHandler implements FunctionOverloadHandlerInterf
 
         if ($intValue < 0) {
             throw new OverflowException(
-                Str\format('Integer value %d overflows unsigned integer', $intValue),
+                sprintf('Integer value %d overflows unsigned integer', $intValue),
                 $call->getSpan(),
             );
         }

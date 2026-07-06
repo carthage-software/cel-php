@@ -12,7 +12,8 @@ use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function mb_strlen;
 
 /**
  * Handles size(string) -> integer
@@ -32,6 +33,6 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
     {
         $value = ArgumentsUtil::get($arguments, 0, StringValue::class);
 
-        return new IntegerValue(Str\length($value->value));
+        return new IntegerValue(mb_strlen($value->value));
     }
 }

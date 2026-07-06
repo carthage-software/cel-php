@@ -12,7 +12,9 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
+
+use function max;
+use function min;
 
 final readonly class IntegerHandler implements FunctionOverloadHandlerInterface
 {
@@ -32,10 +34,6 @@ final readonly class IntegerHandler implements FunctionOverloadHandlerInterface
         $min = ArgumentsUtil::get($arguments, 1, IntegerValue::class);
         $max = ArgumentsUtil::get($arguments, 2, IntegerValue::class);
 
-        try {
-            return new IntegerValue(Math\clamp($value->value, $min->value, $max->value));
-        } catch (Math\Exception\ExceptionInterface $e) {
-            throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
-        }
+        return new IntegerValue(max($min->value, min($max->value, $value->value)));
     }
 }

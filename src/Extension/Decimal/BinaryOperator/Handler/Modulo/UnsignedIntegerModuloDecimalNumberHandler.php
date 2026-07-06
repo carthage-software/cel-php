@@ -14,10 +14,10 @@ use Cel\Value\MessageValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles modulo operation of an UnsignedInteger and a DecimalNumber.
@@ -44,7 +44,7 @@ final readonly class UnsignedIntegerModuloDecimalNumberHandler implements Binary
         try {
             $result = DecimalFactory::from((string) $left->value)->mod($right->message->getInner());
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal modulo failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal modulo failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

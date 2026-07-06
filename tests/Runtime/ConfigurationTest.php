@@ -8,8 +8,11 @@ use Cel\Exception\MisconfigurationException;
 use Cel\Extension\ExtensionInterface;
 use Cel\Message\MessageInterface;
 use Cel\Runtime\Configuration;
+use Cel\Value\Resolver\ValueResolverInterface;
 use Cel\Value\Value;
+use Override;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class ConfigurationTest extends TestCase
 {
@@ -138,8 +141,8 @@ final class ConfigurationTest extends TestCase
     {
         $config = new Configuration(enableStandardExtensions: false);
 
-        $resolver1 = $this->createStub(\Cel\Value\Resolver\ValueResolverInterface::class);
-        $resolver2 = $this->createStub(\Cel\Value\Resolver\ValueResolverInterface::class);
+        $resolver1 = $this->createStub(ValueResolverInterface::class);
+        $resolver2 = $this->createStub(ValueResolverInterface::class);
 
         $extension1 = $this->createStub(ExtensionInterface::class);
         $extension1->method('getValueResolvers')->willReturn([$resolver1]);
@@ -223,13 +226,13 @@ final class ConfigurationTest extends TestCase
     private static function createMockMessageClass(): string
     {
         return new class implements MessageInterface {
-            #[\Override]
+            #[Override]
             public function toCelValue(): Value
             {
-                throw new \RuntimeException('Not implemented');
+                throw new RuntimeException('Not implemented');
             }
 
-            #[\Override]
+            #[Override]
             public static function fromCelFields(array $fields): static
             {
                 return new self();

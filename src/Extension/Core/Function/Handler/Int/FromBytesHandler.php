@@ -13,7 +13,9 @@ use Cel\Value\BytesValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function ltrim;
+use function sprintf;
 
 /**
  * Handles int(bytes) -> integer
@@ -34,23 +36,15 @@ final readonly class FromBytesHandler implements FunctionOverloadHandlerInterfac
     {
         $value = ArgumentsUtil::get($arguments, 0, BytesValue::class);
 
-        try {
-            $string = Str\trim_left($value->value, '0');
-            $integer = Str\to_int($string);
-            if (null === $integer) {
-                throw new TypeConversionException(
-                    Str\format('Cannot convert bytes "%s" to integer.', $value->value),
-                    $call->getSpan(),
-                );
-            }
-
-            return new IntegerValue($integer);
-        } catch (Str\Exception\ExceptionInterface $e) {
+        $string = ltrim($value->value, '0');
+        $integer = (string) (int) $string === $string ? (int) $string : null;
+        if (null === $integer) {
             throw new TypeConversionException(
-                Str\format('Cannot convert bytes "%s" to integer: %s', $value->value, $e->getMessage()),
+                sprintf('Cannot convert bytes "%s" to integer.', $value->value),
                 $call->getSpan(),
-                $e,
             );
         }
+
+        return new IntegerValue($integer);
     }
 }

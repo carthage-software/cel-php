@@ -13,8 +13,8 @@ use Cel\Value\BooleanValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Str;
+
+use function str_contains;
 
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {
@@ -33,14 +33,6 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
         $target = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $substring = ArgumentsUtil::get($arguments, 1, StringValue::class);
 
-        try {
-            return new BooleanValue(Str\contains($target->value, $substring->value));
-        } catch (ExceptionInterface $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new BooleanValue(str_contains($target->value, $substring->value));
     }
 }

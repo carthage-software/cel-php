@@ -17,10 +17,10 @@ use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use LogicException;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles comparison of an UnsignedInteger and a DecimalNumber.
@@ -51,7 +51,7 @@ final readonly class UnsignedIntegerCompareDecimalNumberHandler implements Binar
         try {
             $comparison = DecimalFactory::from((string) $left->value)->compareTo($right->message->getInner());
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal comparison failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal comparison failed: %s', $e->getMessage()), $e);
         }
         $result = $this->compareResult($comparison);
 

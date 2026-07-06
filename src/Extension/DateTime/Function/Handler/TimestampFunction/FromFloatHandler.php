@@ -17,9 +17,9 @@ use Override;
 use Psl\DateTime;
 use Psl\DateTime\Timestamp;
 use Psl\Exception\ExceptionInterface;
-use Psl\Str;
 
 use function is_finite;
+use function sprintf;
 
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {
@@ -52,7 +52,7 @@ final readonly class FromFloatHandler implements FunctionOverloadHandlerInterfac
             return new TimestampValue(Timestamp::fromParts($wholeSeconds, $nanoseconds));
         } catch (ExceptionInterface $e) {
             try {
-                $message = Str\format('Operation failed: %s', $e->getMessage());
+                $message = sprintf('Operation failed: %s', $e->getMessage());
             } catch (ExceptionInterface) {
                 $message = 'Operation failed.';
             }

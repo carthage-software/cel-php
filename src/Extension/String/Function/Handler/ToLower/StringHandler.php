@@ -13,7 +13,9 @@ use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Exception\InvariantViolationException;
-use Psl\Str;
+
+use function mb_strtolower;
+use function sprintf;
 
 final readonly class StringHandler implements FunctionOverloadHandlerInterface
 {
@@ -32,10 +34,10 @@ final readonly class StringHandler implements FunctionOverloadHandlerInterface
         $target = ArgumentsUtil::get($arguments, 0, StringValue::class);
 
         try {
-            return new StringValue(Str\lowercase($target->value));
+            return new StringValue(mb_strtolower($target->value));
         } catch (InvariantViolationException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

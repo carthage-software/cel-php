@@ -7,13 +7,15 @@ namespace Cel\Input;
 use Cel\Exception\InternalException;
 use Cel\Input\Exception\OutOfBoundsException;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Math;
-use Psl\Str;
-use Psl\Str\Byte;
 
 use function ctype_space;
 use function hash;
+use function min;
+use function strcasecmp;
+use function stripos;
+use function strlen;
+use function strpos;
+use function substr;
 
 /**
  * A concrete implementation of {@see InputInterface} that operates on a string of bytes.
@@ -44,11 +46,7 @@ final class Input implements InputInterface
     public function __construct(string $bytes, int $cursor = 0)
     {
         $this->bytes = $bytes;
-        try {
-            $this->length = Byte\length($this->bytes);
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to calculate input length', $e);
-        }
+        $this->length = strlen($this->bytes);
         $this->cursor = $cursor;
     }
 
@@ -91,19 +89,15 @@ final class Input implements InputInterface
     #[Override]
     public function sliceInRange(int $from, int $to): string
     {
-        $start = Math\minva($from, $this->length);
-        $end = Math\minva($to, $this->length);
+        $start = min($from, $this->length);
+        $end = min($to, $this->length);
 
         $offset = $end - $start;
         if ($offset < 1) {
             return '';
         }
 
-        try {
-            return Byte\slice($this->bytes, $start, $offset);
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to slice input in range', $e);
-        }
+        return substr($this->bytes, $start, $offset);
     }
 
     #[Override]
@@ -120,7 +114,7 @@ final class Input implements InputInterface
     #[Override]
     public function skip(int $count): void
     {
-        $this->cursor = Math\minva($this->cursor + $count, $this->length);
+        $this->cursor = min($this->cursor + $count, $this->length);
     }
 
     /**
@@ -132,11 +126,7 @@ final class Input implements InputInterface
     public function consume(int $count): string
     {
         $slice = $this->read($count);
-        try {
-            $this->skip(Byte\length($slice));
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to get slice length during consume', $e);
-        }
+        $this->skip(strlen($slice));
         return $slice;
     }
 
@@ -146,11 +136,7 @@ final class Input implements InputInterface
     #[Override]
     public function consumeRemaining(): string
     {
-        try {
-            $remaining = Byte\slice($this->bytes, $this->cursor);
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to slice remaining input', $e);
-        }
+        $remaining = substr($this->bytes, $this->cursor);
         $this->cursor = $this->length;
         return $remaining;
     }
@@ -161,25 +147,21 @@ final class Input implements InputInterface
     #[Override]
     public function consumeUntil(string $search, bool $ignoreCase = false): string
     {
-        try {
-            $function = $ignoreCase ? Byte\search_ci(...) : Byte\search(...);
-            $position = $function($this->bytes, $search, $this->cursor);
-            if (null === $position) {
-                return $this->consumeRemaining();
-            }
-
-            $offset = $position - $this->cursor;
-            if ($offset < 1) {
-                return '';
-            }
-
-            $slice = Byte\slice($this->bytes, $this->cursor, $offset);
-            $this->cursor = $position;
-
-            return $slice;
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to consume until search term', $e);
+        $function = $ignoreCase ? stripos(...) : strpos(...);
+        $position = $function($this->bytes, $search, $this->cursor);
+        if (false === $position) {
+            return $this->consumeRemaining();
         }
+
+        $offset = $position - $this->cursor;
+        if ($offset < 1) {
+            return '';
+        }
+
+        $slice = substr($this->bytes, $this->cursor, $offset);
+        $this->cursor = $position;
+
+        return $slice;
     }
 
     /**
@@ -188,23 +170,19 @@ final class Input implements InputInterface
     #[Override]
     public function consumeThrough(string $search): string
     {
-        try {
-            $position = Byte\search($this->bytes, $search, $this->cursor);
-            if (null === $position) {
-                return $this->consumeRemaining();
-            }
-
-            $end_position = $position + Byte\length($search);
-            /** @var int<1, max> $offset */
-            $offset = $end_position - $this->cursor;
-
-            $slice = Byte\slice($this->bytes, $this->cursor, $offset);
-            $this->cursor = $end_position;
-
-            return $slice;
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to consume through search term', $e);
+        $position = strpos($this->bytes, $search, $this->cursor);
+        if (false === $position) {
+            return $this->consumeRemaining();
         }
+
+        $end_position = $position + strlen($search);
+        /** @var int<1, max> $offset */
+        $offset = $end_position - $this->cursor;
+
+        $slice = substr($this->bytes, $this->cursor, $offset);
+        $this->cursor = $end_position;
+
+        return $slice;
     }
 
     /**
@@ -221,11 +199,7 @@ final class Input implements InputInterface
         /** @var int<1, max> $offset */
         $offset = $this->cursor - $start;
 
-        try {
-            return Byte\slice($this->bytes, $start, $offset);
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to slice whitespace', $e);
-        }
+        return substr($this->bytes, $start, $offset);
     }
 
     /**
@@ -236,11 +210,7 @@ final class Input implements InputInterface
     #[Override]
     public function read(int $count): string
     {
-        try {
-            return Byte\slice($this->bytes, $this->cursor, $count);
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to read from input', $e);
-        }
+        return substr($this->bytes, $this->cursor, $count);
     }
 
     /**
@@ -262,17 +232,13 @@ final class Input implements InputInterface
     #[Override]
     public function isAt(string $search, bool $ignoreCase = false): bool
     {
-        try {
-            $slice = $this->read(Byte\length($search));
+        $slice = $this->read(strlen($search));
 
-            if ($ignoreCase) {
-                return Byte\compare_ci($slice, $search) === 0;
-            }
-
-            return $slice === $search;
-        } catch (ExceptionInterface $e) {
-            throw InternalException::forMessage('Failed to check if input is at search term', $e);
+        if ($ignoreCase) {
+            return strcasecmp($slice, $search) === 0;
         }
+
+        return $slice === $search;
     }
 
     /**
@@ -284,11 +250,7 @@ final class Input implements InputInterface
     {
         $from = $this->cursor + $offset;
 
-        try {
-            return Byte\slice($this->bytes, $from, $n);
-        } catch (Str\Exception\OutOfBoundsException) {
-            return '';
-        }
+        return substr($this->bytes, $from, $n);
     }
 
     #[Override]

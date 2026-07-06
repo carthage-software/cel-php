@@ -17,7 +17,8 @@ use Cel\Value\Value;
 use Override;
 use Psl\DateTime\DateTime;
 use Psl\DateTime\Timezone;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Handles getFullYear(timestamp) and getFullYear(timestamp, string) -> int
@@ -45,7 +46,7 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
             $datetime = TimezoneUtil::localize($timestamp->value, $timezoneArg->value);
             if (null === $datetime) {
                 throw new EvaluationException(
-                    Str\format('getFullYear: timezone `%s` is not valid', $timezoneArg->value),
+                    sprintf('getFullYear: timezone `%s` is not valid', $timezoneArg->value),
                     $call->getSpan(),
                 );
             }

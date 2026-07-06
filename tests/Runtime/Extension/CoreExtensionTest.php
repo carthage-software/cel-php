@@ -25,6 +25,8 @@ use Override;
 use Psl\DateTime\Duration;
 use Psl\DateTime\Timestamp;
 
+use const INF;
+
 /**
  * @mago-expect lint:halstead
  */

@@ -12,7 +12,10 @@ use Cel\Util\OperandUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
+
+use function intdiv;
+
+use const PHP_INT_MIN;
 
 final readonly class IntegerIntegerHandler implements BinaryOperatorOverloadHandlerInterface
 {
@@ -32,14 +35,13 @@ final readonly class IntegerIntegerHandler implements BinaryOperatorOverloadHand
         $left = OperandUtil::assertLeft($left, IntegerValue::class);
         $right = OperandUtil::assertRight($right, IntegerValue::class);
 
-        try {
-            return new IntegerValue(Math\div($left->value, $right->value));
-        } catch (Math\Exception\DivisionByZeroException|Math\Exception\ArithmeticException $exception) {
+        if (0 === $right->value || -1 === $right->value && PHP_INT_MIN === $left->value) {
             throw new DivisionByZeroException(
                 'Failed to evaluate division: division by zero',
                 $expression->left->getSpan()->join($expression->right->getSpan()),
-                $exception,
             );
         }
+
+        return new IntegerValue(intdiv($left->value, $right->value));
     }
 }

@@ -12,7 +12,9 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\FloatValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
+
+use function max;
+use function min;
 
 final readonly class FloatHandler implements FunctionOverloadHandlerInterface
 {
@@ -32,10 +34,6 @@ final readonly class FloatHandler implements FunctionOverloadHandlerInterface
         $min = ArgumentsUtil::get($arguments, 1, FloatValue::class);
         $max = ArgumentsUtil::get($arguments, 2, FloatValue::class);
 
-        try {
-            return new FloatValue(Math\clamp($value->value, $min->value, $max->value));
-        } catch (Math\Exception\ExceptionInterface $e) {
-            throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
-        }
+        return new FloatValue(max($min->value, min($max->value, $value->value)));
     }
 }

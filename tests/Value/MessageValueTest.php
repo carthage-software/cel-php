@@ -11,6 +11,7 @@ use Cel\Value\MessageValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Cel\Value\ValueKind;
+use Override;
 use PHPUnit\Framework\TestCase;
 
 final class MessageValueTest extends TestCase
@@ -18,13 +19,13 @@ final class MessageValueTest extends TestCase
     public function testgetRawValue(): void
     {
         $message = new class implements MessageInterface {
-            #[\Override]
+            #[Override]
             public function toCelValue(): Value
             {
                 return new MessageValue($this, []);
             }
 
-            #[\Override]
+            #[Override]
             public static function fromCelFields(array $fields): static
             {
                 return new self();
@@ -67,13 +68,13 @@ final class MessageValueTest extends TestCase
     {
         $message1 = $this->createMockMessage();
         $message2 = new class implements MessageInterface {
-            #[\Override]
+            #[Override]
             public function toCelValue(): Value
             {
                 return new MessageValue($this, []);
             }
 
-            #[\Override]
+            #[Override]
             public static function fromCelFields(array $fields): static
             {
                 return new self();
@@ -163,13 +164,13 @@ final class MessageValueTest extends TestCase
     private function createMockMessage(): MessageInterface
     {
         return new class implements MessageInterface {
-            #[\Override]
+            #[Override]
             public function toCelValue(): Value
             {
                 return new MessageValue($this, []);
             }
 
-            #[\Override]
+            #[Override]
             public static function fromCelFields(array $fields): static
             {
                 return new self();

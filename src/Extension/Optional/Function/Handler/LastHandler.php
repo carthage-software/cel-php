@@ -12,7 +12,8 @@ use Cel\Value\ListValue;
 use Cel\Value\OptionalValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Iter;
+
+use function count;
 
 /**
  * Handles `list(T).last() -> optional(T)`, returning the last element wrapped in
@@ -33,7 +34,7 @@ final readonly class LastHandler implements FunctionOverloadHandlerInterface
     {
         $list = ArgumentsUtil::get($arguments, 0, ListValue::class);
 
-        $last = $list->value[Iter\count($list->value) - 1] ?? null;
+        $last = $list->value[count($list->value) - 1] ?? null;
 
         return null === $last ? OptionalValue::none() : OptionalValue::of($last);
     }

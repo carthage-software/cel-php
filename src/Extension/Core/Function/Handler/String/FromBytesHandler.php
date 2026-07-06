@@ -13,7 +13,9 @@ use Cel\Value\BytesValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function mb_check_encoding;
+use function sprintf;
 
 /**
  * Handles string(bytes) -> string
@@ -33,9 +35,9 @@ final readonly class FromBytesHandler implements FunctionOverloadHandlerInterfac
     public function __invoke(CallExpression $call, array $arguments): Value
     {
         $value = ArgumentsUtil::get($arguments, 0, BytesValue::class);
-        if (!Str\is_utf8($value->value)) {
+        if (!mb_check_encoding($value->value, 'UTF-8')) {
             throw new TypeConversionException(
-                Str\format('Cannot convert bytes "%s" to string: invalid UTF-8 sequence.', $value->value),
+                sprintf('Cannot convert bytes "%s" to string: invalid UTF-8 sequence.', $value->value),
                 $call->getSpan(),
             );
         }

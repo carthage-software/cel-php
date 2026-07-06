@@ -14,10 +14,10 @@ use Cel\Value\IntegerValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles addition of an Integer and a DecimalNumber.
@@ -44,7 +44,7 @@ final readonly class IntegerPlusDecimalNumberHandler implements BinaryOperatorOv
         try {
             $result = DecimalFactory::from((string) $left->value)->add($right->message->getInner());
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal addition failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal addition failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

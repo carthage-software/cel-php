@@ -10,7 +10,8 @@ use Cel\Value\BooleanValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Implements the two-variable `transformList()` macro.
@@ -66,7 +67,7 @@ final readonly class TransformListMacro implements MacroInterface
                     $keep = $context->evaluate($filter);
                     if (!$keep instanceof BooleanValue) {
                         throw new InvalidMacroCallException(
-                            Str\format(
+                            sprintf(
                                 'The `transformList` macro filter must result in a boolean, got `%s`',
                                 $keep->getType(),
                             ),

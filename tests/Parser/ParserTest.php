@@ -33,6 +33,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
+use const PHP_INT_MIN;
+
 final class ParserTest extends TestCase
 {
     use ResourceProviderTrait;

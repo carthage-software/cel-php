@@ -14,7 +14,8 @@ use Cel\Interpreter\Interpreter;
 use Cel\Message\MessageInterface;
 use Cel\Syntax\Expression;
 use Override;
-use Psl\Iter;
+
+use function in_array;
 
 final class Runtime implements RuntimeInterface
 {
@@ -134,7 +135,7 @@ final class Runtime implements RuntimeInterface
         // Add extension-provided message types
         foreach ($this->extensionProvidedMessageTypes as $messageClass => $aliases) {
             // Add the class to allowed list if not already present
-            if (!Iter\contains($mergedAllowedMessageClasses, $messageClass)) {
+            if (!in_array($messageClass, $mergedAllowedMessageClasses, true)) {
                 $mergedAllowedMessageClasses[] = $messageClass;
             }
 

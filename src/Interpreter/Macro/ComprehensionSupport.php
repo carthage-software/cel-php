@@ -14,9 +14,9 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\MapValue;
 use Cel\Value\Value;
-use Psl\Str;
 
 use function assert;
+use function sprintf;
 
 /**
  * Shared iteration support for the comprehension macros (`all`, `exists`,
@@ -55,7 +55,7 @@ trait ComprehensionSupport
         $value = $context->evaluate($target);
         if (!$value instanceof ListValue && !$value instanceof MapValue) {
             throw new InvalidMacroCallException(
-                Str\format('The `%s` macro requires a list or map target, got `%s`', $macro, $value->getType()),
+                sprintf('The `%s` macro requires a list or map target, got `%s`', $macro, $value->getType()),
                 $target->getSpan(),
             );
         }
@@ -88,7 +88,7 @@ trait ComprehensionSupport
     {
         if (!$argument instanceof IdentifierExpression) {
             throw new InvalidMacroCallException(
-                Str\format('The `%s` macro requires its iteration variables to be identifiers.', $macro),
+                sprintf('The `%s` macro requires its iteration variables to be identifiers.', $macro),
                 $argument->getSpan(),
             );
         }

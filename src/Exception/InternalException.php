@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Cel\Exception;
 
 use LogicException;
-use Psl\Str;
 use Throwable;
+
+use function sprintf;
 
 /**
  * Exception thrown when an internal invariant is violated.
@@ -19,7 +20,7 @@ final class InternalException extends LogicException implements ExceptionInterfa
 {
     public static function forInvalidOperator(string $operator): self
     {
-        return new self(Str\format('Invalid operator: %s', $operator));
+        return new self(sprintf('Invalid operator: %s', $operator));
     }
 
     public static function forMessage(string $message, null|Throwable $previous = null): self

@@ -13,8 +13,11 @@ use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Exception\InvariantViolationException;
-use Psl\Str;
-use Psl\Str\Byte;
+
+use function chr;
+use function ord;
+use function sprintf;
+use function strlen;
 
 final readonly class BytesHandler implements FunctionOverloadHandlerInterface
 {
@@ -34,17 +37,17 @@ final readonly class BytesHandler implements FunctionOverloadHandlerInterface
 
         try {
             $result = '';
-            for ($i = 0; $i < Byte\length($target->value); ++$i) {
+            for ($i = 0; $i < strlen($target->value); ++$i) {
                 $byte = $target->value[$i];
-                $ord = Byte\ord($byte);
+                $ord = ord($byte);
                 // a = 97, z = 122
-                $result .= $ord >= 97 && $ord <= 122 ? Byte\chr($ord - 32) : $byte;
+                $result .= $ord >= 97 && $ord <= 122 ? chr($ord - 32) : $byte;
             }
 
             return new BytesValue($result);
         } catch (InvariantViolationException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

@@ -6,7 +6,8 @@ namespace Cel\Util;
 
 use Cel\Exception\InternalException;
 use Cel\Value\Value;
-use Psl\Str;
+
+use function sprintf;
 
 final readonly class ArgumentsUtil
 {
@@ -29,11 +30,11 @@ final readonly class ArgumentsUtil
     {
         $argument = $arguments[$index] ?? null;
         if (null === $argument) {
-            throw InternalException::forMessage(Str\format('Argument at index %d is missing', $index));
+            throw InternalException::forMessage(sprintf('Argument at index %d is missing', $index));
         }
 
         if (!$argument instanceof $expectedType) {
-            throw InternalException::forMessage(Str\format(
+            throw InternalException::forMessage(sprintf(
                 'Argument at index %d is not of expected type %s, got %s',
                 $index,
                 $expectedType,
@@ -65,7 +66,7 @@ final readonly class ArgumentsUtil
         }
 
         if (!$argument instanceof $expectedType) {
-            throw InternalException::forMessage(Str\format(
+            throw InternalException::forMessage(sprintf(
                 'Argument at index %d is not of expected type %s, got %s',
                 $index,
                 $expectedType,

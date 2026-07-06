@@ -6,7 +6,8 @@ namespace Cel\Exception;
 
 use Cel\Span\Span;
 use Cel\Value\Value;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Thrown when an operation is not supported for the given types.
@@ -19,7 +20,7 @@ final class UnsupportedOperationException extends EvaluationException
         Span $span = new Span(0, 0),
     ): UnsupportedOperationException {
         return new static(
-            Str\format('Cannot compare values of type `%s` and `%s`', $that->getType(), $other->getType()),
+            sprintf('Cannot compare values of type `%s` and `%s`', $that->getType(), $other->getType()),
             $span,
         );
     }

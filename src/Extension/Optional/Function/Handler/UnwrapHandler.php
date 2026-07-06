@@ -13,7 +13,8 @@ use Cel\Value\ListValue;
 use Cel\Value\OptionalValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Handles `optional.unwrap(list(optional(T))) -> list(T)` and its postfix form
@@ -40,7 +41,7 @@ final readonly class UnwrapHandler implements FunctionOverloadHandlerInterface
         foreach ($list->value as $element) {
             if (!$element instanceof OptionalValue) {
                 throw new EvaluationException(
-                    Str\format('unwrap requires a list of optionals, got `%s` element', $element->getType()),
+                    sprintf('unwrap requires a list of optionals, got `%s` element', $element->getType()),
                     $call->getSpan(),
                 );
             }

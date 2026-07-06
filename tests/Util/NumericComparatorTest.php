@@ -15,6 +15,7 @@ use Cel\Value\Value;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use const NAN;
 use const PHP_INT_MAX;
 
 final class NumericComparatorTest extends TestCase

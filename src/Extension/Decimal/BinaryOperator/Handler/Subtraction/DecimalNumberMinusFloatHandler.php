@@ -14,10 +14,10 @@ use Cel\Value\FloatValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles subtraction of a Float from a DecimalNumber.
@@ -44,7 +44,7 @@ final readonly class DecimalNumberMinusFloatHandler implements BinaryOperatorOve
         try {
             $result = $left->message->getInner()->sub(DecimalFactory::from((string) $right->value));
         } catch (Throwable $e) {
-            throw InternalException::forMessage(Str\format('Decimal subtraction failed: %s', $e->getMessage()), $e);
+            throw InternalException::forMessage(sprintf('Decimal subtraction failed: %s', $e->getMessage()), $e);
         }
 
         return new DecimalNumber($result)->toCelValue();

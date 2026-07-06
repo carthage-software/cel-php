@@ -13,10 +13,11 @@ use Cel\Value\ListValue;
 use Cel\Value\MapValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
-use Psl\Vec;
 
+use function array_keys;
+use function array_map;
 use function assert;
+use function sprintf;
 
 final readonly class FilterMacro implements MacroInterface
 {
@@ -61,7 +62,7 @@ final readonly class FilterMacro implements MacroInterface
         $target = $context->evaluate($call_target);
         if (!$target instanceof ListValue && !$target instanceof MapValue) {
             throw new InvalidMacroCallException(
-                Str\format('The `filter` macro requires a list or map target, got `%s`', $target->getType()),
+                sprintf('The `filter` macro requires a list or map target, got `%s`', $target->getType()),
                 $call_target->getSpan(),
             );
         }
@@ -80,7 +81,7 @@ final readonly class FilterMacro implements MacroInterface
             $results = [];
             $items = $target instanceof ListValue
                 ? $target->value
-                : Vec\map(Vec\keys($target->value), MapKeyUtil::keyToValue(...));
+                : array_map(MapKeyUtil::keyToValue(...), array_keys($target->value));
 
             foreach ($items as $item) {
                 $environment->addVariable($variableName, $item);
@@ -88,7 +89,7 @@ final readonly class FilterMacro implements MacroInterface
                 $filterResult = $context->evaluate($callback);
                 if (!$filterResult instanceof BooleanValue) {
                     throw new InvalidMacroCallException(
-                        Str\format(
+                        sprintf(
                             'The `filter` macro predicate must result in a boolean, got `%s`',
                             $filterResult->getType(),
                         ),

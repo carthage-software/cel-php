@@ -13,8 +13,9 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
+
+use function sprintf;
 
 /**
  * Handles decimal(string) -> DecimalNumber
@@ -38,7 +39,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             $decimal = DecimalFactory::from($arg->value);
         } catch (Throwable $e) {
             throw InternalException::forMessage(
-                Str\format('Failed to create decimal from string "%s": %s', $arg->value, $e->getMessage()),
+                sprintf('Failed to create decimal from string "%s": %s', $arg->value, $e->getMessage()),
                 $e,
             );
         }

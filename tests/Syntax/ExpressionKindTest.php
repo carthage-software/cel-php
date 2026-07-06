@@ -6,14 +6,15 @@ namespace Cel\Tests\Syntax;
 
 use Cel\Syntax\ExpressionKind;
 use PHPUnit\Framework\TestCase;
-use Psl\Vec;
+
+use function array_map;
 
 final class ExpressionKindTest extends TestCase
 {
     public function testEnumCases(): void
     {
         $cases = ExpressionKind::cases();
-        $caseNames = Vec\map($cases, static fn(ExpressionKind $c): string => $c->name);
+        $caseNames = array_map(static fn(ExpressionKind $c): string => $c->name, $cases);
 
         static::assertContains('Literal', $caseNames);
         static::assertContains('Conditional', $caseNames);

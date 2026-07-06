@@ -8,6 +8,7 @@ use Cel\Value\IntegerValue;
 use Cel\Value\Resolver\DefaultValueResolver;
 use Cel\Value\StringValue;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 final class DefaultValueResolverTest extends TestCase
 {
@@ -19,7 +20,7 @@ final class DefaultValueResolverTest extends TestCase
         static::assertTrue($resolver->canResolve('hello'));
         static::assertTrue($resolver->canResolve([]));
         static::assertTrue($resolver->canResolve(null));
-        static::assertTrue($resolver->canResolve(new \stdClass()));
+        static::assertTrue($resolver->canResolve(new stdClass()));
     }
 
     public function testResolveInteger(): void

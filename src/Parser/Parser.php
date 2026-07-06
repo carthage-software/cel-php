@@ -41,16 +41,20 @@ use Cel\Syntax\Unary\UnaryOperator;
 use Cel\Syntax\Unary\UnaryOperatorKind;
 use Cel\Token\Token;
 use Cel\Token\TokenKind;
+use Cel\Util\NumberBase;
 use Closure;
 use Error;
 use Override;
-use Psl;
-use Psl\Exception\ExceptionInterface;
-use Psl\Math;
-use Psl\Str;
-use Psl\Str\Byte;
+use SensitiveParameter;
 
 use function is_numeric;
+use function ltrim;
+use function rtrim;
+use function str_repeat;
+use function str_starts_with;
+use function strlen;
+use function strtolower;
+use function substr;
 
 /**
  * A recursive-descent parser for the Common Expression Language (CEL).
@@ -521,7 +525,7 @@ final class Parser implements ParserInterface
                 $token->span,
             ),
             TokenKind::LiteralUInt => new UnsignedIntegerLiteralExpression(
-                self::unsignedIntegerLiteralValue(Byte\trim_right($token->value, 'uU')),
+                self::unsignedIntegerLiteralValue(rtrim($token->value, 'uU')),
                 $token->value,
                 $token->span,
             ),
@@ -541,15 +545,15 @@ final class Parser implements ParserInterface
      */
     private static function integerLiteralValue(string $text): int
     {
-        $negative = Byte\starts_with($text, '-');
-        $body = Byte\lowercase($negative ? Byte\slice($text, 1) : $text);
+        $negative = str_starts_with($text, '-');
+        $body = strtolower($negative ? substr($text, 1) : $text);
 
-        if (Byte\starts_with($body, '0x')) {
-            $magnitude = self::fromBase(Byte\slice($body, 2), 16);
-        } elseif (Byte\starts_with($body, '0o')) {
-            $magnitude = self::fromBase(Byte\slice($body, 2), 8);
-        } elseif (Byte\starts_with($body, '0b')) {
-            $magnitude = self::fromBase(Byte\slice($body, 2), 2);
+        if (str_starts_with($body, '0x')) {
+            $magnitude = self::fromBase(substr($body, 2), 16);
+        } elseif (str_starts_with($body, '0o')) {
+            $magnitude = self::fromBase(substr($body, 2), 8);
+        } elseif (str_starts_with($body, '0b')) {
+            $magnitude = self::fromBase(substr($body, 2), 2);
         } else {
             // Decimal: cast the whole signed literal so that INT64_MIN, whose
             // magnitude alone overflows a signed 64-bit integer, round-trips.
@@ -568,21 +572,21 @@ final class Parser implements ParserInterface
      */
     private static function unsignedIntegerLiteralValue(string $text): int|string
     {
-        $body = Byte\lowercase($text);
+        $body = strtolower($text);
 
-        if (Byte\starts_with($body, '0x')) {
-            return self::fromBase(Byte\slice($body, 2), 16);
+        if (str_starts_with($body, '0x')) {
+            return self::fromBase(substr($body, 2), 16);
         }
 
-        if (Byte\starts_with($body, '0o')) {
-            return self::fromBase(Byte\slice($body, 2), 8);
+        if (str_starts_with($body, '0o')) {
+            return self::fromBase(substr($body, 2), 8);
         }
 
-        if (Byte\starts_with($body, '0b')) {
-            return self::fromBase(Byte\slice($body, 2), 2);
+        if (str_starts_with($body, '0b')) {
+            return self::fromBase(substr($body, 2), 2);
         }
 
-        $digits = Byte\trim_left($body, '0');
+        $digits = ltrim($body, '0');
         if ('' === $digits || !is_numeric($digits)) {
             return 0;
         }
@@ -599,7 +603,7 @@ final class Parser implements ParserInterface
      */
     private static function fromBase(string $digits, int $base): int
     {
-        return '' === $digits ? 0 : Math\from_base($digits, $base);
+        return '' === $digits ? 0 : NumberBase::fromBase($digits, $base);
     }
 
     /**
@@ -607,24 +611,23 @@ final class Parser implements ParserInterface
      *
      * @throws InternalException If string unescaping fails.
      */
-    private function parseStringLiteral(#[\SensitiveParameter] Token $token): StringLiteralExpression
+    private function parseStringLiteral(#[SensitiveParameter] Token $token): StringLiteralExpression
     {
-        try {
-            // Check if it's a raw string (prefixed with r or R)
+        try { // Check if it's a raw string (prefixed with r or R)
             $value = $token->value;
-            $isRaw = Byte\lowercase(Byte\slice($value, 0, 1)) === 'r';
+            $isRaw = strtolower(substr($value, 0, 1)) === 'r';
 
             // Determine quote style and extract content
             $quoteStart = $isRaw ? 1 : 0;
-            $quote = Byte\slice($value, $quoteStart, 1);
-            $isTriple = Byte\slice($value, $quoteStart, 3) === Psl\Str\repeat($quote, 3);
+            $quote = substr($value, $quoteStart, 1);
+            $isTriple = substr($value, $quoteStart, 3) === str_repeat($quote, 3);
             $quoteLength = $isTriple ? 3 : 1;
 
             // Extract the content between quotes
             $start = $quoteStart + $quoteLength;
-            $end = Byte\length($value) - $quoteLength;
+            $end = strlen($value) - $quoteLength;
             $length = $end - $start;
-            $content = Byte\slice($value, $start, $length >= 0 ? $length : 0);
+            $content = substr($value, $start, $length >= 0 ? $length : 0);
 
             // Unescape unless it's a raw string
             if (!$isRaw) {
@@ -632,7 +635,7 @@ final class Parser implements ParserInterface
             }
 
             return new StringLiteralExpression($content, $token->value, $token->span);
-        } catch (ExceptionInterface $e) {
+        } catch (InternalException $e) {
             throw InternalException::forMessage('String literal parsing failed: ' . $e->getMessage(), $e);
         }
     }
@@ -642,31 +645,30 @@ final class Parser implements ParserInterface
      *
      * @throws InternalException If bytes unescaping fails.
      */
-    private function parseBytesLiteral(#[\SensitiveParameter] Token $token): BytesLiteralExpression
+    private function parseBytesLiteral(#[SensitiveParameter] Token $token): BytesLiteralExpression
     {
-        try {
-            // Bytes can be: b"...", b'...', br"...", rb"...", etc.
+        try { // Bytes can be: b"...", b'...', br"...", rb"...", etc.
             $value = $token->value;
-            $lowerValue = Byte\lowercase($value);
+            $lowerValue = strtolower($value);
 
             // Determine if raw by checking the prefix (first 2 chars)
             // Can be: br"..." or rb"..." (or with ')
-            $prefix = Byte\slice($lowerValue, 0, 2);
+            $prefix = substr($lowerValue, 0, 2);
             $isRaw = $prefix === 'br' || $prefix === 'rb';
 
             // Find where the quote starts (after b, r, br, or rb prefix)
             $prefixEnd = $isRaw ? 2 : 1;
 
             // Extract quote and content
-            $quote = Byte\slice($value, $prefixEnd, 1);
-            $isTriple = Byte\slice($value, $prefixEnd, 3) === Psl\Str\repeat($quote, 3);
+            $quote = substr($value, $prefixEnd, 1);
+            $isTriple = substr($value, $prefixEnd, 3) === str_repeat($quote, 3);
             $quoteLength = $isTriple ? 3 : 1;
 
             // Extract content between quotes
             $start = $prefixEnd + $quoteLength;
-            $end = Byte\length($value) - $quoteLength;
+            $end = strlen($value) - $quoteLength;
             $length = $end - $start;
-            $content = Byte\slice($value, $start, $length >= 0 ? $length : 0);
+            $content = substr($value, $start, $length >= 0 ? $length : 0);
 
             // Unescape unless it's a raw bytes literal
             if (!$isRaw) {
@@ -674,7 +676,7 @@ final class Parser implements ParserInterface
             }
 
             return new BytesLiteralExpression($content, $token->value, $token->span);
-        } catch (ExceptionInterface $e) {
+        } catch (InternalException $e) {
             throw InternalException::forMessage('Bytes literal parsing failed: ' . $e->getMessage(), $e);
         }
     }

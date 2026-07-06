@@ -12,8 +12,8 @@ use Cel\Runtime\RuntimeReceipt;
 use Cel\Value\Value;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Psl\Str;
 
+use function sprintf;
 use function var_export;
 
 abstract class RuntimeTestCase extends TestCase
@@ -60,7 +60,7 @@ abstract class RuntimeTestCase extends TestCase
 
         static::assertTrue(
             $expectedResult->isEqual($actualResult),
-            Str\format(
+            sprintf(
                 "Expected result to be equal.\nExpected: %s\nActual: %s",
                 var_export($expectedResult, true),
                 var_export($actualResult, true),

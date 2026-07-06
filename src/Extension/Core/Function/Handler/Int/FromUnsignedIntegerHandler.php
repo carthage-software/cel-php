@@ -13,11 +13,12 @@ use Cel\Value\IntegerValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Str;
 use Psl\Type;
 
 use function bccomp;
+use function sprintf;
+
+use const PHP_INT_MAX;
 
 /**
  * Handles int(unsigned_integer) -> integer
@@ -43,9 +44,9 @@ final readonly class FromUnsignedIntegerHandler implements FunctionOverloadHandl
             return new IntegerValue($uintValue);
         }
 
-        if (bccomp($uintValue, (string) Math\INT64_MAX) === 1) {
+        if (bccomp($uintValue, (string) PHP_INT_MAX) === 1) {
             throw new OverflowException(
-                Str\format('Unsigned integer value %s overflows maximum integer value %d', $uintValue, Math\INT64_MAX),
+                sprintf('Unsigned integer value %s overflows maximum integer value %d', $uintValue, PHP_INT_MAX),
                 $call->getSpan(),
             );
         }

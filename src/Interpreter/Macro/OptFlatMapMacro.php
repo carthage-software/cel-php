@@ -10,9 +10,9 @@ use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Value\OptionalValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 
 use function assert;
+use function sprintf;
 
 /**
  * Implements the `optional(T).optFlatMap(T var, T -> optional(U)) -> optional(U)` macro.
@@ -55,7 +55,7 @@ final readonly class OptFlatMapMacro implements MacroInterface
         $optional = $context->evaluate($target);
         if (!$optional instanceof OptionalValue) {
             throw new InvalidMacroCallException(
-                Str\format('The `optFlatMap` macro requires an optional target, got `%s`', $optional->getType()),
+                sprintf('The `optFlatMap` macro requires an optional target, got `%s`', $optional->getType()),
                 $target->getSpan(),
             );
         }
@@ -82,7 +82,7 @@ final readonly class OptFlatMapMacro implements MacroInterface
             $result = $context->evaluate($transform);
             if (!$result instanceof OptionalValue) {
                 throw new InvalidMacroCallException(
-                    Str\format(
+                    sprintf(
                         'The `optFlatMap` macro transform must result in an optional, got `%s`',
                         $result->getType(),
                     ),

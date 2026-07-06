@@ -9,12 +9,13 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\NumberBase;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Str;
+
+use function sprintf;
 
 final readonly class IntegerIntegerHandler implements FunctionOverloadHandlerInterface
 {
@@ -35,22 +36,18 @@ final readonly class IntegerIntegerHandler implements FunctionOverloadHandlerInt
 
         if ($number->value < 0) {
             throw new EvaluationException(
-                Str\format('toBase: number %d is negative, only non-negative integers are supported', $number->value),
+                sprintf('toBase: number %d is negative, only non-negative integers are supported', $number->value),
                 $call->getSpan(),
             );
         }
 
         if ($toBase->value > 36 || $toBase->value < 2) {
             throw new EvaluationException(
-                Str\format('toBase: base %d is not in the range 2-36', $toBase->value),
+                sprintf('toBase: base %d is not in the range 2-36', $toBase->value),
                 $call->getSpan(),
             );
         }
 
-        try {
-            return new StringValue(Math\to_base($number->value, $toBase->value));
-        } catch (Math\Exception\ExceptionInterface $e) {
-            throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
-        }
+        return new StringValue(NumberBase::toBase($number->value, $toBase->value));
     }
 }

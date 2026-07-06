@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Cel\Parser\Exception;
 
 use Cel\Token\TokenKind;
-use Psl\Iter;
-use Psl\Str;
-use Psl\Vec;
 use RuntimeException;
+
+use function array_map;
+use function count;
+use function implode;
 
 final class UnexpectedEndOfFileException extends RuntimeException implements ExceptionInterface
 {
@@ -20,9 +21,9 @@ final class UnexpectedEndOfFileException extends RuntimeException implements Exc
         public readonly array $expected = [],
     ) {
         $message = 'Unexpected end of file';
-        if (0 !== Iter\count($this->expected)) {
-            $expected_names = Vec\map($this->expected, static fn(TokenKind $k): string => $k->name);
-            $message .= ', expected one of: `' . Str\join($expected_names, '`, `') . '`';
+        if (0 !== count($this->expected)) {
+            $expected_names = array_map(static fn(TokenKind $k): string => $k->name, $this->expected);
+            $message .= ', expected one of: `' . implode('`, `', $expected_names) . '`';
         }
 
         parent::__construct($message . " at position {$position}.");

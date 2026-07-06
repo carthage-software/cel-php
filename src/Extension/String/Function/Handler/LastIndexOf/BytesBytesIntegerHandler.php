@@ -9,13 +9,16 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\SearchOffset;
 use Cel\Value\BytesValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\Value;
+use OutOfRangeException;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Str;
-use Psl\Str\Byte;
+
+use function sprintf;
+use function strlen;
+use function strrpos;
 
 final readonly class BytesBytesIntegerHandler implements FunctionOverloadHandlerInterface
 {
@@ -40,12 +43,13 @@ final readonly class BytesBytesIntegerHandler implements FunctionOverloadHandler
         }
 
         try {
-            $pos = Byte\search_last($haystack->value, $needle->value, $offset->value);
+            $normalized = SearchOffset::normalize($offset->value, strlen($haystack->value));
+            $pos = strrpos($haystack->value, $needle->value, $normalized);
 
-            return new IntegerValue($pos ?? -1);
-        } catch (ExceptionInterface $e) {
+            return new IntegerValue(false === $pos ? -1 : $pos);
+        } catch (OutOfRangeException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

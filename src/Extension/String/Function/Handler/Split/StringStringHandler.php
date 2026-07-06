@@ -9,13 +9,14 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\StringSplit;
 use Cel\Value\ListValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
-use Psl\Str;
-use Psl\Vec;
+
+use function array_map;
+use function explode;
 
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {
@@ -34,16 +35,10 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
         $haystack = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $delimiter = ArgumentsUtil::get($arguments, 1, StringValue::class);
 
-        try {
-            $parts = Str\split($haystack->value, $delimiter->value);
+        $parts = '' === $delimiter->value
+            ? StringSplit::characters($haystack->value, null, false)
+            : explode($delimiter->value, $haystack->value);
 
-            return new ListValue(Vec\map($parts, static fn(string $p): StringValue => new StringValue($p)));
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new ListValue(array_map(static fn(string $p): StringValue => new StringValue($p), $parts));
     }
 }

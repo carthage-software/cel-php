@@ -14,7 +14,12 @@ use Cel\Value\Value;
 use Override;
 use Psl\DateTime\DateTime;
 use Psl\DateTime\Timezone;
-use Psl\Str;
+
+use function rtrim;
+use function sprintf;
+use function str_pad;
+
+use const STR_PAD_LEFT;
 
 /**
  * Handles string(timestamp) -> string
@@ -35,7 +40,7 @@ final readonly class FromTimestampHandler implements FunctionOverloadHandlerInte
         $value = ArgumentsUtil::get($arguments, 0, TimestampValue::class);
         $datetime = DateTime::fromTimestamp($value->value, Timezone::UTC);
 
-        $formatted = Str\format(
+        $formatted = sprintf(
             '%04d-%02d-%02dT%02d:%02d:%02d%sZ',
             $datetime->getYear(),
             $datetime->getMonth(),
@@ -55,6 +60,6 @@ final readonly class FromTimestampHandler implements FunctionOverloadHandlerInte
             return '';
         }
 
-        return '.' . Str\trim_right(Str\pad_left((string) $nanoseconds, 9, '0'), '0');
+        return '.' . rtrim(str_pad((string) $nanoseconds, 9, '0', STR_PAD_LEFT), '0');
     }
 }

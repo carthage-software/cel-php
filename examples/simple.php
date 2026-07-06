@@ -18,7 +18,7 @@ const EXPRESSION = <<<CEL
     CEL;
 
 try {
-    $result = Cel\evaluate(EXPRESSION, [
+    $result = Cel\evaluate(namespace\EXPRESSION, [
         'account' => [
             'balance' => 500,
             'overdraftProtection' => true,

@@ -9,12 +9,15 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\NumberBase;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
+use InvalidArgumentException;
+use OverflowException;
 use Override;
-use Psl\Math;
-use Psl\Str;
+
+use function sprintf;
 
 final readonly class StringIntegerHandler implements FunctionOverloadHandlerInterface
 {
@@ -34,19 +37,19 @@ final readonly class StringIntegerHandler implements FunctionOverloadHandlerInte
         $fromBase = ArgumentsUtil::get($arguments, 1, IntegerValue::class);
 
         if ('' === $number->value) {
-            throw new EvaluationException(Str\format('fromBase: cannot convert empty string'), $call->getSpan());
+            throw new EvaluationException(sprintf('fromBase: cannot convert empty string'), $call->getSpan());
         }
 
         if ($fromBase->value > 36 || $fromBase->value < 2) {
             throw new EvaluationException(
-                Str\format('fromBase: base %d is not in the range 2-36', $fromBase->value),
+                sprintf('fromBase: base %d is not in the range 2-36', $fromBase->value),
                 $call->getSpan(),
             );
         }
 
         try {
-            return new IntegerValue(Math\from_base($number->value, $fromBase->value));
-        } catch (Math\Exception\ExceptionInterface $e) {
+            return new IntegerValue(NumberBase::fromBase($number->value, $fromBase->value));
+        } catch (InvalidArgumentException|OverflowException $e) {
             throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
         }
     }

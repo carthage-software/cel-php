@@ -14,10 +14,10 @@ use Cel\Value\BooleanValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 use Throwable;
 
 use function assert;
+use function sprintf;
 
 /**
  * Handles equality comparison of two DecimalNumber values.
@@ -50,7 +50,7 @@ final readonly class DecimalNumberEqualsDecimalNumberHandler implements BinaryOp
             $equals = $left->message->getInner()->equals($right->message->getInner());
         } catch (Throwable $e) {
             throw InternalException::forMessage(
-                Str\format('Decimal equality comparison failed: %s', $e->getMessage()),
+                sprintf('Decimal equality comparison failed: %s', $e->getMessage()),
                 $e,
             );
         }

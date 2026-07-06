@@ -12,8 +12,8 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Str;
+
+use function rtrim;
 
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {
@@ -32,14 +32,6 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
         $target = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $characters = ArgumentsUtil::get($arguments, 1, StringValue::class);
 
-        try {
-            return new StringValue(Str\trim_right($target->value, $characters->value));
-        } catch (ExceptionInterface $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new StringValue(rtrim($target->value, $characters->value));
     }
 }

@@ -9,9 +9,9 @@ use Cel\Syntax\Member\CallExpression;
 use Cel\Value\OptionalValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Str;
 
 use function assert;
+use function sprintf;
 
 /**
  * Implements the `optional(T).orValue(T) -> T` macro.
@@ -45,7 +45,7 @@ final readonly class OrValueMacro implements MacroInterface
         $optional = $context->evaluate($target);
         if (!$optional instanceof OptionalValue) {
             throw new InvalidMacroCallException(
-                Str\format('The `orValue` macro requires an optional target, got `%s`', $optional->getType()),
+                sprintf('The `orValue` macro requires an optional target, got `%s`', $optional->getType()),
                 $target->getSpan(),
             );
         }

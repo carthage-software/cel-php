@@ -9,12 +9,15 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\NumberBase;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
+use InvalidArgumentException;
+use OverflowException;
 use Override;
-use Psl\Math;
-use Psl\Str;
+
+use function sprintf;
 
 final readonly class StringIntegerIntegerHandler implements FunctionOverloadHandlerInterface
 {
@@ -35,26 +38,26 @@ final readonly class StringIntegerIntegerHandler implements FunctionOverloadHand
         $toBase = ArgumentsUtil::get($arguments, 2, IntegerValue::class);
 
         if ('' === $number->value) {
-            throw new EvaluationException(Str\format('baseConvert: cannot convert empty string'), $call->getSpan());
+            throw new EvaluationException(sprintf('baseConvert: cannot convert empty string'), $call->getSpan());
         }
 
         if ($fromBase->value > 36 || $fromBase->value < 2) {
             throw new EvaluationException(
-                Str\format('baseConvert: from base %d is not in the range 2-36', $fromBase->value),
+                sprintf('baseConvert: from base %d is not in the range 2-36', $fromBase->value),
                 $call->getSpan(),
             );
         }
 
         if ($toBase->value > 36 || $toBase->value < 2) {
             throw new EvaluationException(
-                Str\format('baseConvert: to base %d is not in the range 2-36', $toBase->value),
+                sprintf('baseConvert: to base %d is not in the range 2-36', $toBase->value),
                 $call->getSpan(),
             );
         }
 
         try {
-            return new StringValue(Math\base_convert($number->value, $fromBase->value, $toBase->value));
-        } catch (Math\Exception\ExceptionInterface $e) {
+            return new StringValue(NumberBase::baseConvert($number->value, $fromBase->value, $toBase->value));
+        } catch (InvalidArgumentException|OverflowException $e) {
             throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
         }
     }

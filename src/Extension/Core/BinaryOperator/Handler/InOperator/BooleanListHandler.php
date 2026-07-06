@@ -12,7 +12,8 @@ use Cel\Value\BooleanValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Iter;
+
+use function array_any;
 
 final readonly class BooleanListHandler implements BinaryOperatorOverloadHandlerInterface
 {
@@ -31,6 +32,6 @@ final readonly class BooleanListHandler implements BinaryOperatorOverloadHandler
         $left = OperandUtil::assertLeft($left, BooleanValue::class);
         $right = OperandUtil::assertRight($right, ListValue::class);
 
-        return new BooleanValue(Iter\any($right->value, static fn(Value $item): bool => $item->isEqual($left)));
+        return new BooleanValue(array_any($right->value, static fn(Value $item): bool => $item->isEqual($left)));
     }
 }

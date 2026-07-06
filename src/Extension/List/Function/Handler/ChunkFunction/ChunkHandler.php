@@ -13,7 +13,9 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Vec;
+
+use function array_chunk;
+use function array_map;
 
 final readonly class ChunkHandler implements FunctionOverloadHandlerInterface
 {
@@ -36,12 +38,12 @@ final readonly class ChunkHandler implements FunctionOverloadHandlerInterface
             throw new EvaluationException('Chunk size must be a positive integer', $call->getSpan());
         }
 
-        $chunks = Vec\chunk($list->value, $size->value);
+        $chunks = array_chunk($list->value, $size->value);
 
-        return new ListValue(Vec\map(
-            $chunks,
+        return new ListValue(array_map(
             /** @param list<Value> $chunk */
             static fn(array $chunk): ListValue => new ListValue($chunk),
+            $chunks,
         ));
     }
 }

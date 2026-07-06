@@ -14,8 +14,9 @@ use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Exception\InvariantViolationException;
-use Psl\Str;
-use Psl\Str\Byte;
+
+use function sprintf;
+use function str_starts_with;
 
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
@@ -39,10 +40,10 @@ final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterfa
         }
 
         try {
-            return new BooleanValue(Byte\starts_with($target->value, $prefix->value));
+            return new BooleanValue(str_starts_with($target->value, $prefix->value));
         } catch (InvariantViolationException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

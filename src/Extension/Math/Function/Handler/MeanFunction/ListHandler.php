@@ -14,8 +14,9 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Str;
+
+use function count;
+use function sprintf;
 
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
@@ -38,22 +39,25 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
         foreach ($list->value as $item) {
             if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
                 throw new EvaluationException(
-                    Str\format('mean() only supports lists of integers and floats, got `%s`', $item->getType()),
+                    sprintf('mean() only supports lists of integers and floats, got `%s`', $item->getType()),
                     $call->getSpan(),
                 );
             }
             $numbers[] = $item->getRawValue();
         }
 
-        try {
-            $mean = Math\mean($numbers);
-            if (null === $mean) {
-                throw new EvaluationException('mean() requires a non-empty list', $call->getSpan());
-            }
-
-            return new FloatValue($mean);
-        } catch (Math\Exception\ExceptionInterface $e) {
-            throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
+        if ([] === $numbers) {
+            throw new EvaluationException('mean() requires a non-empty list', $call->getSpan());
         }
+
+        // Accumulate each term divided by the count so the result matches the
+        // previous implementation's floating-point behaviour exactly.
+        $count = count($numbers);
+        $mean = 0.0;
+        foreach ($numbers as $number) {
+            $mean += (float) $number / $count;
+        }
+
+        return new FloatValue($mean);
     }
 }

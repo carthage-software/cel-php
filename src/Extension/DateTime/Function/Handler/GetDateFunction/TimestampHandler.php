@@ -17,7 +17,8 @@ use Cel\Value\Value;
 use Override;
 use Psl\DateTime\DateTime;
 use Psl\DateTime\Timezone;
-use Psl\Str;
+
+use function sprintf;
 
 /**
  * Returns the one-based day of the month (1-31).
@@ -45,7 +46,7 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
             $datetime = TimezoneUtil::localize($timestamp->value, $timezoneArg->value);
             if (null === $datetime) {
                 throw new EvaluationException(
-                    Str\format('getDate: timezone `%s` is not valid', $timezoneArg->value),
+                    sprintf('getDate: timezone `%s` is not valid', $timezoneArg->value),
                     $call->getSpan(),
                 );
             }

@@ -15,7 +15,10 @@ use Cel\Value\Value;
 use Override;
 use Psl\Regex;
 use Psl\Regex\Exception\InvalidPatternException;
-use Psl\Str;
+
+use function sprintf;
+use function str_contains;
+use function str_replace;
 
 /**
  * Handles matches(string, string) -> bool.
@@ -41,7 +44,7 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
             return new BooleanValue(Regex\matches($target->value, self::compile($pattern->value)));
         } catch (InvalidPatternException $exception) {
             throw new EvaluationException(
-                Str\format('Invalid regular expression `%s`: %s', $pattern->value, $exception->getMessage()),
+                sprintf('Invalid regular expression `%s`: %s', $pattern->value, $exception->getMessage()),
                 $call->getSpan(),
                 $exception,
             );
@@ -54,11 +57,11 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
     private static function compile(string $regex): string
     {
         foreach (['/', '#', '~', '%', '@', '!', ';', ','] as $delimiter) {
-            if (!Str\contains($regex, $delimiter)) {
+            if (!str_contains($regex, $delimiter)) {
                 return $delimiter . $regex . $delimiter . 'u';
             }
         }
 
-        return '#' . Str\replace($regex, '#', '\\#') . '#u';
+        return '#' . str_replace('#', '\\#', $regex) . '#u';
     }
 }

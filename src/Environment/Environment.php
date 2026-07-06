@@ -9,9 +9,12 @@ use Cel\Value\Resolver\DefaultValueResolver;
 use Cel\Value\Resolver\ValueResolverInterface;
 use Cel\Value\Value;
 use Override;
-use Psl\Dict;
-use Psl\Iter;
-use Psl\Vec;
+
+use function array_key_exists;
+use function array_map;
+use function array_reverse;
+use function array_slice;
+use function count;
 
 /**
  * A mutable environment for the CEL runtime.
@@ -59,7 +62,7 @@ final class Environment implements EnvironmentInterface
      */
     public static function fromArray(array $variables): self
     {
-        $variables = Dict\map($variables, Value::from(...));
+        $variables = array_map(Value::from(...), $variables);
 
         return new self($variables);
     }
@@ -75,11 +78,11 @@ final class Environment implements EnvironmentInterface
     {
         // Try resolvers in reverse order (most recently registered first)
         // Exclude the last one (default resolver) from the reverse iteration
-        $count = Iter\count($this->valueResolvers);
+        $count = count($this->valueResolvers);
         $length = $count > 0 ? $count - 1 : 0;
-        $customResolvers = Vec\slice($this->valueResolvers, 0, $length);
+        $customResolvers = array_slice($this->valueResolvers, 0, $length);
 
-        foreach (Vec\reverse($customResolvers) as $resolver) {
+        foreach (array_reverse($customResolvers) as $resolver) {
             if (!$resolver->canResolve($value)) {
                 continue;
             }
@@ -97,10 +100,10 @@ final class Environment implements EnvironmentInterface
     public function registerValueResolver(ValueResolverInterface $resolver): void
     {
         // Insert before the default resolver (which is always last)
-        $count = Iter\count($this->valueResolvers);
+        $count = count($this->valueResolvers);
         $length = $count > 0 ? $count - 1 : 0;
         $this->valueResolvers = [
-            ...Vec\slice($this->valueResolvers, 0, $length),
+            ...array_slice($this->valueResolvers, 0, $length),
             $resolver,
             $this->valueResolvers[$count - 1],
         ];
@@ -109,7 +112,7 @@ final class Environment implements EnvironmentInterface
     #[Override]
     public function hasVariable(string $name): bool
     {
-        return Iter\contains_key($this->variables, $name);
+        return array_key_exists($name, $this->variables);
     }
 
     #[Override]
@@ -122,9 +125,9 @@ final class Environment implements EnvironmentInterface
     public function fork(): EnvironmentInterface
     {
         // Exclude the default resolver since constructor will add it
-        $count = Iter\count($this->valueResolvers);
+        $count = count($this->valueResolvers);
         $length = $count > 0 ? $count - 1 : 0;
-        $customResolvers = Vec\slice($this->valueResolvers, 0, $length);
+        $customResolvers = array_slice($this->valueResolvers, 0, $length);
         return new self($this->variables, $customResolvers);
     }
 }

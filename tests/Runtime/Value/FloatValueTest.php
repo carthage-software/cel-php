@@ -14,6 +14,8 @@ use Cel\Value\ValueKind;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use const NAN;
+
 final class FloatValueTest extends TestCase
 {
     public function testConstructorAndGetters(): void

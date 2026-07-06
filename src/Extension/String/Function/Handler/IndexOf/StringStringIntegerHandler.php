@@ -9,12 +9,16 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\SearchOffset;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
+use OutOfRangeException;
 use Override;
-use Psl\Exception\ExceptionInterface;
-use Psl\Str;
+
+use function mb_strlen;
+use function mb_strpos;
+use function sprintf;
 
 final readonly class StringStringIntegerHandler implements FunctionOverloadHandlerInterface
 {
@@ -39,12 +43,13 @@ final readonly class StringStringIntegerHandler implements FunctionOverloadHandl
         }
 
         try {
-            $pos = Str\search($haystack->value, $needle->value, $offset->value);
+            $normalized = SearchOffset::normalize($offset->value, mb_strlen($haystack->value));
+            $pos = mb_strpos($haystack->value, $needle->value, $normalized);
 
-            return new IntegerValue($pos ?? -1);
-        } catch (ExceptionInterface $e) {
+            return new IntegerValue(false === $pos ? -1 : $pos);
+        } catch (OutOfRangeException $e) {
             throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
+                sprintf('String operation failed: %s', $e->getMessage()),
                 $call->getSpan(),
                 $e,
             );

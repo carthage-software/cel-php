@@ -14,9 +14,10 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Str;
 use Psl\Type;
+
+use function min;
+use function sprintf;
 
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
@@ -39,18 +40,18 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
         foreach ($list->value as $item) {
             if (!$item instanceof IntegerValue && !$item instanceof FloatValue) {
                 throw new EvaluationException(
-                    Str\format('min() only supports lists of integers and floats, got `%s`', $item->getType()),
+                    sprintf('min() only supports lists of integers and floats, got `%s`', $item->getType()),
                     $call->getSpan(),
                 );
             }
             $numbers[] = $item->getRawValue();
         }
 
-        /** @var float|int|null $result */
-        $result = Math\min($numbers);
-        if (null === $result) {
+        if ([] === $numbers) {
             throw new EvaluationException('min() requires a non-empty list', $call->getSpan());
         }
+
+        $result = min($numbers);
 
         if (Type\int()->matches($result)) {
             return new IntegerValue($result);

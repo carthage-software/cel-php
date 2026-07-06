@@ -9,15 +9,16 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\StringSplit;
 use Cel\Value\BytesValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
-use Psl\Str;
-use Psl\Str\Byte;
-use Psl\Vec;
+
+use function array_map;
+use function explode;
+use function sprintf;
 
 final readonly class BytesBytesIntegerHandler implements FunctionOverloadHandlerInterface
 {
@@ -39,21 +40,15 @@ final readonly class BytesBytesIntegerHandler implements FunctionOverloadHandler
 
         if ($limit->value < 1) {
             throw new EvaluationException(
-                Str\format('split: limit %d is less than 1, only positive integers are supported', $limit->value),
+                sprintf('split: limit %d is less than 1, only positive integers are supported', $limit->value),
                 $call->getSpan(),
             );
         }
 
-        try {
-            $parts = Byte\split($haystack->value, $delimiter->value, $limit->value);
+        $parts = '' === $delimiter->value
+            ? StringSplit::characters($haystack->value, $limit->value, true)
+            : explode($delimiter->value, $haystack->value, $limit->value);
 
-            return new ListValue(Vec\map($parts, static fn(string $p): BytesValue => new BytesValue($p)));
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                Str\format('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new ListValue(array_map(static fn(string $p): BytesValue => new BytesValue($p), $parts));
     }
 }

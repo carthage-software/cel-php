@@ -13,8 +13,9 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Math;
-use Psl\Vec;
+
+use function array_map;
+use function array_sum;
 
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
@@ -35,19 +36,12 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
             return new IntegerValue(0);
         }
 
-        try {
-            return new IntegerValue(Math\sum(Vec\map($list->value, static function (Value $v) use ($call): int {
-                if ($v instanceof IntegerValue) {
-                    return $v->value;
-                }
+        return new IntegerValue(array_sum(array_map(static function (Value $v) use ($call): int {
+            if ($v instanceof IntegerValue) {
+                return $v->value;
+            }
 
-                throw new EvaluationException(
-                    'sum() only supports lists of integers, got ' . $v::class,
-                    $call->getSpan(),
-                );
-            })));
-        } catch (Math\Exception\ExceptionInterface $e) {
-            throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
-        }
+            throw new EvaluationException('sum() only supports lists of integers, got ' . $v::class, $call->getSpan());
+        }, $list->value)));
     }
 }
