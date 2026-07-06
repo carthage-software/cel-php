@@ -165,9 +165,9 @@ final class CommonExpressionLanguageTest extends TestCase
 
     public function testCanBeConstructedWithCustomComponents(): void
     {
-        $parser = $this->createMock(ParserInterface::class);
-        $optimizer = $this->createMock(OptimizerInterface::class);
-        $runtime = $this->createMock(RuntimeInterface::class);
+        $parser = $this->createStub(ParserInterface::class);
+        $optimizer = $this->createStub(OptimizerInterface::class);
+        $runtime = $this->createStub(RuntimeInterface::class);
 
         $cel = new CommonExpressionLanguage(parser: $parser, optimizer: $optimizer, runtime: $runtime);
 
@@ -176,7 +176,7 @@ final class CommonExpressionLanguageTest extends TestCase
 
     public function testParseStringDelegationToParser(): void
     {
-        $expectedExpression = $this->createMock(Expression::class);
+        $expectedExpression = $this->createStub(Expression::class);
 
         $parser = $this->createMock(ParserInterface::class);
         $parser->expects($this->once())->method('parseString')->with('test')->willReturn($expectedExpression);
@@ -190,9 +190,9 @@ final class CommonExpressionLanguageTest extends TestCase
 
     public function testParseDelegationToParser(): void
     {
-        $expectedExpression = $this->createMock(Expression::class);
+        $expectedExpression = $this->createStub(Expression::class);
 
-        $input = $this->createMock(InputInterface::class);
+        $input = $this->createStub(InputInterface::class);
 
         $parser = $this->createMock(ParserInterface::class);
         $parser->expects($this->once())->method('parse')->with($input)->willReturn($expectedExpression);
@@ -206,9 +206,9 @@ final class CommonExpressionLanguageTest extends TestCase
 
     public function testConstructDelegationToParser(): void
     {
-        $expectedExpression = $this->createMock(Expression::class);
+        $expectedExpression = $this->createStub(Expression::class);
 
-        $lexer = $this->createMock(LexerInterface::class);
+        $lexer = $this->createStub(LexerInterface::class);
 
         $parser = $this->createMock(ParserInterface::class);
         $parser->expects($this->once())->method('construct')->with($lexer)->willReturn($expectedExpression);
@@ -222,8 +222,8 @@ final class CommonExpressionLanguageTest extends TestCase
 
     public function testOptimizeDelegationToOptimizer(): void
     {
-        $inputExpression = $this->createMock(Expression::class);
-        $outputExpression = $this->createMock(Expression::class);
+        $inputExpression = $this->createStub(Expression::class);
+        $outputExpression = $this->createStub(Expression::class);
 
         $optimizer = $this->createMock(OptimizerInterface::class);
         $optimizer->expects($this->once())->method('optimize')->with($inputExpression)->willReturn($outputExpression);
@@ -237,7 +237,7 @@ final class CommonExpressionLanguageTest extends TestCase
 
     public function testAddOptimizationDelegationToOptimizer(): void
     {
-        $optimization = $this->createMock(OptimizationInterface::class);
+        $optimization = $this->createStub(OptimizationInterface::class);
 
         $optimizer = $this->createMock(OptimizerInterface::class);
         $optimizer->expects($this->once())->method('addOptimization')->with($optimization);

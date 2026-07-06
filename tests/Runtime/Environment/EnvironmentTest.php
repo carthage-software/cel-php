@@ -102,7 +102,7 @@ final class EnvironmentTest extends TestCase
     {
         $env = new Environment();
 
-        $resolver = $this->createMock(ValueResolverInterface::class);
+        $resolver = $this->createStub(ValueResolverInterface::class);
         $resolver->method('canResolve')->willReturn(false);
 
         // Should not throw

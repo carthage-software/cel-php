@@ -111,7 +111,7 @@ final class ConfigurationTest extends TestCase
     {
         $config = new Configuration(enableStandardExtensions: false);
 
-        $extension = $this->createMock(ExtensionInterface::class);
+        $extension = $this->createStub(ExtensionInterface::class);
 
         $config->addExtension($extension);
 
@@ -122,8 +122,8 @@ final class ConfigurationTest extends TestCase
     {
         $config = new Configuration(enableStandardExtensions: false);
 
-        $extension1 = $this->createMock(ExtensionInterface::class);
-        $extension2 = $this->createMock(ExtensionInterface::class);
+        $extension1 = $this->createStub(ExtensionInterface::class);
+        $extension2 = $this->createStub(ExtensionInterface::class);
 
         $config->addExtension($extension1);
         $config->addExtension($extension2);
@@ -138,13 +138,13 @@ final class ConfigurationTest extends TestCase
     {
         $config = new Configuration(enableStandardExtensions: false);
 
-        $resolver1 = $this->createMock(\Cel\Value\Resolver\ValueResolverInterface::class);
-        $resolver2 = $this->createMock(\Cel\Value\Resolver\ValueResolverInterface::class);
+        $resolver1 = $this->createStub(\Cel\Value\Resolver\ValueResolverInterface::class);
+        $resolver2 = $this->createStub(\Cel\Value\Resolver\ValueResolverInterface::class);
 
-        $extension1 = $this->createMock(ExtensionInterface::class);
+        $extension1 = $this->createStub(ExtensionInterface::class);
         $extension1->method('getValueResolvers')->willReturn([$resolver1]);
 
-        $extension2 = $this->createMock(ExtensionInterface::class);
+        $extension2 = $this->createStub(ExtensionInterface::class);
         $extension2->method('getValueResolvers')->willReturn([$resolver2]);
 
         $config->addExtension($extension1);
@@ -160,7 +160,7 @@ final class ConfigurationTest extends TestCase
     {
         $config = new Configuration(enableStandardExtensions: false);
 
-        $extension = $this->createMock(ExtensionInterface::class);
+        $extension = $this->createStub(ExtensionInterface::class);
         $extension->method('getValueResolvers')->willReturn([]);
 
         $config->addExtension($extension);
