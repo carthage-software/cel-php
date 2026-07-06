@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Cel\Extension\DateTime\Function;
 
 use Cel\Extension\DateTime\Function\Handler\GetMonthFunction\TimestampHandler;
-use Cel\Extension\DateTime\Function\Handler\GetMonthFunction\TimestampWithTimezoneHandler;
 use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
 use Override;
@@ -28,6 +27,6 @@ final readonly class GetMonthFunction implements FunctionInterface
     public function getOverloads(): iterable
     {
         yield [ValueKind::Timestamp] => new TimestampHandler();
-        yield [ValueKind::Timestamp, ValueKind::String] => new TimestampWithTimezoneHandler();
+        yield [ValueKind::Timestamp, ValueKind::String] => new TimestampHandler();
     }
 }

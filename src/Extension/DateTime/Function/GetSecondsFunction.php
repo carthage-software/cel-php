@@ -6,7 +6,6 @@ namespace Cel\Extension\DateTime\Function;
 
 use Cel\Extension\DateTime\Function\Handler\GetSecondsFunction\DurationHandler;
 use Cel\Extension\DateTime\Function\Handler\GetSecondsFunction\TimestampHandler;
-use Cel\Extension\DateTime\Function\Handler\GetSecondsFunction\TimestampWithTimezoneHandler;
 use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
 use Override;
@@ -30,6 +29,6 @@ final readonly class GetSecondsFunction implements FunctionInterface
     {
         yield [ValueKind::Duration] => new DurationHandler();
         yield [ValueKind::Timestamp] => new TimestampHandler();
-        yield [ValueKind::Timestamp, ValueKind::String] => new TimestampWithTimezoneHandler();
+        yield [ValueKind::Timestamp, ValueKind::String] => new TimestampHandler();
     }
 }

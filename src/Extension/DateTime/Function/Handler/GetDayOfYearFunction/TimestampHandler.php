@@ -9,17 +9,19 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\TimezoneUtil;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\TimestampValue;
 use Cel\Value\Value;
 use Override;
 use Psl\DateTime\DateTime;
-use Psl\DateTime\Month;
 use Psl\DateTime\Timezone;
 use Psl\Str;
-use ValueError;
 
+/**
+ * Handles getDayOfYear(timestamp) and getDayOfYear(timestamp, string) -> int
+ */
 final readonly class TimestampHandler implements FunctionOverloadHandlerInterface
 {
     /**
@@ -28,8 +30,8 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
      *
      * @return Value The resulting value.
      *
-     * @throws EvaluationException If the operation fails.
-     * @throws InternalException If an internal error occurs.
+     * @throws EvaluationException If the timezone argument is not valid.
+     * @throws InternalException If argument type assertion fails.
      */
     #[Override]
     public function __invoke(CallExpression $call, array $arguments): Value
@@ -37,32 +39,18 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
         $timestamp = ArgumentsUtil::get($arguments, 0, TimestampValue::class);
         $timezoneArg = ArgumentsUtil::getOptional($arguments, 1, StringValue::class);
 
-        $timezone = Timezone::UTC;
-        if (null !== $timezoneArg) {
-            $tz = Timezone::tryFrom($timezoneArg->value);
-            if (null === $tz) {
+        if (null === $timezoneArg) {
+            $datetime = DateTime::fromTimestamp($timestamp->value, Timezone::UTC);
+        } else {
+            $datetime = TimezoneUtil::localize($timestamp->value, $timezoneArg->value);
+            if (null === $datetime) {
                 throw new EvaluationException(
                     Str\format('getDayOfYear: timezone `%s` is not valid', $timezoneArg->value),
                     $call->getSpan(),
                 );
             }
-
-            $timezone = $tz;
         }
 
-        try {
-            $datetime = DateTime::fromTimestamp($timestamp->value, $timezone);
-            $month = $datetime->getMonth();
-            $number_of_days = $datetime->getDay();
-            while ($month > 1) {
-                $number_of_days += Month::from($month)->getDaysForYear($datetime->getYear());
-                $month--;
-            }
-
-            // Psl is 1-based, CEL spec is 0-based.
-            return new IntegerValue($number_of_days - 1);
-        } catch (ValueError $e) { // @mago-expect analysis:avoid-catching-error
-            throw new EvaluationException(Str\format('Operation failed: %s', $e->getMessage()), $call->getSpan(), $e);
-        }
+        return new IntegerValue($datetime->getDayOfYear() - 1);
     }
 }

@@ -159,7 +159,7 @@ final class DateTimeExtensionTest extends RuntimeTestCase
         yield 'DateTime getMilliseconds(): duration' => [
             'duration("1.234s").getMilliseconds()',
             [],
-            new IntegerValue(1234),
+            new IntegerValue(234),
         ];
         yield 'DateTime getMilliseconds(): timestamp UTC' => [
             'timestamp("2025-09-13T10:20:30.456Z").getMilliseconds()',
@@ -196,16 +196,16 @@ final class DateTimeExtensionTest extends RuntimeTestCase
             new IntegerValue(1),
         ];
 
-        // getDayOfMonth()
+        // getDayOfMonth() is zero-based (0-30).
         yield 'DateTime getDayOfMonth(): timestamp UTC' => [
             'getDayOfMonth(timestamp("2025-09-13T10:00:00Z"))',
             [],
-            new IntegerValue(13),
+            new IntegerValue(12),
         ];
         yield 'DateTime getDayOfMonth(): timestamp with timezone change' => [
             'getDayOfMonth(timestamp("2025-09-01T02:00:00Z"), "America/Los_Angeles")', // This is Aug 31st in LA
             [],
-            new IntegerValue(31),
+            new IntegerValue(30),
         ];
 
         // getDayOfYear()
@@ -235,6 +235,40 @@ final class DateTimeExtensionTest extends RuntimeTestCase
             'getDayOfWeek(timestamp("2025-09-15T02:00:00Z"), "America/Los_Angeles")', // This is Sunday in LA
             [],
             new IntegerValue(0),
+        ];
+
+        // getDate() is one-based (1-31).
+        yield 'DateTime getDate(): timestamp UTC' => [
+            'getDate(timestamp("2009-02-13T23:31:30Z"))',
+            [],
+            new IntegerValue(13),
+        ];
+        yield 'DateTime getDate(): timestamp with timezone' => [
+            'getDate(timestamp("2009-02-13T23:31:30Z"), "Australia/Sydney")',
+            [],
+            new IntegerValue(14),
+        ];
+
+        // Timezone argument formats.
+        yield 'DateTime timezone: legacy alias' => [
+            'getDayOfMonth(timestamp("2009-02-13T23:31:30Z"), "US/Central")',
+            [],
+            new IntegerValue(12),
+        ];
+        yield 'DateTime timezone: signed offset' => [
+            'getDayOfMonth(timestamp("2009-02-13T23:31:30Z"), "+11:00")',
+            [],
+            new IntegerValue(13),
+        ];
+        yield 'DateTime timezone: unsigned offset' => [
+            'getHours(timestamp("2009-02-13T23:31:30Z"), "02:00")',
+            [],
+            new IntegerValue(1),
+        ];
+        yield 'DateTime timezone: negative zero offset' => [
+            'getSeconds(timestamp("2009-02-13T23:31:30Z"), "-00:00")',
+            [],
+            new IntegerValue(30),
         ];
 
         // Error cases
@@ -350,6 +384,13 @@ final class DateTimeExtensionTest extends RuntimeTestCase
     public function testGetDayOfWeekFunctionIsIdempotent(): void
     {
         $receipt = $this->evaluate('timestamp("2025-09-13T10:00:00Z").getDayOfWeek()');
+
+        static::assertTrue($receipt->idempotent);
+    }
+
+    public function testGetDateFunctionIsIdempotent(): void
+    {
+        $receipt = $this->evaluate('timestamp("2025-09-13T10:00:00Z").getDate()');
 
         static::assertTrue($receipt->idempotent);
     }

@@ -9,15 +9,20 @@ use Cel\Exception\InternalException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\TimezoneUtil;
 use Cel\Value\IntegerValue;
+use Cel\Value\StringValue;
 use Cel\Value\TimestampValue;
 use Cel\Value\Value;
 use Override;
-use Psl\DateTime;
+use Psl\DateTime\DateTime;
 use Psl\DateTime\Timezone;
-use Psl\Exception\InvariantViolationException;
+use Psl\Math;
 use Psl\Str;
 
+/**
+ * Handles getMilliseconds(timestamp) and getMilliseconds(timestamp, string) -> int
+ */
 final readonly class TimestampHandler implements FunctionOverloadHandlerInterface
 {
     /**
@@ -26,22 +31,27 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
      *
      * @return Value The resulting value.
      *
-     * @throws EvaluationException If the operation fails.
-     * @throws InternalException If an internal error occurs.
+     * @throws EvaluationException If the timezone argument is not valid.
+     * @throws InternalException If argument type assertion fails.
      */
     #[Override]
     public function __invoke(CallExpression $call, array $arguments): Value
     {
         $timestamp = ArgumentsUtil::get($arguments, 0, TimestampValue::class);
+        $timezoneArg = ArgumentsUtil::getOptional($arguments, 1, StringValue::class);
 
-        try {
-            $datetime = DateTime\DateTime::fromTimestamp($timestamp->value, Timezone::UTC);
-            $nanoseconds = $datetime->getNanoseconds();
-            $milliseconds = (int) ($nanoseconds / DateTime\NANOSECONDS_PER_MILLISECOND);
-
-            return new IntegerValue($milliseconds);
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(Str\format('Operation failed: %s', $e->getMessage()), $call->getSpan(), $e);
+        if (null === $timezoneArg) {
+            $datetime = DateTime::fromTimestamp($timestamp->value, Timezone::UTC);
+        } else {
+            $datetime = TimezoneUtil::localize($timestamp->value, $timezoneArg->value);
+            if (null === $datetime) {
+                throw new EvaluationException(
+                    Str\format('getMilliseconds: timezone `%s` is not valid', $timezoneArg->value),
+                    $call->getSpan(),
+                );
+            }
         }
+
+        return new IntegerValue(Math\div($datetime->getNanoseconds(), 1_000_000));
     }
 }

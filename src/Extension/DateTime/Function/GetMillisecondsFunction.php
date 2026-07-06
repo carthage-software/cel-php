@@ -6,7 +6,6 @@ namespace Cel\Extension\DateTime\Function;
 
 use Cel\Extension\DateTime\Function\Handler\GetMillisecondsFunction\DurationHandler;
 use Cel\Extension\DateTime\Function\Handler\GetMillisecondsFunction\TimestampHandler;
-use Cel\Extension\DateTime\Function\Handler\GetMillisecondsFunction\TimestampWithTimezoneHandler;
 use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
 use Override;
@@ -30,6 +29,6 @@ final readonly class GetMillisecondsFunction implements FunctionInterface
     {
         yield [ValueKind::Duration] => new DurationHandler();
         yield [ValueKind::Timestamp] => new TimestampHandler();
-        yield [ValueKind::Timestamp, ValueKind::String] => new TimestampWithTimezoneHandler();
+        yield [ValueKind::Timestamp, ValueKind::String] => new TimestampHandler();
     }
 }

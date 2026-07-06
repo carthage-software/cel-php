@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Extension\DateTime\Function\Handler\GetDayOfMonthFunction;
+namespace Cel\Extension\DateTime\Function\Handler\GetDateFunction;
 
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
@@ -20,7 +20,7 @@ use Psl\DateTime\Timezone;
 use Psl\Str;
 
 /**
- * Handles getDayOfMonth(timestamp) and getDayOfMonth(timestamp, string) -> int
+ * Returns the one-based day of the month (1-31).
  */
 final readonly class TimestampHandler implements FunctionOverloadHandlerInterface
 {
@@ -45,12 +45,12 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
             $datetime = TimezoneUtil::localize($timestamp->value, $timezoneArg->value);
             if (null === $datetime) {
                 throw new EvaluationException(
-                    Str\format('getDayOfMonth: timezone `%s` is not valid', $timezoneArg->value),
+                    Str\format('getDate: timezone `%s` is not valid', $timezoneArg->value),
                     $call->getSpan(),
                 );
             }
         }
 
-        return new IntegerValue($datetime->getDay() - 1);
+        return new IntegerValue($datetime->getDay());
     }
 }

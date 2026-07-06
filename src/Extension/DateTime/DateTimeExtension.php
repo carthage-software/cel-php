@@ -28,6 +28,7 @@ final readonly class DateTimeExtension implements ExtensionInterface
             new Function\GetDayOfYearFunction(),
             new Function\GetDayOfMonthFunction(),
             new Function\GetDayOfWeekFunction(),
+            new Function\GetDateFunction(),
         ];
     }
 

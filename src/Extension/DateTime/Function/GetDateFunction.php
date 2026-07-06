@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Cel\Extension\DateTime\Function;
 
-use Cel\Extension\DateTime\Function\Handler\GetDayOfMonthFunction\TimestampHandler;
+use Cel\Extension\DateTime\Function\Handler\GetDateFunction\TimestampHandler;
 use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
 use Override;
 
-final readonly class GetDayOfMonthFunction implements FunctionInterface
+final readonly class GetDateFunction implements FunctionInterface
 {
     #[Override]
     public function getName(): string
     {
-        return 'getDayOfMonth';
+        return 'getDate';
     }
 
     #[Override]
