@@ -56,8 +56,8 @@ final readonly class TimezoneUtil
         try {
             // The native classes are used deliberately: only they expose the full
             // IANA database (with legacy aliases) and offset resolution.
-            $timezone = new DateTimeZone($zone); // @mago-expect lint:psl-datetime
-            $instant = new DateTimeImmutable('@' . $seconds); // @mago-expect lint:psl-datetime
+            $timezone = new DateTimeZone($zone);
+            $instant = new DateTimeImmutable('@' . $seconds);
         } catch (Exception) {
             return null;
         }

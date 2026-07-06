@@ -9,7 +9,7 @@ excludes = []
 null-type-hint = "pipe"
 
 [linter]
-integrations = ["phpunit", "php-standard-library"]
+integrations = ["phpunit"]
 
 [linter.rules]
 # Complexity 😖
