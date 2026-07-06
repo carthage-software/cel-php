@@ -46,6 +46,12 @@ final class CoreExtensionTest extends RuntimeTestCase
         yield 'Core type: unsigned integer' => ['type(1u)', [], new TypeValue('uint')];
         yield 'Core type: type of a type is type' => ['type(type(1))', [], new TypeValue('type')];
         yield 'Core type: type of a denotation is type' => ['type(int)', [], new TypeValue('type')];
+        yield 'Core type: duration' => ['type(duration("1s"))', [], new TypeValue('google.protobuf.Duration')];
+        yield 'Core type: timestamp' => [
+            'type(timestamp(0))',
+            [],
+            new TypeValue('google.protobuf.Timestamp'),
+        ];
 
         yield 'Core type denotation: int' => ['int', [], new TypeValue('int')];
         yield 'Core type denotation: uint' => ['uint', [], new TypeValue('uint')];

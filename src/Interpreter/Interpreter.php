@@ -658,7 +658,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
      *
      * @throws NoSuchOverloadException If the index type cannot be used as a map key.
      */
-    private function mapGet(MapValue $map, Value $index, Span $indexSpan): ?Value
+    private function mapGet(MapValue $map, Value $index, Span $indexSpan): null|Value
     {
         if (!MapKeyUtil::isKeyType($index)) {
             throw new NoSuchOverloadException(
@@ -866,7 +866,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
      *
      * @throws EvaluationException
      */
-    private function namespacedCall(CallExpression $expression): ?Value
+    private function namespacedCall(CallExpression $expression): null|Value
     {
         $target = $expression->target;
         if (!$target instanceof IdentifierExpression) {

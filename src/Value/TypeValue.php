@@ -45,7 +45,7 @@ final readonly class TypeValue extends Value
      * Resolves a bare identifier to the type value it denotes, or null when the
      * identifier is not a type name.
      */
-    public static function denotation(string $name): ?self
+    public static function denotation(string $name): null|self
     {
         foreach (self::DENOTATIONS as $denotation) {
             if ($denotation === $name) {

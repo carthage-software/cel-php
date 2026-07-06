@@ -24,6 +24,15 @@ final readonly class DurationValue extends Value
         return ValueKind::Duration;
     }
 
+    /**
+     * @return non-empty-string
+     */
+    #[Override]
+    public function getType(): string
+    {
+        return 'google.protobuf.Duration';
+    }
+
     #[Override]
     public function isZeroValue(): bool
     {

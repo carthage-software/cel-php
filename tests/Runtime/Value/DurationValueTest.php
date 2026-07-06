@@ -25,7 +25,7 @@ final class DurationValueTest extends TestCase
     {
         $value = new DurationValue(Duration::hours(1));
         static::assertSame(ValueKind::Duration, $value->getKind());
-        static::assertSame('duration', $value->getType());
+        static::assertSame('google.protobuf.Duration', $value->getType());
     }
 
     #[DataProvider('provideIsEqualCases')]
@@ -95,7 +95,7 @@ final class DurationValueTest extends TestCase
     public function testIsGreaterThanThrowsExceptionForDifferentValueType(): void
     {
         $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `duration` and `bool`');
+        $this->expectExceptionMessage('Cannot compare values of type `google.protobuf.Duration` and `bool`');
 
         $durationValue = new DurationValue(Duration::hours(1));
         $booleanValue = new BooleanValue(true);
@@ -134,7 +134,7 @@ final class DurationValueTest extends TestCase
     public function testIsLessThanThrowsExceptionForDifferentValueType(): void
     {
         $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `duration` and `bool`');
+        $this->expectExceptionMessage('Cannot compare values of type `google.protobuf.Duration` and `bool`');
 
         $durationValue = new DurationValue(Duration::hours(1));
         $booleanValue = new BooleanValue(true);

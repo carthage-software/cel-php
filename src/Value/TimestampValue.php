@@ -25,6 +25,15 @@ final readonly class TimestampValue extends Value
     }
 
     /**
+     * @return non-empty-string
+     */
+    #[Override]
+    public function getType(): string
+    {
+        return 'google.protobuf.Timestamp';
+    }
+
+    /**
      * A timestamp is never a zero value: the CEL/Go zero timestamp is the
      * uninitialized zero time sentinel, which cannot be represented here (even
      * the Unix epoch is explicitly not a zero value).

@@ -25,7 +25,7 @@ final class TimestampValueTest extends TestCase
     {
         $value = new TimestampValue(Timestamp::fromParts(123));
         static::assertSame(ValueKind::Timestamp, $value->getKind());
-        static::assertSame('timestamp', $value->getType());
+        static::assertSame('google.protobuf.Timestamp', $value->getType());
     }
 
     #[DataProvider('provideIsEqualCases')]
@@ -90,7 +90,7 @@ final class TimestampValueTest extends TestCase
     public function testIsGreaterThanThrowsExceptionForDifferentValueType(): void
     {
         $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `timestamp` and `bool`');
+        $this->expectExceptionMessage('Cannot compare values of type `google.protobuf.Timestamp` and `bool`');
 
         $timestampValue = new TimestampValue(Timestamp::fromParts(1));
         $booleanValue = new BooleanValue(true);
@@ -129,7 +129,7 @@ final class TimestampValueTest extends TestCase
     public function testIsLessThanThrowsExceptionForDifferentValueType(): void
     {
         $this->expectException(UnsupportedOperationException::class);
-        $this->expectExceptionMessage('Cannot compare values of type `timestamp` and `bool`');
+        $this->expectExceptionMessage('Cannot compare values of type `google.protobuf.Timestamp` and `bool`');
 
         $timestampValue = new TimestampValue(Timestamp::fromParts(1));
         $booleanValue = new BooleanValue(true);

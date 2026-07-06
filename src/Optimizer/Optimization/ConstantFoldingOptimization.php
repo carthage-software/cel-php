@@ -52,7 +52,7 @@ final readonly class ConstantFoldingOptimization implements OptimizationInterfac
     ) {}
 
     #[Override]
-    public function apply(Expression $expression): ?Expression
+    public function apply(Expression $expression): null|Expression
     {
         // Check if expression is a binary operation with both sides being literals
         if (
@@ -84,7 +84,7 @@ final readonly class ConstantFoldingOptimization implements OptimizationInterfac
         );
     }
 
-    private function fold(Expression $expression): ?Expression
+    private function fold(Expression $expression): null|Expression
     {
         try {
             $receipt = $this->runtime->run($expression, []);
@@ -102,7 +102,7 @@ final readonly class ConstantFoldingOptimization implements OptimizationInterfac
         return $this->valueToLiteral($receipt->result, $expression->getSpan());
     }
 
-    private function valueToLiteral(mixed $value, Span $span): ?Expression
+    private function valueToLiteral(mixed $value, Span $span): null|Expression
     {
         if ($value instanceof IntegerValue) {
             $nativeValue = $value->getRawValue();
