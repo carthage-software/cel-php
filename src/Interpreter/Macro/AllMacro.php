@@ -4,30 +4,29 @@ declare(strict_types=1);
 
 namespace Cel\Interpreter\Macro;
 
+use Cel\Exception\EvaluationException;
 use Cel\Exception\InvalidMacroCallException;
 use Cel\Syntax\Member\CallExpression;
-use Cel\Syntax\Member\IdentifierExpression;
 use Cel\Value\BooleanValue;
-use Cel\Value\ListValue;
-use Cel\Value\MapValue;
 use Cel\Value\Value;
 use Override;
 use Psl\Str;
-use Psl\Vec;
-
-use function assert;
 
 /**
  * Implements the `all()` macro.
  *
- * The `all` macro checks if a predicate returns true for all elements
- * in a list or map.
+ * The `all` macro checks whether a predicate holds for every element of a list
+ * or map. It has a single-variable form (`list.all(x, p)`, `map.all(k, p)`) and
+ * a two-variable form binding the index/key and the value
+ * (`list.all(i, v, p)`, `map.all(k, v, p)`).
  *
  * @example list.all(x, x > 0)
- * @example map.all(k, k.startsWith('prefix'))
+ * @example [1, 2].all(i, v, i < v)
  */
 final readonly class AllMacro implements MacroInterface
 {
+    use ComprehensionSupport;
+
     #[Override]
     public function getName(): string
     {
@@ -37,61 +36,39 @@ final readonly class AllMacro implements MacroInterface
     #[Override]
     public function canHandle(CallExpression $call): bool
     {
-        // all() must be called as a method (has target)
-        if (null === $call->target) {
-            return false;
-        }
-
-        // Must have exactly 2 arguments
-        $name = $call->arguments->elements[0] ?? null;
-        $callback = $call->arguments->elements[1] ?? null;
-        if (null === $name || null === $callback || $call->arguments->count() > 2) {
-            return false;
-        }
-
-        return true;
+        return null !== $call->target && ($call->arguments->count() === 2 || $call->arguments->count() === 3);
     }
 
     #[Override]
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
-        $call_target = $call->target;
-        assert(null !== $call_target, 'all() macro requires a target');
-
-        $name = $call->arguments->elements[0];
-        $callback = $call->arguments->elements[1];
-
-        if (!$name instanceof IdentifierExpression) {
-            throw new InvalidMacroCallException(
-                'The `all` macro requires the first argument to be an identifier.',
-                $name->getSpan(),
-            );
-        }
-
-        $target = $context->evaluate($call_target);
-        if (!$target instanceof ListValue && !$target instanceof MapValue) {
-            throw new InvalidMacroCallException(
-                Str\format('The `all` macro requires a list or map target, got `%s`', $target->getType()),
-                $call_target->getSpan(),
-            );
-        }
-
-        $items = $target instanceof ListValue ? $target->value : Vec\map(Vec\keys($target->value), Value::from(...));
+        $variableCount = $call->arguments->count() - 1;
+        $callback = $call->arguments->elements[$variableCount];
+        $bindings = self::comprehensionBindings('all', $call, $context, $variableCount);
 
         $environment = $context->getEnvironment()->fork();
+
         /** @var BooleanValue */
         return $context->withEnvironment($environment, static function () use (
-            $items,
-            $name,
+            $bindings,
             $callback,
             $context,
             $environment,
         ): BooleanValue {
-            $all_true = true;
-            foreach ($items as $value) {
-                $environment->addVariable($name->identifier->name, $value);
+            $pendingError = null;
+            foreach ($bindings as $variables) {
+                foreach ($variables as $variable => $value) {
+                    $environment->addVariable($variable, $value);
+                }
 
-                $result = $context->evaluate($callback);
+                try {
+                    $result = $context->evaluate($callback);
+                } catch (EvaluationException $error) {
+                    $pendingError ??= $error;
+
+                    continue;
+                }
+
                 if (!$result instanceof BooleanValue) {
                     throw new InvalidMacroCallException(
                         Str\format('The `all` macro predicate must result in a boolean, got `%s`', $result->getType()),
@@ -100,12 +77,15 @@ final readonly class AllMacro implements MacroInterface
                 }
 
                 if (!$result->value) {
-                    $all_true = false;
-                    break;
+                    return new BooleanValue(false);
                 }
             }
 
-            return new BooleanValue($all_true);
+            if (null !== $pendingError) {
+                throw $pendingError;
+            }
+
+            return new BooleanValue(true);
         });
     }
 }

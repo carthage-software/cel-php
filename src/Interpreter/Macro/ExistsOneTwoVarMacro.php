@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cel\Interpreter\Macro;
 
-use Cel\Exception\EvaluationException;
 use Cel\Exception\InvalidMacroCallException;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Value\BooleanValue;
@@ -13,37 +12,36 @@ use Override;
 use Psl\Str;
 
 /**
- * Implements the `exists()` macro.
+ * Implements the two-variable `existsOne()` macro.
  *
- * The `exists` macro checks whether a predicate holds for at least one element
- * of a list or map. It has a single-variable form (`list.exists(x, p)`) and a
- * two-variable form binding the index/key and the value (`list.exists(i, v, p)`).
+ * Returns true when the predicate holds for exactly one entry, binding the
+ * index/key as the first variable and the value as the second
+ * (`list.existsOne(i, v, p)`, `map.existsOne(k, v, p)`). Unlike `all`/`exists`,
+ * every entry is evaluated, so a predicate error is not absorbed.
  *
- * @example list.exists(x, x > 0)
- * @example [1, 2].exists(i, v, i == 1 && v == 2)
+ * @example [5, 7, 8].existsOne(i, v, v % 5 == i)
  */
-final readonly class ExistsMacro implements MacroInterface
+final readonly class ExistsOneTwoVarMacro implements MacroInterface
 {
     use ComprehensionSupport;
 
     #[Override]
     public function getName(): string
     {
-        return 'exists';
+        return 'existsOne';
     }
 
     #[Override]
     public function canHandle(CallExpression $call): bool
     {
-        return null !== $call->target && ($call->arguments->count() === 2 || $call->arguments->count() === 3);
+        return null !== $call->target && $call->arguments->count() === 3;
     }
 
     #[Override]
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
-        $variableCount = $call->arguments->count() - 1;
-        $callback = $call->arguments->elements[$variableCount];
-        $bindings = self::comprehensionBindings('exists', $call, $context, $variableCount);
+        $callback = $call->arguments->elements[2];
+        $bindings = self::comprehensionBindings('existsOne', $call, $context, 2);
 
         $environment = $context->getEnvironment()->fork();
 
@@ -54,24 +52,17 @@ final readonly class ExistsMacro implements MacroInterface
             $context,
             $environment,
         ): BooleanValue {
-            $pendingError = null;
+            $trueCount = 0;
             foreach ($bindings as $variables) {
                 foreach ($variables as $variable => $value) {
                     $environment->addVariable($variable, $value);
                 }
 
-                try {
-                    $result = $context->evaluate($callback);
-                } catch (EvaluationException $error) {
-                    $pendingError ??= $error;
-
-                    continue;
-                }
-
+                $result = $context->evaluate($callback);
                 if (!$result instanceof BooleanValue) {
                     throw new InvalidMacroCallException(
                         Str\format(
-                            'The `exists` macro predicate must result in a boolean, got `%s`',
+                            'The `existsOne` macro predicate must result in a boolean, got `%s`',
                             $result->getType(),
                         ),
                         $callback->getSpan(),
@@ -79,15 +70,11 @@ final readonly class ExistsMacro implements MacroInterface
                 }
 
                 if ($result->value) {
-                    return new BooleanValue(true);
+                    ++$trueCount;
                 }
             }
 
-            if (null !== $pendingError) {
-                throw $pendingError;
-            }
-
-            return new BooleanValue(false);
+            return new BooleanValue(1 === $trueCount);
         });
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Runtime;
 
+use Cel\Exception\DivisionByZeroException;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InvalidMacroCallException;
 use Cel\Exception\NoSuchFunctionException;
@@ -12,6 +13,8 @@ use Cel\Span\Span;
 use Cel\Value\BooleanValue;
 use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
+use Cel\Value\MapValue;
+use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 
@@ -99,6 +102,16 @@ final class MacroTest extends RuntimeTestCase
             new BooleanValue(false),
         ];
         yield 'Macro all (map): empty map is true' => ['{}.all(k, k.size() == 1)', [], new BooleanValue(true)];
+        yield 'Macro all: later false absorbs an error' => [
+            '[1, 2, 3].all(e, 6 / (2 - e) == 6)',
+            [],
+            new BooleanValue(false),
+        ];
+        yield 'Macro all: unabsorbed error propagates' => [
+            '[1, 2].all(e, 6 / (2 - e) == 6)',
+            [],
+            new DivisionByZeroException('Failed to evaluate division: division by zero', new Span(0, 0)),
+        ];
         yield 'Macro all error: predicate returns non-boolean' => [
             '[1, 2, 3].all(x, x + 1)',
             [],
@@ -146,6 +159,16 @@ final class MacroTest extends RuntimeTestCase
             new BooleanValue(false),
         ];
         yield 'Macro exists (map): empty map is false' => ['{}.exists(k, k.size() > 1)', [], new BooleanValue(false)];
+        yield 'Macro exists: later true absorbs an error' => [
+            '[3, 2, 1].exists(e, 6 / (2 - e) == 6)',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'Macro exists: unabsorbed error propagates' => [
+            '[1, 2].exists(e, 6 / (2 - e) == 0)',
+            [],
+            new DivisionByZeroException('Failed to evaluate division: division by zero', new Span(0, 0)),
+        ];
         yield 'Macro exists error: predicate returns non-boolean' => [
             '[1, 2, 3].exists(x, x + 1)',
             [],
@@ -289,6 +312,64 @@ final class MacroTest extends RuntimeTestCase
             '[1].filter(x, true, false)',
             ['x' => true],
             new NoSuchFunctionException('Function `filter` is not defined', new Span(4, 10)),
+        ];
+        yield 'Macro all (two-var list)' => ['[1, 2, 3].all(i, v, i < v)', [], new BooleanValue(true)];
+        yield 'Macro all (two-var list) false' => ['[1, 2, 3].all(i, v, v == 2)', [], new BooleanValue(false)];
+        yield 'Macro all (two-var list): later false absorbs an error' => [
+            '[1, 2, 3].all(i, v, 6 / (2 - v) == i)',
+            [],
+            new BooleanValue(false),
+        ];
+        yield 'Macro all (two-var map)' => [
+            '{"key1": 1, "key2": 2}.all(k, v, k.startsWith("key") && v > 0)',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'Macro exists (two-var list)' => [
+            '[1, 2, 3].exists(i, v, i == 1 && v == 2)',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'Macro exists (two-var map)' => [
+            '{"key1": 1, "key2": 2}.exists(k, v, k == "key2" && v == 2)',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'Macro existsOne (two-var list): exactly one' => [
+            '[5, 7, 8].existsOne(i, v, v % 5 == i)',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'Macro existsOne (two-var list): more than one' => [
+            '[0, 1, 2, 3, 4].existsOne(i, v, v % 2 == i)',
+            [],
+            new BooleanValue(false),
+        ];
+        yield 'Macro existsOne (two-var): predicate error is not absorbed' => [
+            '[3, 2, 1, 0].existsOne(i, v, v / i > 1)',
+            [],
+            new DivisionByZeroException('Failed to evaluate division: division by zero', new Span(0, 0)),
+        ];
+        yield 'Macro transformList: transform' => [
+            '[2, 4, 6].transformList(i, v, v / 2 + i)',
+            [],
+            new ListValue([new IntegerValue(1), new IntegerValue(3), new IntegerValue(5)]),
+        ];
+        yield 'Macro transformList: filter and transform' => [
+            '[1, 2, 3, 4].transformList(i, v, v % 2 == 0, v * i)',
+            [],
+            new ListValue([new IntegerValue(2), new IntegerValue(12)]),
+        ];
+        yield 'Macro transformList: empty' => ['[].transformList(i, v, v + i)', [], new ListValue([])];
+        yield 'Macro transformMap: transform values' => [
+            '{"foo": "bar"}.transformMap(k, v, k + v)',
+            [],
+            new MapValue(['foo' => new StringValue('foobar')]),
+        ];
+        yield 'Macro transformMap: filter and transform' => [
+            '{"a": 1, "b": 2}.transformMap(k, v, v > 1, v * 10)',
+            [],
+            new MapValue(['b' => new IntegerValue(20)]),
         ];
     }
 }
