@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Tests\Runtime\Extension;
 
 use Cel\Exception\EvaluationException;
+use Cel\Span\Span;
 use Cel\Tests\Runtime\RuntimeTestCase;
 use Cel\Value\BooleanValue;
 use Cel\Value\BytesValue;
@@ -35,6 +36,29 @@ final class StringExtensionTest extends RuntimeTestCase
             new BooleanValue(true),
         ];
         yield 'Strings contains: substring at end' => ['contains("hello world", "world")', [], new BooleanValue(true)];
+
+        yield 'Strings matches: method style' => ['"hubba".matches("ubb")', [], new BooleanValue(true)];
+        yield 'Strings matches: function style' => ['matches("hubba", "ubb")', [], new BooleanValue(true)];
+        yield 'Strings matches: no match' => ['"".matches("foo|bar")', [], new BooleanValue(false)];
+        yield 'Strings matches: empty pattern matches anything' => ['"cows".matches("")', [], new BooleanValue(true)];
+        yield 'Strings matches: alternation' => ['"grey".matches("gr(a|e)y")', [], new BooleanValue(true)];
+        yield 'Strings matches: repetition' => ['"xyzxyz".matches("(xyz)+")', [], new BooleanValue(true)];
+        yield 'Strings matches: unicode' => ['"mañana".matches("a+ñ+a+")', [], new BooleanValue(true)];
+        yield 'Strings matches: pattern containing the default delimiter' => [
+            '"a/b".matches("a/b")',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'Strings matches: pattern containing every delimiter candidate' => [
+            '"/#~%@!;,".matches("/#~%@!;,")',
+            [],
+            new BooleanValue(true),
+        ];
+        yield 'Strings matches: invalid pattern errors' => [
+            '"x".matches("[")',
+            [],
+            new EvaluationException('Invalid regular expression `[`', new Span(0, 0)),
+        ];
 
         yield 'Strings endsWith: found' => ['endsWith("hello world", "world")', [], new BooleanValue(true)];
         yield 'Strings endsWith: not found' => ['endsWith("hello world", "hello")', [], new BooleanValue(false)];

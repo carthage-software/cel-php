@@ -154,6 +154,17 @@ The String extension provides functions for string manipulation.
 'hello'.endsWith('hello')        // true
 ```
 
+#### `matches()` - Test a string against a regular expression
+
+Returns true when the regular expression matches anywhere in the string
+(unanchored). An invalid pattern raises an evaluation error.
+
+```php
+'hubba'.matches('ubb')       // true
+'grey'.matches('gr(a|e)y')   // true
+matches('mañana', 'a+ñ+a+')  // true
+```
+
 #### `indexOf()` - Find index of substring
 
 ```php

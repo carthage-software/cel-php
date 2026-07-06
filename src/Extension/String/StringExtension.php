@@ -20,6 +20,7 @@ final readonly class StringExtension implements ExtensionInterface
             new Function\EndsWithFunction(),
             new Function\IndexOfFunction(),
             new Function\LastIndexOfFunction(),
+            new Function\MatchesFunction(),
             new Function\ReplaceFunction(),
             new Function\SplitFunction(),
             new Function\StartsWithFunction(),
