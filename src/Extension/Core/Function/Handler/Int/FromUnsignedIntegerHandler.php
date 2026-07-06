@@ -13,9 +13,9 @@ use Cel\Value\IntegerValue;
 use Cel\Value\UnsignedIntegerValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Type;
 
 use function bccomp;
+use function is_int;
 use function sprintf;
 
 use const PHP_INT_MAX;
@@ -40,7 +40,7 @@ final readonly class FromUnsignedIntegerHandler implements FunctionOverloadHandl
         $value = ArgumentsUtil::get($arguments, 0, UnsignedIntegerValue::class);
         $uintValue = $value->value;
 
-        if (Type\int()->matches($uintValue)) {
+        if (is_int($uintValue)) {
             return new IntegerValue($uintValue);
         }
 

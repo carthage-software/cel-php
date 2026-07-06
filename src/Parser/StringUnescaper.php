@@ -7,7 +7,6 @@ namespace Cel\Parser;
 use Cel\Exception\InternalException;
 use Cel\Util\NumberBase;
 use InvalidArgumentException;
-use Psl\Ref;
 
 use function chr;
 use function mb_chr;
@@ -45,24 +44,23 @@ final readonly class StringUnescaper
     {
         $result = '';
         $length = strlen($value);
-        /** @var Ref<int<0, max>> */
-        $position = new Ref(0);
+        $position = 0;
 
-        while ($position->value < $length) {
-            $char = $value[$position->value];
+        while ($position < $length) {
+            $char = $value[$position];
 
             if ('\\' !== $char) {
                 $result .= $char;
-                $position->value++;
+                $position++;
                 continue;
             }
 
             // We have a backslash, check next character
-            if (($position->value + 1) >= $length) {
+            if (($position + 1) >= $length) {
                 throw InternalException::forMessage('Incomplete escape sequence at end of string');
             }
 
-            $next = $value[$position->value + 1];
+            $next = $value[$position + 1];
 
             $result .= match ($next) {
                 // Punctuation
@@ -109,23 +107,22 @@ final readonly class StringUnescaper
     {
         $result = '';
         $length = strlen($value);
-        /** @var Ref<int<0, max>> $position */
-        $position = new Ref(0);
+        $position = 0;
 
-        while ($position->value < $length) {
-            $char = $value[$position->value];
+        while ($position < $length) {
+            $char = $value[$position];
 
             if ('\\' !== $char) {
                 $result .= $char;
-                $position->value++;
+                $position++;
                 continue;
             }
 
-            if (($position->value + 1) >= $length) {
+            if (($position + 1) >= $length) {
                 throw InternalException::forMessage('Incomplete escape sequence at end of bytes literal');
             }
 
-            $next = $value[$position->value + 1];
+            $next = $value[$position + 1];
 
             $result .= match ($next) {
                 // Punctuation
@@ -162,14 +159,14 @@ final readonly class StringUnescaper
     /**
      * Handles simple escape sequences (single character replacements).
      *
-     * @param Ref<int<0, max>> $position Current position reference
+     * @param int<0, max> $position Current position reference
      * @param string $replacement The character to return
      *
      * @return string The replacement character
      */
-    private static function simpleEscape(Ref $position, string $replacement): string
+    private static function simpleEscape(int &$position, string $replacement): string
     {
-        $position->value += 2; // Skip backslash and escape character
+        $position += 2; // Skip backslash and escape character
         return $replacement;
     }
 
@@ -177,16 +174,16 @@ final readonly class StringUnescaper
      * Processes Unicode escape sequence \uHHHH or \UHHHHHHHH.
      *
      * @param string $value The full string
-     * @param Ref<int<0, max>> $position Current position reference (at backslash)
+     * @param int<0, max> $position Current position reference (at backslash)
      * @param int<4, 8> $hexDigits Number of hex digits (4 or 8)
      *
      * @return string The UTF-8 encoded character
      *
      * @throws InternalException If the escape sequence is invalid
      */
-    private static function unescapeUnicode(string $value, Ref $position, int $hexDigits): string
+    private static function unescapeUnicode(string $value, int &$position, int $hexDigits): string
     {
-        $start = $position->value + 2; // Skip \u or \U
+        $start = $position + 2; // Skip \u or \U
         $hexString = substr($value, $start, $hexDigits);
 
         if ('' === $hexString || strlen($hexString) < $hexDigits) {
@@ -219,7 +216,7 @@ final readonly class StringUnescaper
             throw InternalException::forMessage(sprintf('Invalid Unicode code point: U+%X is a surrogate', $codePoint));
         }
 
-        $position->value += 2 + $hexDigits;
+        $position += 2 + $hexDigits;
 
         return mb_chr($codePoint);
     }
@@ -228,16 +225,16 @@ final readonly class StringUnescaper
      * Processes hex escape sequence \xHH or \XHH.
      *
      * @param string $value The full string
-     * @param Ref<int<0, max>> $position Current position reference (at backslash)
+     * @param int<0, max> $position Current position reference (at backslash)
      * @param bool $isString True for strings (Unicode code point), false for bytes (raw octet)
      *
      * @return string The result
      *
      * @throws InternalException If the escape sequence is invalid
      */
-    private static function unescapeHex(string $value, Ref $position, bool $isString): string
+    private static function unescapeHex(string $value, int &$position, bool $isString): string
     {
-        $start = $position->value + 2; // Skip \x or \X
+        $start = $position + 2; // Skip \x or \X
         $hexString = substr($value, $start, 2);
 
         if ('' === $hexString || strlen($hexString) !== 2) {
@@ -250,7 +247,7 @@ final readonly class StringUnescaper
             throw InternalException::forMessage('Invalid hex escape: expected valid hex digits after \\x', $e);
         }
 
-        $position->value += 4; // \xHH = 4 chars
+        $position += 4; // \xHH = 4 chars
 
         if ($isString) {
             // For strings, treat as Unicode code point and encode as UTF-8
@@ -265,17 +262,17 @@ final readonly class StringUnescaper
      * Processes octal escape sequence \OOO.
      *
      * @param string $value The full string
-     * @param Ref<int<0, max>> $position Current position reference (at backslash)
+     * @param int<0, max> $position Current position reference (at backslash)
      * @param bool $isString True for strings (Unicode code point), false for bytes (raw octet)
      *
      * @return string The result
      *
      * @throws InternalException If the escape sequence is invalid
      */
-    private static function unescapeOctal(string $value, Ref $position, bool $isString): string
+    private static function unescapeOctal(string $value, int &$position, bool $isString): string
     {
         // Read up to 3 octal digits
-        $start = $position->value + 1; // Skip backslash
+        $start = $position + 1; // Skip backslash
         $octalString = '';
         $maxDigits = 3;
 
@@ -303,7 +300,7 @@ final readonly class StringUnescaper
             throw InternalException::forMessage(sprintf('Invalid octal escape: \\%s exceeds 377', $octalString));
         }
 
-        $position->value += 1 + strlen($octalString); // Update position
+        $position += 1 + strlen($octalString); // Update position
 
         if ($isString) {
             // For strings, treat as Unicode code point

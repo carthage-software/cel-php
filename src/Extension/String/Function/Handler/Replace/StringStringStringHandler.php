@@ -12,11 +12,9 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
 
 use function implode;
 use function mb_str_split;
-use function sprintf;
 use function str_replace;
 
 final readonly class StringStringStringHandler implements FunctionOverloadHandlerInterface
@@ -37,24 +35,16 @@ final readonly class StringStringStringHandler implements FunctionOverloadHandle
         $needle = ArgumentsUtil::get($arguments, 1, StringValue::class);
         $replacement = ArgumentsUtil::get($arguments, 2, StringValue::class);
 
-        try {
-            if ('' === $needle->value) {
-                // If the needle is an empty string, we insert the replacement between every character.
-                $result = implode($replacement->value, mb_str_split($haystack->value)) . $replacement->value;
-                if ('' !== $haystack->value) {
-                    $result = $replacement->value . $result;
-                }
-
-                return new StringValue($result);
+        if ('' === $needle->value) {
+            // If the needle is an empty string, we insert the replacement between every character.
+            $result = implode($replacement->value, mb_str_split($haystack->value)) . $replacement->value;
+            if ('' !== $haystack->value) {
+                $result = $replacement->value . $result;
             }
 
-            return new StringValue(str_replace($needle->value, $replacement->value, $haystack->value));
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                sprintf('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
+            return new StringValue($result);
         }
+
+        return new StringValue(str_replace($needle->value, $replacement->value, $haystack->value));
     }
 }

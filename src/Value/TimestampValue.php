@@ -6,7 +6,6 @@ namespace Cel\Value;
 
 use Cel\Exception\UnsupportedOperationException;
 use Override;
-use Psl\Comparison\Order;
 use Psl\DateTime\Timestamp;
 
 /**
@@ -47,7 +46,7 @@ final readonly class TimestampValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        return $other instanceof TimestampValue && $this->value->compare($other->value) === Order::Equal;
+        return $other instanceof TimestampValue && 0 === $this->value->compare($other->value)->value;
     }
 
     #[Override]
@@ -57,7 +56,7 @@ final readonly class TimestampValue extends Value
             throw UnsupportedOperationException::forComparison($this, $other);
         }
 
-        return $this->value->compare($other->value) === Order::Greater;
+        return $this->value->compare($other->value)->value > 0;
     }
 
     #[Override]
@@ -67,7 +66,7 @@ final readonly class TimestampValue extends Value
             throw UnsupportedOperationException::forComparison($this, $other);
         }
 
-        return $this->value->compare($other->value) === Order::Less;
+        return $this->value->compare($other->value)->value < 0;
     }
 
     #[Override]

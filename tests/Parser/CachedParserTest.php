@@ -9,10 +9,10 @@ use Cel\Parser\CachedParser;
 use Cel\Parser\Parser;
 use Cel\Syntax\Expression;
 use PHPUnit\Framework\TestCase;
-use Psl\Async;
-use Psl\DateTime\Duration;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Psr16Cache;
+
+use function sleep;
 
 final class CachedParserTest extends TestCase
 {
@@ -73,7 +73,7 @@ final class CachedParserTest extends TestCase
         $expr1 = $parser->parseString('1 + 2');
 
         // Wait for cache to expire
-        Async\sleep(Duration::seconds(2));
+        sleep(2);
 
         // Should parse again (cache expired)
         $expr2 = $parser->parseString('1 + 2');

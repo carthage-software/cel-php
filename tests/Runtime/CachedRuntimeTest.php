@@ -9,10 +9,10 @@ use Cel\Runtime\CachedRuntime;
 use Cel\Runtime\Runtime;
 use Cel\Runtime\RuntimeReceipt;
 use PHPUnit\Framework\TestCase;
-use Psl\Async;
-use Psl\DateTime\Duration;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Psr16Cache;
+
+use function sleep;
 
 final class CachedRuntimeTest extends TestCase
 {
@@ -94,7 +94,7 @@ final class CachedRuntimeTest extends TestCase
         static::assertSame(200, $receipt1->result->getRawValue());
 
         // Wait for cache to expire
-        Async\sleep(Duration::seconds(2));
+        sleep(2);
 
         // Should evaluate again (cache expired)
         $receipt2 = $runtime->run($expression);

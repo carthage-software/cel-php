@@ -12,10 +12,8 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
 
 use function mb_strtoupper;
-use function sprintf;
 
 final readonly class StringHandler implements FunctionOverloadHandlerInterface
 {
@@ -33,14 +31,6 @@ final readonly class StringHandler implements FunctionOverloadHandlerInterface
     {
         $target = ArgumentsUtil::get($arguments, 0, StringValue::class);
 
-        try {
-            return new StringValue(mb_strtoupper($target->value));
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                sprintf('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new StringValue(mb_strtoupper($target->value));
     }
 }

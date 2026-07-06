@@ -10,9 +10,8 @@ use Cel\Value\MessageValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Type;
 
-use function sprintf;
+use function count;
 
 final readonly class CommentMessage implements MessageInterface
 {
@@ -37,17 +36,13 @@ final readonly class CommentMessage implements MessageInterface
     #[Override]
     public static function fromCelFields(array $fields): static
     {
-        try {
-            $fields = Type\shape([
-                'content' => Type\instance_of(StringValue::class),
-            ])->assert($fields);
-        } catch (Type\Exception\ExceptionInterface $e) {
-            throw new InvalidMessageFieldsException(sprintf(
-                'Invalid fields for `CommentMessage`: %s',
-                $e->getMessage(),
-            ));
+        $content = $fields['content'] ?? null;
+        if (!$content instanceof StringValue || 1 !== count($fields)) {
+            throw new InvalidMessageFieldsException(
+                'Invalid fields for `CommentMessage`: expected field `content` of type `string`',
+            );
         }
 
-        return new static($fields['content']->value);
+        return new static($content->value);
     }
 }

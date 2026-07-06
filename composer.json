@@ -29,10 +29,6 @@
     "ext-intl": "*",
     "php-standard-library/date-time": "~5.0 || ~6.0",
     "php-standard-library/default": "~5.0 || ~6.0",
-    "php-standard-library/foundation": "~5.0 || ~6.0",
-    "php-standard-library/regex": "~5.0 || ~6.0",
-    "php-standard-library/comparison": "~5.0 || ~6.0",
-    "php-standard-library/async": "~5.0 || ~6.0",
     "psr/simple-cache": "^3.0"
   },
   "require-dev": {

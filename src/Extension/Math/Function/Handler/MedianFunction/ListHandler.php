@@ -56,8 +56,8 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
         sort($numbers);
         $count = count($numbers);
         $middle = intdiv($count, 2);
-        // For an even count, average the two middle values the same way the mean
-        // is computed, to preserve the previous floating-point behaviour.
+        // For an even count, average the two middle values by halving each one
+        // before adding, keeping the intermediate values within range.
         $result = 0 === ($count % 2)
             ? ((float) $numbers[$middle] / 2) + ((float) $numbers[$middle - 1] / 2)
             : (float) $numbers[$middle];

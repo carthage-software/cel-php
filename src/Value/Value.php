@@ -8,11 +8,15 @@ use Cel\Exception\IncompatibleValueTypeException;
 use Cel\Exception\UnsupportedOperationException;
 use Cel\Message\MessageInterface;
 use Cel\Util\MapKeyUtil;
-use Psl\Type;
 
+use function array_is_list;
 use function gettype;
+use function is_array;
+use function is_bool;
+use function is_float;
 use function is_int;
 use function is_object;
+use function is_string;
 use function sprintf;
 
 /**
@@ -108,23 +112,23 @@ abstract readonly class Value
             return new NullValue();
         }
 
-        if (Type\bool()->matches($value)) {
+        if (is_bool($value)) {
             return new BooleanValue($value);
         }
 
-        if (Type\float()->matches($value)) {
+        if (is_float($value)) {
             return new FloatValue($value);
         }
 
-        if (Type\int()->matches($value)) {
+        if (is_int($value)) {
             return new IntegerValue($value);
         }
 
-        if (Type\string()->matches($value)) {
+        if (is_string($value)) {
             return new StringValue($value);
         }
 
-        if (Type\mixed_dict()->matches($value)) {
+        if (is_array($value)) {
             return self::fromArray($value);
         }
 
@@ -155,7 +159,7 @@ abstract readonly class Value
      */
     private static function fromArray(array $value): ListValue|MapValue
     {
-        if (Type\mixed_vec()->matches($value)) {
+        if (array_is_list($value)) {
             $items = [];
             foreach ($value as $item) {
                 $items[] = self::from($item);

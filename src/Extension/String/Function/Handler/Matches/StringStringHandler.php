@@ -13,9 +13,10 @@ use Cel\Value\BooleanValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Regex;
-use Psl\Regex\Exception\InvalidPatternException;
 
+use function preg_match;
+use function restore_error_handler;
+use function set_error_handler;
 use function sprintf;
 use function str_contains;
 use function str_replace;
@@ -40,15 +41,25 @@ final readonly class StringStringHandler implements FunctionOverloadHandlerInter
         $target = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $pattern = ArgumentsUtil::get($arguments, 1, StringValue::class);
 
+        $compiled = self::compile($pattern->value);
+
+        // Silence the E_WARNING PHP emits for an invalid pattern; the `false`
+        // return is handled explicitly below.
+        set_error_handler(static fn(): bool => true);
         try {
-            return new BooleanValue(Regex\matches($target->value, self::compile($pattern->value)));
-        } catch (InvalidPatternException $exception) {
+            $result = preg_match($compiled, $target->value);
+        } finally {
+            restore_error_handler();
+        }
+
+        if (false === $result) {
             throw new EvaluationException(
-                sprintf('Invalid regular expression `%s`: %s', $pattern->value, $exception->getMessage()),
+                sprintf('Invalid regular expression `%s`', $pattern->value),
                 $call->getSpan(),
-                $exception,
             );
         }
+
+        return new BooleanValue(1 === $result);
     }
 
     /**

@@ -12,12 +12,10 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
 
 use function mb_ord;
 use function mb_str_split;
 use function mb_strtolower;
-use function sprintf;
 
 final readonly class StringHandler implements FunctionOverloadHandlerInterface
 {
@@ -35,21 +33,13 @@ final readonly class StringHandler implements FunctionOverloadHandlerInterface
     {
         $target = ArgumentsUtil::get($arguments, 0, StringValue::class);
 
-        try {
-            $result = '';
-            foreach (mb_str_split($target->value) as $char) {
-                $ord = mb_ord($char);
-                // A = 65, Z = 90
-                $result .= $ord >= 65 && $ord <= 90 ? mb_strtolower($char) : $char;
-            }
-
-            return new StringValue($result);
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                sprintf('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
+        $result = '';
+        foreach (mb_str_split($target->value) as $char) {
+            $ord = mb_ord($char);
+            // A = 65, Z = 90
+            $result .= $ord >= 65 && $ord <= 90 ? mb_strtolower($char) : $char;
         }
+
+        return new StringValue($result);
     }
 }

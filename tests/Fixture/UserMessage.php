@@ -10,9 +10,8 @@ use Cel\Value\MessageValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Type;
 
-use function sprintf;
+use function count;
 
 final readonly class UserMessage implements MessageInterface
 {
@@ -39,17 +38,14 @@ final readonly class UserMessage implements MessageInterface
     #[Override]
     public static function fromCelFields(array $fields): static
     {
-        try {
-            $fields = Type\shape([
-                'name' => Type\instance_of(StringValue::class),
-                'email' => Type\instance_of(StringValue::class),
-            ])->assert($fields);
-        } catch (Type\Exception\ExceptionInterface) {
-            throw new InvalidMessageFieldsException(sprintf(
+        $name = $fields['name'] ?? null;
+        $email = $fields['email'] ?? null;
+        if (!$name instanceof StringValue || !$email instanceof StringValue || 2 !== count($fields)) {
+            throw new InvalidMessageFieldsException(
                 'Invalid fields for `UserMessage`, expected `name` and `email` of type `string`',
-            ));
+            );
         }
 
-        return new static($fields['name']->value, $fields['email']->value);
+        return new static($name->value, $email->value);
     }
 }

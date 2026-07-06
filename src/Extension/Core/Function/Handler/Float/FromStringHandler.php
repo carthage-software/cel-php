@@ -9,11 +9,11 @@ use Cel\Exception\TypeConversionException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\FloatParser;
 use Cel\Value\FloatValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Type;
 
 use function sprintf;
 
@@ -36,9 +36,8 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
     {
         $value = ArgumentsUtil::get($arguments, 0, StringValue::class);
 
-        try {
-            $float = Type\float()->coerce($value->value);
-        } catch (Type\Exception\CoercionException) {
+        $float = FloatParser::tryParse($value->value);
+        if (null === $float) {
             throw new TypeConversionException(
                 sprintf('Cannot convert string "%s" to float.', $value->value),
                 $call->getSpan(),

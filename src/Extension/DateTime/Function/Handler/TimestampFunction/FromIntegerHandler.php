@@ -14,8 +14,8 @@ use Cel\Value\IntegerValue;
 use Cel\Value\TimestampValue;
 use Cel\Value\Value;
 use Override;
+use Psl\DateTime\Exception\ExceptionInterface;
 use Psl\DateTime\Timestamp;
-use Psl\Exception\ExceptionInterface;
 
 use function sprintf;
 

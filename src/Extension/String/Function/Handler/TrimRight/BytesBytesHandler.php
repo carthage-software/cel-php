@@ -12,10 +12,8 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
 
 use function rtrim;
-use function sprintf;
 
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
@@ -34,14 +32,6 @@ final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterfa
         $target = ArgumentsUtil::get($arguments, 0, BytesValue::class);
         $characters = ArgumentsUtil::get($arguments, 1, BytesValue::class);
 
-        try {
-            return new BytesValue(rtrim($target->value, $characters->value));
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                sprintf('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new BytesValue(rtrim($target->value, $characters->value));
     }
 }

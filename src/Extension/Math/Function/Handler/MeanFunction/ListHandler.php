@@ -50,8 +50,8 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
             throw new EvaluationException('mean() requires a non-empty list', $call->getSpan());
         }
 
-        // Accumulate each term divided by the count so the result matches the
-        // previous implementation's floating-point behaviour exactly.
+        // Divide each term by the count before accumulating so the running sum
+        // stays near the mean's magnitude instead of growing with the list size.
         $count = count($numbers);
         $mean = 0.0;
         foreach ($numbers as $number) {

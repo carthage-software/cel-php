@@ -9,11 +9,11 @@ use Cel\Exception\TypeConversionException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
+use Cel\Util\FloatParser;
 use Cel\Value\BytesValue;
 use Cel\Value\FloatValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Type;
 
 use function sprintf;
 
@@ -36,9 +36,8 @@ final readonly class FromBytesHandler implements FunctionOverloadHandlerInterfac
     {
         $value = ArgumentsUtil::get($arguments, 0, BytesValue::class);
 
-        try {
-            $float = Type\float()->coerce($value->value);
-        } catch (Type\Exception\CoercionException) {
+        $float = FloatParser::tryParse($value->value);
+        if (null === $float) {
             throw new TypeConversionException(
                 sprintf('Cannot convert bytes "%s" to float.', $value->value),
                 $call->getSpan(),

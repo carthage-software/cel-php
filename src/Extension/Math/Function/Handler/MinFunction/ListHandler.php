@@ -14,8 +14,8 @@ use Cel\Value\IntegerValue;
 use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Type;
 
+use function is_int;
 use function min;
 use function sprintf;
 
@@ -53,7 +53,7 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
 
         $result = min($numbers);
 
-        if (Type\int()->matches($result)) {
+        if (is_int($result)) {
             return new IntegerValue($result);
         }
 

@@ -17,10 +17,10 @@ use Cel\Value\Value;
 use Override;
 use Psl\DateTime;
 use Psl\DateTime\Timestamp;
-use Psl\Regex;
 
 use function checkdate;
 use function mb_substr;
+use function preg_match;
 use function sprintf;
 use function str_pad;
 use function str_starts_with;
@@ -49,14 +49,15 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
         $value = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $string = $value->value;
 
-        /** @var null|array{0: string, 1: string, 2: string, 3: string, 4: string, 5: string, 6: string, 7: string, 8: string} $matches */
-        $matches = Regex\first_match($string, self::RFC3339_PATTERN);
-        if (null === $matches) {
+        $matches = [];
+        if (1 !== preg_match(self::RFC3339_PATTERN, $string, $matches)) {
             throw new TypeConversionException(
                 sprintf('Failed to parse timestamp string "%s".', $string),
                 $call->getSpan(),
             );
         }
+
+        /** @var array{0: string, 1: string, 2: string, 3: string, 4: string, 5: string, 6: string, 7: string, 8: string} $matches */
 
         $year = self::toInt($matches[1]);
         $month = self::toInt($matches[2]);

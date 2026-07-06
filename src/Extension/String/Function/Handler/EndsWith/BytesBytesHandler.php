@@ -13,9 +13,7 @@ use Cel\Value\BooleanValue;
 use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
 
-use function sprintf;
 use function str_ends_with;
 
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
@@ -39,14 +37,6 @@ final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterfa
             return new BooleanValue(true);
         }
 
-        try {
-            return new BooleanValue(str_ends_with($target->value, $suffix->value));
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                sprintf('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
-        }
+        return new BooleanValue(str_ends_with($target->value, $suffix->value));
     }
 }

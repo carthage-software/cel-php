@@ -12,10 +12,8 @@ use Cel\Util\ArgumentsUtil;
 use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
-use Psl\Exception\InvariantViolationException;
 
 use function implode;
-use function sprintf;
 use function str_replace;
 use function str_split;
 
@@ -37,24 +35,16 @@ final readonly class BytesBytesBytesHandler implements FunctionOverloadHandlerIn
         $needle = ArgumentsUtil::get($arguments, 1, BytesValue::class);
         $replacement = ArgumentsUtil::get($arguments, 2, BytesValue::class);
 
-        try {
-            if ('' === $needle->value) {
-                // If the needle is an empty string, we insert the replacement between every character.
-                $result = implode($replacement->value, str_split($haystack->value)) . $replacement->value;
-                if ('' !== $haystack->value) {
-                    $result = $replacement->value . $result;
-                }
-
-                return new BytesValue($result);
+        if ('' === $needle->value) {
+            // If the needle is an empty string, we insert the replacement between every character.
+            $result = implode($replacement->value, str_split($haystack->value)) . $replacement->value;
+            if ('' !== $haystack->value) {
+                $result = $replacement->value . $result;
             }
 
-            return new BytesValue(str_replace($needle->value, $replacement->value, $haystack->value));
-        } catch (InvariantViolationException $e) {
-            throw new EvaluationException(
-                sprintf('String operation failed: %s', $e->getMessage()),
-                $call->getSpan(),
-                $e,
-            );
+            return new BytesValue($result);
         }
+
+        return new BytesValue(str_replace($needle->value, $replacement->value, $haystack->value));
     }
 }

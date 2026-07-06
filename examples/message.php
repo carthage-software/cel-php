@@ -8,9 +8,9 @@ use Cel;
 use Cel\Exception\InvalidMessageFieldsException;
 use Cel\Value;
 use Override;
-use Psl;
+use Psl\IO;
 use Psl\Json;
-use Psl\Type;
+use RuntimeException;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -41,24 +41,23 @@ final readonly class RequestMessage implements Cel\Message\MessageInterface
     #[Override]
     public static function fromCelFields(array $fields): static
     {
-        try {
-            $fields = Type\shape([
-                'id' => Type\instance_of(Value\IntegerValue::class),
-                'name' => Type\instance_of(Value\StringValue::class),
-                'email' => Type\optional(Type\union(
-                    Type\instance_of(Value\NullValue::class),
-                    Type\instance_of(Value\StringValue::class),
-                )),
-            ])->assert($fields);
+        $id = $fields['id'] ?? null;
+        $name = $fields['name'] ?? null;
+        $email = $fields['email'] ?? null;
 
-            $id = $fields['id']->getRawValue();
-            $name = $fields['name']->getRawValue();
-            $email = isset($fields['email']) ? $fields['email']->getRawValue() : null;
-
-            return new self(id: $id, name: $name, email: $email);
-        } catch (Type\Exception\AssertException $e) {
-            throw new InvalidMessageFieldsException('Unable to create RequestMessage from CEL fields.', previous: $e);
+        if (
+            !$id instanceof Value\IntegerValue
+            || !$name instanceof Value\StringValue
+            || null !== $email && !$email instanceof Value\StringValue && !$email instanceof Value\NullValue
+        ) {
+            throw new InvalidMessageFieldsException('Unable to create RequestMessage from CEL fields.');
         }
+
+        return new self(
+            id: $id->getRawValue(),
+            name: $name->getRawValue(),
+            email: $email instanceof Value\StringValue ? $email->getRawValue() : null,
+        );
     }
 }
 
@@ -67,25 +66,33 @@ $configuration = new Cel\Runtime\Configuration(allowedMessageClasses: [
 ]);
 
 $message = Cel\evaluate('Cel.Examples.RequestMessage { id: 1234, name: "John Doe" }', configuration: $configuration);
-Psl\invariant($message->getRawValue() instanceof RequestMessage, 'Expected a RequestMessage instance.');
+if (!$message->getRawValue() instanceof RequestMessage) {
+    throw new RuntimeException('Expected a RequestMessage instance.');
+}
 
 $message = Cel\evaluate(
     'Cel.Examples.RequestMessage { id: 1234, name: "John Doe", email: null }',
     configuration: $configuration,
 );
-Psl\invariant($message->getRawValue() instanceof RequestMessage, 'Expected a RequestMessage instance.');
+if (!$message->getRawValue() instanceof RequestMessage) {
+    throw new RuntimeException('Expected a RequestMessage instance.');
+}
 
 $message = Cel\evaluate(
     'Cel.Examples.RequestMessage { id: 1234, name: "John Doe", email: "john.doe@example.com" }',
     configuration: $configuration,
 );
-Psl\invariant($message->getRawValue() instanceof RequestMessage, 'Expected a RequestMessage instance.');
+if (!$message->getRawValue() instanceof RequestMessage) {
+    throw new RuntimeException('Expected a RequestMessage instance.');
+}
 
 $result = Cel\evaluate(
     'has(message.email) ? message.email : null',
     variables: ['message' => $message],
     configuration: $configuration,
 );
-Psl\invariant($result->getRawValue() === 'john.doe@example.com', 'Expected email to exist');
+if ('john.doe@example.com' !== $result->getRawValue()) {
+    throw new RuntimeException('Expected email to exist');
+}
 
-Psl\IO\write_line('RequestMessage created successfully: %s', Json\encode($message->getRawValue(), true));
+IO\write_line('RequestMessage created successfully: %s', Json\encode($message->getRawValue(), true));

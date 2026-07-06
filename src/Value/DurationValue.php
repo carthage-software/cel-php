@@ -6,7 +6,6 @@ namespace Cel\Value;
 
 use Cel\Exception\UnsupportedOperationException;
 use Override;
-use Psl\Comparison\Order;
 use Psl\DateTime\Duration;
 
 /**
@@ -42,7 +41,7 @@ final readonly class DurationValue extends Value
     #[Override]
     public function isEqual(Value $other): bool
     {
-        return $other instanceof DurationValue && $this->value->compare($other->value) === Order::Equal;
+        return $other instanceof DurationValue && 0 === $this->value->compare($other->value)->value;
     }
 
     #[Override]
@@ -52,7 +51,7 @@ final readonly class DurationValue extends Value
             throw UnsupportedOperationException::forComparison($this, $other);
         }
 
-        return $this->value->compare($other->value) === Order::Greater;
+        return $this->value->compare($other->value)->value > 0;
     }
 
     #[Override]
@@ -62,7 +61,7 @@ final readonly class DurationValue extends Value
             throw UnsupportedOperationException::forComparison($this, $other);
         }
 
-        return $this->value->compare($other->value) === Order::Less;
+        return $this->value->compare($other->value)->value < 0;
     }
 
     #[Override]

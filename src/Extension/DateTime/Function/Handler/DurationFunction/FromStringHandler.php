@@ -16,10 +16,10 @@ use Cel\Value\Value;
 use Override;
 use Psl\DateTime;
 use Psl\DateTime\Duration;
-use Psl\Exception\ExceptionInterface;
-use Psl\Regex;
+use Psl\DateTime\Exception\ExceptionInterface;
 
 use function abs;
+use function preg_match;
 use function sprintf;
 
 final readonly class FromStringHandler implements FunctionOverloadHandlerInterface
@@ -45,9 +45,10 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
         $value = ArgumentsUtil::get($arguments, 0, StringValue::class);
         $durationStr = $value->value;
 
+        $matches = [];
+
         try {
-            $matches = Regex\first_match($durationStr, self::DURATION_PATTERN);
-            if (null === $matches) {
+            if (1 !== preg_match(self::DURATION_PATTERN, $durationStr, $matches)) {
                 throw new TypeConversionException(
                     sprintf('Invalid duration format: "%s"', $durationStr),
                     $call->getSpan(),
