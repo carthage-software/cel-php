@@ -45,7 +45,6 @@ use Cel\Token\Token;
 use Cel\Token\TokenKind;
 use Cel\Util\NumberBase;
 use Closure;
-use Error;
 use Override;
 use SensitiveParameter;
 
@@ -251,7 +250,7 @@ final class Parser implements ParserInterface
             $opKind = match ($opToken->kind) {
                 TokenKind::Bang => UnaryOperatorKind::Not,
                 TokenKind::Minus => UnaryOperatorKind::Negate,
-                default => throw new Error("Not a unary operator token: `{$opToken->kind->name}`"),
+                default => throw InternalException::forMessage("Not a unary operator token: `{$opToken->kind->name}`"),
             };
 
             $operator = new UnaryOperator($opKind, $opToken->span);
@@ -608,7 +607,7 @@ final class Parser implements ParserInterface
      */
     private static function fromBase(string $digits, int $base): int
     {
-        // @mago-expect analysis:unhandled-thrown-type(2) - the lexer only tokenizes valid, in-range integer literals.
+        // @mago-expect analysis:unhandled-thrown-type - the lexer only tokenizes valid, in-range integer literals.
         return '' === $digits ? 0 : NumberBase::fromBase($digits, $base);
     }
 
@@ -762,7 +761,7 @@ final class Parser implements ParserInterface
             TokenKind::Asterisk => BinaryOperatorKind::Multiply,
             TokenKind::Slash => BinaryOperatorKind::Divide,
             TokenKind::Percent => BinaryOperatorKind::Modulo,
-            default => throw new Error("Not a binary operator token: {$kind->name}"),
+            default => throw InternalException::forMessage("Not a binary operator token: {$kind->name}"),
         };
     }
 

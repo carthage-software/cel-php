@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cel\Parser\Internal;
 
 use Cel\Exception\InternalException;
+use Cel\Exception\NumberFormatException;
 use Cel\Util\NumberBase;
-use InvalidArgumentException;
 
 use function chr;
 use function mb_chr;
@@ -196,7 +196,7 @@ final readonly class StringUnescaper
 
         try {
             $codePoint = (int) NumberBase::baseConvert($hexString, 16, 10);
-        } catch (InvalidArgumentException $e) {
+        } catch (NumberFormatException $e) {
             throw InternalException::forMessage(
                 sprintf('Invalid Unicode escape: expected valid hex digits after \\%s', $hexDigits === 4 ? 'u' : 'U'),
                 $e,
@@ -243,7 +243,7 @@ final readonly class StringUnescaper
 
         try {
             $byteValue = (int) NumberBase::baseConvert($hexString, 16, 10);
-        } catch (InvalidArgumentException $e) {
+        } catch (NumberFormatException $e) {
             throw InternalException::forMessage('Invalid hex escape: expected valid hex digits after \\x', $e);
         }
 

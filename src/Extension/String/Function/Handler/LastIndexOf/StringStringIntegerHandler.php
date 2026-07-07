@@ -6,6 +6,7 @@ namespace Cel\Extension\String\Function\Handler\LastIndexOf;
 
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
+use Cel\Exception\OutOfRangeException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
@@ -13,7 +14,6 @@ use Cel\Util\SearchOffset;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
-use OutOfRangeException;
 use Override;
 
 use function mb_strlen;

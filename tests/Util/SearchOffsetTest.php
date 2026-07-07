@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Util;
 
+use Cel\Exception\OutOfRangeException;
 use Cel\Util\SearchOffset;
-use OutOfRangeException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

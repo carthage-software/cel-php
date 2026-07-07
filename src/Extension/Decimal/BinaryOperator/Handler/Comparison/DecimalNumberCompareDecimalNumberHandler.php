@@ -13,7 +13,6 @@ use Cel\Util\OperandUtil;
 use Cel\Value\BooleanValue;
 use Cel\Value\MessageValue;
 use Cel\Value\Value;
-use LogicException;
 use Override;
 use Throwable;
 
@@ -67,7 +66,7 @@ final readonly class DecimalNumberCompareDecimalNumberHandler implements BinaryO
             BinaryOperatorKind::LessThanOrEqual => $comparison <= 0,
             BinaryOperatorKind::GreaterThan => $comparison > 0,
             BinaryOperatorKind::GreaterThanOrEqual => $comparison >= 0,
-            default => throw new LogicException('Invalid comparison operator'),
+            default => throw InternalException::forInvalidOperator($this->operator->getSymbol()),
         };
     }
 }

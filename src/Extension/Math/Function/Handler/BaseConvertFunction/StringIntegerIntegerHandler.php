@@ -6,6 +6,7 @@ namespace Cel\Extension\Math\Function\Handler\BaseConvertFunction;
 
 use Cel\Exception\EvaluationException;
 use Cel\Exception\InternalException;
+use Cel\Exception\NumberFormatException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
@@ -13,8 +14,6 @@ use Cel\Util\NumberBase;
 use Cel\Value\IntegerValue;
 use Cel\Value\StringValue;
 use Cel\Value\Value;
-use InvalidArgumentException;
-use OverflowException;
 use Override;
 
 use function sprintf;
@@ -60,7 +59,7 @@ final readonly class StringIntegerIntegerHandler implements FunctionOverloadHand
 
         try {
             return new StringValue(NumberBase::baseConvert($number->value, $fromBase->value, $toBase->value));
-        } catch (InvalidArgumentException|OverflowException $e) {
+        } catch (NumberFormatException $e) {
             throw new EvaluationException($e->getMessage(), $call->getSpan(), $e);
         }
     }

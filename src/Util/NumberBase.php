@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Util;
 
-use InvalidArgumentException;
-use OverflowException;
+use Cel\Exception\NumberFormatException;
 
 use function bcadd;
 use function bcdiv;
@@ -14,7 +13,6 @@ use function bcmul;
 use function bcpow;
 use function intdiv;
 use function ord;
-use function sprintf;
 use function str_split;
 use function stripos;
 use function strlen;
@@ -37,8 +35,8 @@ final readonly class NumberBase
     /**
      * Parses a string in the given base to a native integer.
      *
-     * @throws InvalidArgumentException If the string contains a digit invalid for the base.
-     * @throws OverflowException If the value overflows the integer range.
+     * @throws NumberFormatException If the string contains a digit invalid for the base or the value
+     *                              overflows the integer range.
      */
     public static function fromBase(string $number, int $fromBase): int
     {
@@ -54,21 +52,17 @@ final readonly class NumberBase
             } elseif ($ordinal >= 65 && $ordinal <= 90) {
                 $value = $ordinal - 55;
             } else {
-                throw new InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
+                throw NumberFormatException::forInvalidDigit($digit, $fromBase);
             }
 
             if ($fromBase <= $value) {
-                throw new InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
+                throw NumberFormatException::forInvalidDigit($digit, $fromBase);
             }
 
             $previous = $result;
             $result = ($fromBase * $result) + $value;
             if ($previous > $limit || $previous > $result) {
-                throw new OverflowException(sprintf(
-                    'Unexpected integer overflow parsing %s from base %d',
-                    $number,
-                    $fromBase,
-                ));
+                throw NumberFormatException::forOverflow($number, $fromBase);
             }
         }
 
@@ -96,7 +90,7 @@ final readonly class NumberBase
     /**
      * Converts an arbitrary-precision string from one base to another.
      *
-     * @throws InvalidArgumentException If the value contains a digit invalid for the source base.
+     * @throws NumberFormatException If the value contains a digit invalid for the source base.
      */
     public static function baseConvert(string $value, int $fromBase, int $toBase): string
     {
@@ -106,7 +100,7 @@ final readonly class NumberBase
         foreach (str_split($value) as $digit) {
             $digitValue = stripos($fromAlphabet, $digit);
             if (false === $digitValue) {
-                throw new InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
+                throw NumberFormatException::forInvalidDigit($digit, $fromBase);
             }
 
             $decimal = bcadd($decimal, bcmul((string) $digitValue, $placeValue));

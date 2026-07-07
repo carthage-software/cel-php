@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Util;
 
+use Cel\Exception\NumberFormatException;
 use Cel\Util\NumberBase;
-use InvalidArgumentException;
-use OverflowException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -40,7 +39,7 @@ final class NumberBaseTest extends TestCase
     #[DataProvider('provideFromBaseInvalidCases')]
     public function testFromBaseRejectsInvalidDigit(string $number, int $fromBase): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(NumberFormatException::class);
 
         NumberBase::fromBase($number, $fromBase);
     }
@@ -59,7 +58,7 @@ final class NumberBaseTest extends TestCase
     #[DataProvider('provideFromBaseOverflowCases')]
     public function testFromBaseOverflows(string $number, int $fromBase): void
     {
-        $this->expectException(OverflowException::class);
+        $this->expectException(NumberFormatException::class);
 
         NumberBase::fromBase($number, $fromBase);
     }
@@ -113,7 +112,7 @@ final class NumberBaseTest extends TestCase
     #[DataProvider('provideBaseConvertInvalidCases')]
     public function testBaseConvertRejectsInvalidDigit(string $value, int $fromBase, int $toBase): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(NumberFormatException::class);
 
         NumberBase::baseConvert($value, $fromBase, $toBase);
     }

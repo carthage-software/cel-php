@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Util;
 
-use OutOfRangeException;
-
-use function sprintf;
+use Cel\Exception\OutOfRangeException;
 
 /**
  * Normalizes a search offset the way the string functions expect: a negative
@@ -25,7 +23,7 @@ final readonly class SearchOffset
     {
         $normalized = $offset < 0 ? $offset + $length : $offset;
         if ($normalized < 0 || $normalized > $length) {
-            throw new OutOfRangeException(sprintf('Offset %d is out of bounds', $offset));
+            throw OutOfRangeException::forOffset($offset);
         }
 
         return $normalized;
