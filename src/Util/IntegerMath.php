@@ -19,8 +19,12 @@ final readonly class IntegerMath
     {
         $result = $left + $right;
 
-        // @mago-expect analysis:redundant-type-comparison (an overflowing result is promoted to float)
-        // @mago-expect analysis:redundant-condition (an overflowing result is promoted to float)
+        /**
+         * @mago-expect analysis:redundant-type-comparison (an overflowing result is promoted to float)
+         * @mago-expect analysis:redundant-condition (an overflowing result is promoted to float)
+         *
+         * @var int|null
+         */
         return is_int($result) ? $result : null;
     }
 
@@ -28,8 +32,12 @@ final readonly class IntegerMath
     {
         $result = $left - $right;
 
-        // @mago-expect analysis:redundant-type-comparison (an overflowing result is promoted to float)
-        // @mago-expect analysis:redundant-condition (an overflowing result is promoted to float)
+        /**
+         * @mago-expect analysis:redundant-type-comparison (an overflowing result is promoted to float)
+         * @mago-expect analysis:redundant-condition (an overflowing result is promoted to float)
+         *
+         * @var int|null
+         */
         return is_int($result) ? $result : null;
     }
 
@@ -37,8 +45,12 @@ final readonly class IntegerMath
     {
         $result = $left * $right;
 
-        // @mago-expect analysis:redundant-type-comparison (an overflowing result is promoted to float)
-        // @mago-expect analysis:redundant-condition (an overflowing result is promoted to float)
+        /**
+         * @mago-expect analysis:redundant-type-comparison (an overflowing result is promoted to float)
+         * @mago-expect analysis:redundant-condition (an overflowing result is promoted to float)
+         *
+         * @var int|null
+         */
         return is_int($result) ? $result : null;
     }
 
@@ -46,8 +58,12 @@ final readonly class IntegerMath
     {
         $result = -$value;
 
-        // @mago-expect analysis:redundant-type-comparison (an overflowing result is promoted to float)
-        // @mago-expect analysis:redundant-condition (an overflowing result is promoted to float)
+        /**
+         * @mago-expect analysis:redundant-type-comparison (an overflowing result is promoted to float)
+         * @mago-expect analysis:redundant-condition (an overflowing result is promoted to float)
+         *
+         * @var int|null
+         */
         return is_int($result) ? $result : null;
     }
 }
