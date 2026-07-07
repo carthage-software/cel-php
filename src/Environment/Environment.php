@@ -94,7 +94,7 @@ final class Environment implements EnvironmentInterface
 
         // Fall back to the default resolver (always the last one)
         $lastIndex = $count - 1;
-        assert(array_key_exists($lastIndex, $this->valueResolvers));
+        assert(array_key_exists($lastIndex, $this->valueResolvers), 'the resolver list is never empty');
         $defaultResolver = $this->valueResolvers[$lastIndex];
         $this->addVariable($name, $defaultResolver->resolve($value));
     }
@@ -106,7 +106,7 @@ final class Environment implements EnvironmentInterface
         $count = count($this->valueResolvers);
         $lastIndex = $count - 1;
         $length = $count > 0 ? $lastIndex : 0;
-        assert(array_key_exists($lastIndex, $this->valueResolvers));
+        assert(array_key_exists($lastIndex, $this->valueResolvers), 'the resolver list is never empty');
         $this->valueResolvers = [
             ...array_slice($this->valueResolvers, 0, $length),
             $resolver,

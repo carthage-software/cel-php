@@ -8,7 +8,6 @@ use InvalidArgumentException;
 use OverflowException;
 
 use function bcadd;
-use function bccomp;
 use function bcdiv;
 use function bcmod;
 use function bcmul;
@@ -115,7 +114,7 @@ final readonly class NumberBase
         do {
             $result = $toAlphabet[(int) bcmod($decimal, (string) $toBase)] . $result;
             $decimal = bcdiv($decimal, (string) $toBase);
-        } while (bccomp($decimal, '0') > 0);
+        } while ('0' !== $decimal);
 
         return $result;
     }

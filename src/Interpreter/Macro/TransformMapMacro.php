@@ -87,7 +87,7 @@ final readonly class TransformMapMacro implements MacroInterface
                     }
                 }
 
-                assert(array_key_exists($keyVariable, $variables));
+                assert(array_key_exists($keyVariable, $variables), 'the key variable is always bound');
                 $key = MapKeyUtil::resolve($variables[$keyVariable]);
                 if (null === $key) {
                     throw new InvalidMacroCallException(

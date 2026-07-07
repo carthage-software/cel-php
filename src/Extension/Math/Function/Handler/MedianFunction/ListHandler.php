@@ -59,13 +59,13 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
         $count = count($numbers);
         $middle = intdiv($count, 2);
 
-        assert(array_key_exists($middle, $numbers));
+        assert(array_key_exists($middle, $numbers), 'the middle index is within the sorted list');
         if (1 === ($count % 2)) {
             return new FloatValue((float) $numbers[$middle]);
         }
 
         $lower = $middle - 1;
-        assert(array_key_exists($lower, $numbers));
+        assert(array_key_exists($lower, $numbers), 'the lower-middle index is within the sorted list');
 
         // For an even count, average the two middle values by halving each one
         // before adding, keeping the intermediate values within range.
