@@ -62,7 +62,7 @@ jobs:
           extensions: "bcmath, mbstring, intl, sodium, json${{ matrix.decimal && ', decimal-1.5.0' || '' }}"
 
       - name: "installing dependencies"
-        run: just install
+        run: composer install --no-interaction ${{ matrix.decimal && '' || '--ignore-platform-req=ext-decimal' }}
 
       - name: "running the test suite"
         run: php -dmemory_limit=-1 vendor/bin/phpunit -c config/phpunit.xml.dist --no-coverage
