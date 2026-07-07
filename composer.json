@@ -26,7 +26,7 @@
   "require": {
     "php": "~8.4 || ~8.5",
     "ext-bcmath": "*",
-    "ext-intl": "*",
+    "ext-mbstring": "*",
     "php-standard-library/date-time": "~5.0 || ~6.0",
     "php-standard-library/default": "~5.0 || ~6.0",
     "psr/simple-cache": "^3.0"
