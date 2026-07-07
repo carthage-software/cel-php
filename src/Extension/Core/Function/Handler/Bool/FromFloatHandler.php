@@ -15,6 +15,8 @@ use Override;
 
 /**
  * Handles bool(float) -> boolean
+ *
+ * @internal
  */
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {

@@ -7,6 +7,9 @@ namespace Cel\Syntax;
 use Cel\Span\Span;
 use Override;
 
+/**
+ * @api
+ */
 final readonly class ParenthesizedExpression extends Expression
 {
     public function __construct(

@@ -12,6 +12,8 @@ use Override;
 
 /**
  * The `optional.none() -> optional(T)` global function.
+ *
+ * @internal
  */
 final readonly class NoneFunction implements FunctionInterface
 {

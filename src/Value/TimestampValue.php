@@ -10,6 +10,8 @@ use Psl\DateTime\Timestamp;
 
 /**
  * Represents a timestamp value.
+ *
+ * @api
  */
 final readonly class TimestampValue extends Value
 {

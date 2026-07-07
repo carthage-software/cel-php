@@ -18,6 +18,8 @@ use Override;
  *
  * Two optionals are equal when both are empty, or both hold values that are
  * themselves equal.
+ *
+ * @internal
  */
 final readonly class OptionalOptionalHandler implements BinaryOperatorOverloadHandlerInterface
 {

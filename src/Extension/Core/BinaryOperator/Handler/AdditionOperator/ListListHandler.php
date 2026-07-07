@@ -12,6 +12,9 @@ use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class ListListHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

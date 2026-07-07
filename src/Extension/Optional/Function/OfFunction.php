@@ -12,6 +12,8 @@ use Override;
 
 /**
  * The `optional.of(T) -> optional(T)` global function.
+ *
+ * @internal
  */
 final readonly class OfFunction implements FunctionInterface
 {

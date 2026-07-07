@@ -19,6 +19,8 @@ use function substr;
 
 /**
  * A concrete implementation of {@see InputInterface} that operates on a string of bytes.
+ *
+ * @api
  */
 final class Input implements InputInterface
 {

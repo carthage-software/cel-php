@@ -16,6 +16,9 @@ use Override;
 
 use function array_any;
 
+/**
+ * @internal
+ */
 final readonly class FloatListHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

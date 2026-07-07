@@ -10,6 +10,8 @@ use Psl\DateTime\Duration;
 
 /**
  * Represents a timestamp value.
+ *
+ * @api
  */
 final readonly class DurationValue extends Value
 {

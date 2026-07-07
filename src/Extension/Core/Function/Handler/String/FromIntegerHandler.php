@@ -15,6 +15,8 @@ use Override;
 
 /**
  * Handles string(integer) -> string
+ *
+ * @internal
  */
 final readonly class FromIntegerHandler implements FunctionOverloadHandlerInterface
 {

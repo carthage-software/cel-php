@@ -10,6 +10,8 @@ use Override;
 
 /**
  * Represents a float value.
+ *
+ * @api
  */
 final readonly class FloatValue extends Value
 {

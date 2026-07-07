@@ -8,6 +8,8 @@ namespace Cel\Token;
  * Enumerates all possible kinds of tokens that can be produced by the CEL lexer.
  *
  * @mago-expect lint:too-many-enum-cases
+ *
+ * @api
  */
 enum TokenKind
 {

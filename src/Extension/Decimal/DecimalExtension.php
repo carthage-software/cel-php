@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Cel\Extension\Decimal;
 
+use Cel\Extension\Decimal\Message\DecimalNumber;
+use Cel\Extension\Decimal\Resolver\DecimalValueResolver;
 use Cel\Extension\ExtensionInterface;
 use Cel\Syntax\Binary\BinaryOperatorKind;
 use Override;
@@ -17,6 +19,8 @@ use Override;
  * - Provides operator overloads for all mathematical operations
  * - Supports operations between DecimalNumber and int/uint/float types
  * - Registers DecimalNumber as an available message type
+ *
+ * @api
  */
 final readonly class DecimalExtension implements ExtensionInterface
 {

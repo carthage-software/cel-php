@@ -17,6 +17,9 @@ use function intdiv;
 
 use const PHP_INT_MIN;
 
+/**
+ * @internal
+ */
 final readonly class IntegerIntegerHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

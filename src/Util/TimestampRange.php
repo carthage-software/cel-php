@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cel\Util;
 
+/**
+ * @internal
+ */
 final readonly class TimestampRange
 {
     /** Seconds at `0001-01-01T00:00:00Z`. */

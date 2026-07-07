@@ -17,6 +17,8 @@ use function count;
 
 /**
  * Handles size(map) -> integer
+ *
+ * @internal
  */
 final readonly class FromMapHandler implements FunctionOverloadHandlerInterface
 {

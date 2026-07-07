@@ -12,6 +12,9 @@ use Cel\Value\FloatValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class FloatHandler implements UnaryOperatorOverloadHandlerInterface
 {
     /**

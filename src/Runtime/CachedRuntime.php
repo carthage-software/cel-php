@@ -24,6 +24,8 @@ use function serialize;
  * expressions that are idempotent (produce the same result regardless of environment).
  *
  * Only idempotent expressions are cached to ensure correctness.
+ *
+ * @api
  */
 final class CachedRuntime implements RuntimeInterface
 {

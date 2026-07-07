@@ -21,6 +21,8 @@ use function ctype_space;
  * It advances one token at a time and is designed to be used by a parser.
  *
  * @see https://github.com/google/cel-spec/blob/master/doc/langdef.md#syntax
+ *
+ * @api
  */
 final readonly class Lexer implements LexerInterface
 {

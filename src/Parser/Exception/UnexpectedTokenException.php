@@ -12,6 +12,9 @@ use function array_map;
 use function count;
 use function implode;
 
+/**
+ * @api
+ */
 final class UnexpectedTokenException extends RuntimeException implements ExceptionInterface
 {
     /**

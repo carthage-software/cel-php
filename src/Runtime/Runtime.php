@@ -17,6 +17,9 @@ use Override;
 
 use function in_array;
 
+/**
+ * @api
+ */
 final class Runtime implements RuntimeInterface
 {
     /**

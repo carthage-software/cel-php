@@ -9,6 +9,9 @@ use Cel\Syntax\Expression;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 abstract class OptimizationTestCase extends TestCase
 {
     #[DataProvider('provideOptimizationCases')]

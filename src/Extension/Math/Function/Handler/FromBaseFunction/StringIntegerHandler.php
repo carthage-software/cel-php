@@ -19,6 +19,9 @@ use Override;
 
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class StringIntegerHandler implements FunctionOverloadHandlerInterface
 {
     /**

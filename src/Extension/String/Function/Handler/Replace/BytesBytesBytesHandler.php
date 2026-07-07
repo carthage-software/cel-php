@@ -17,6 +17,9 @@ use function implode;
 use function str_replace;
 use function str_split;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesBytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

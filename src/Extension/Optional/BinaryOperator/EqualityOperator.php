@@ -12,6 +12,8 @@ use Override;
 
 /**
  * Provides equality (`==`) and inequality (`!=`) overloads for optional values.
+ *
+ * @internal
  */
 final readonly class EqualityOperator implements BinaryOperatorOverloadInterface
 {

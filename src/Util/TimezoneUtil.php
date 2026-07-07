@@ -22,6 +22,8 @@ use function ctype_digit;
  * aliases) is only available through the native {@see DateTimeZone}, so the
  * offset for the relevant instant is resolved there and applied to the
  * timestamp; the resulting wall-clock is then read back in UTC.
+ *
+ * @internal
  */
 final readonly class TimezoneUtil
 {

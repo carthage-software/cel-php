@@ -7,6 +7,9 @@ namespace Cel\Extension\DateTime;
 use Cel\Extension\ExtensionInterface;
 use Override;
 
+/**
+ * @api
+ */
 final readonly class DateTimeExtension implements ExtensionInterface
 {
     /**

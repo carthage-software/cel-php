@@ -10,6 +10,8 @@ use Cel\Token\Token;
 
 /**
  * Defines the contract for a CEL lexer, which breaks an input stream into a series of tokens.
+ *
+ * @api
  */
 interface LexerInterface extends HasCursorInterface
 {

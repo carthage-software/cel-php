@@ -25,6 +25,8 @@ use function sprintf;
  * A single-variable comprehension binds the element (for a list) or the key
  * (for a map). A two-variable comprehension binds the index/key as the first
  * variable and the value as the second.
+ *
+ * @internal
  */
 trait ComprehensionSupport
 {

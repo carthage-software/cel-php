@@ -9,6 +9,8 @@ namespace Cel\Token;
  *
  * Precedence determines the order in which operators are evaluated. Operators with a lower enum value
  * have higher precedence and are evaluated first.
+ *
+ * @api
  */
 enum Precedence: int
 {

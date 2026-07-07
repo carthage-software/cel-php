@@ -14,6 +14,9 @@ use Override;
 
 use function fdiv;
 
+/**
+ * @internal
+ */
 final readonly class FloatFloatHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

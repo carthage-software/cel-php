@@ -25,6 +25,9 @@ use function array_values;
 use function implode;
 use function sprintf;
 
+/**
+ * @api
+ */
 final class OperationRegistry implements DefaultInterface
 {
     /**

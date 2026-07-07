@@ -15,6 +15,8 @@ use Override;
  * values (int, uint, double), across types on a single number line.
  *
  * Comparisons involving NaN raise an error, as NaN cannot be ordered.
+ *
+ * @internal
  */
 final readonly class NumericHandler implements BinaryOperatorOverloadHandlerInterface
 {

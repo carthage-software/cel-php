@@ -17,6 +17,8 @@ use function count;
 
 /**
  * Handles size(list) -> integer
+ *
+ * @internal
  */
 final readonly class FromListHandler implements FunctionOverloadHandlerInterface
 {

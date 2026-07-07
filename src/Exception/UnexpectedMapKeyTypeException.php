@@ -6,5 +6,7 @@ namespace Cel\Exception;
 
 /**
  * Thrown when a map key is of an unexpected type.
+ *
+ * @api
  */
 final class UnexpectedMapKeyTypeException extends EvaluationException {}

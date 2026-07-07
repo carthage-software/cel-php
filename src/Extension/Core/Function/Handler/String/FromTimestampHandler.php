@@ -23,6 +23,8 @@ use const STR_PAD_LEFT;
 
 /**
  * Handles string(timestamp) -> string
+ *
+ * @internal
  */
 final readonly class FromTimestampHandler implements FunctionOverloadHandlerInterface
 {

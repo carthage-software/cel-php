@@ -16,6 +16,8 @@ use Override;
  * Equality never errors on a type mismatch: incompatible types are unequal,
  * numeric values compare across `int`/`uint`/`double`, and `null` equals only
  * `null`. The actual comparison is delegated to each value's `isEqual`.
+ *
+ * @internal
  */
 final readonly class EqualityOperator implements BinaryOperatorOverloadInterface
 {

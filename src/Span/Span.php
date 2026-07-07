@@ -14,6 +14,8 @@ use function sprintf;
  *
  * Spans are used to associate tokens and AST nodes with their original location
  * in the source, which is crucial for error reporting and debugging.
+ *
+ * @api
  */
 final readonly class Span implements Stringable
 {

@@ -19,6 +19,8 @@ use Override;
  * - string
  * - arrays (lists and maps)
  * - MessageInterface implementations
+ *
+ * @api
  */
 final readonly class DefaultValueResolver implements ValueResolverInterface
 {

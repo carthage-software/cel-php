@@ -10,6 +10,9 @@ use Cel\Extension\ExtensionInterface;
 use Cel\Syntax\Expression;
 use Psl\Default\DefaultInterface;
 
+/**
+ * @api
+ */
 interface RuntimeInterface extends DefaultInterface
 {
     /**

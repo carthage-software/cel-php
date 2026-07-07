@@ -22,6 +22,8 @@ use function sprintf;
 
 /**
  * Handles getSeconds(timestamp) and getSeconds(timestamp, string) -> int
+ *
+ * @internal
  */
 final readonly class TimestampHandler implements FunctionOverloadHandlerInterface
 {

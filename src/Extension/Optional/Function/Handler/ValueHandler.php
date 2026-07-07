@@ -16,6 +16,8 @@ use Override;
 /**
  * Handles `optional(T).value() -> T`, returning the contained value or erroring
  * when the optional is empty.
+ *
+ * @internal
  */
 final readonly class ValueHandler implements FunctionOverloadHandlerInterface
 {

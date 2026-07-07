@@ -37,6 +37,8 @@ use const PHP_INT_MIN;
  * `1.0` (which are cross-type equal in CEL) address the same entry. That
  * normalization is one-way: a numeric key decodes back to an int or a uint by
  * magnitude, not to its original spelling.
+ *
+ * @internal
  */
 final readonly class MapKeyUtil
 {

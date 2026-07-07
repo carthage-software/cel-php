@@ -22,6 +22,9 @@ use function abs;
 use function preg_match;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class FromStringHandler implements FunctionOverloadHandlerInterface
 {
     // Regex to parse CEL duration format, e.g., "-1h30m5.5s"

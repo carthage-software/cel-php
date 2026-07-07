@@ -21,6 +21,8 @@ use function sprintf;
  * evaluated when the target is empty.
  *
  * @example {'k': 'v'}[?'missing'].orValue('default') // "default"
+ *
+ * @internal
  */
 final readonly class OrValueMacro implements MacroInterface
 {

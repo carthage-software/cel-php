@@ -16,6 +16,9 @@ use Override;
 use function bccomp;
 use function bcmul;
 
+/**
+ * @internal
+ */
 final readonly class UnsignedIntegerUnsignedIntegerHandler implements BinaryOperatorOverloadHandlerInterface
 {
     private const string UINT64_MAX = '18446744073709551615';

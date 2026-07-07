@@ -21,6 +21,9 @@ use Psl\DateTime\Timestamp;
 use function is_finite;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {
     /**

@@ -22,6 +22,8 @@ use function sprintf;
  * @template-covariant T of Node
  *
  * @implements IteratorAggregate<T>
+ *
+ * @api
  */
 final readonly class PunctuatedSequence implements IteratorAggregate
 {

@@ -17,6 +17,8 @@ use function sprintf;
 
 /**
  * Handles string(duration) -> string
+ *
+ * @internal
  */
 final readonly class FromDurationHandler implements FunctionOverloadHandlerInterface
 {

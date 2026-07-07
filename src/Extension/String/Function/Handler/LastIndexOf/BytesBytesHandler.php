@@ -17,6 +17,9 @@ use Override;
 use function mb_strlen;
 use function strrpos;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

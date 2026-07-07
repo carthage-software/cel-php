@@ -18,6 +18,9 @@ use Override;
 use function array_map;
 use function explode;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

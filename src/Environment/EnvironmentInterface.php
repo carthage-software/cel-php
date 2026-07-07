@@ -10,6 +10,8 @@ use Psl\Default\DefaultInterface;
 
 /**
  * Defines the contract for the CEL runtime environment.
+ *
+ * @api
  */
 interface EnvironmentInterface extends DefaultInterface
 {

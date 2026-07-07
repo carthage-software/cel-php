@@ -13,6 +13,9 @@ use Cel\Value\DurationValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class DurationDurationHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

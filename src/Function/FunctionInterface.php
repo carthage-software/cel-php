@@ -8,6 +8,8 @@ use Cel\Value\ValueKind;
 
 /**
  * Defines the contract for a CEL function, which can contain multiple overloads.
+ *
+ * @api
  */
 interface FunctionInterface
 {

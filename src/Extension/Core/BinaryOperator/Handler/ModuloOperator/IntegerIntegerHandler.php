@@ -14,6 +14,9 @@ use Cel\Value\Value;
 use DivisionByZeroError;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class IntegerIntegerHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

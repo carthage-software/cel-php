@@ -10,6 +10,8 @@ use Override;
 
 /**
  * @extends LiteralExpression<int|numeric-string>
+ *
+ * @api
  */
 final readonly class UnsignedIntegerLiteralExpression extends LiteralExpression
 {

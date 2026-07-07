@@ -12,6 +12,8 @@ use Cel\Value\Resolver\ValueResolverInterface;
 
 /**
  * Defines the contract for a CEL extension.
+ *
+ * @api
  */
 interface ExtensionInterface
 {

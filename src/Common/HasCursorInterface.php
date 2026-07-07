@@ -6,6 +6,8 @@ namespace Cel\Common;
 
 /**
  * Defines the basic behavior for objects that manage a cursor over an input source.
+ *
+ * @api
  */
 interface HasCursorInterface
 {

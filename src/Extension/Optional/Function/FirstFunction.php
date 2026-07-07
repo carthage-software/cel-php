@@ -12,6 +12,8 @@ use Override;
 
 /**
  * The `list(T).first() -> optional(T)` member function.
+ *
+ * @internal
  */
 final readonly class FirstFunction implements FunctionInterface
 {

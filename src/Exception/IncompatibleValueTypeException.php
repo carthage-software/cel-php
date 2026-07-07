@@ -8,5 +8,7 @@ use DomainException;
 
 /**
  * Thrown when an unsupported PHP type is encountered during value conversion.
+ *
+ * @api
  */
 final class IncompatibleValueTypeException extends DomainException implements ExceptionInterface {}

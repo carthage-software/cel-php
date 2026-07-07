@@ -12,6 +12,8 @@ use Override;
 
 /**
  * The `optional.unwrap(list(optional(T))) -> list(T)` global function.
+ *
+ * @internal
  */
 final readonly class UnwrapFunction implements FunctionInterface
 {

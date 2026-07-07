@@ -12,6 +12,8 @@ use Override;
 
 /**
  * The `optional(T).hasValue() -> bool` member function.
+ *
+ * @internal
  */
 final readonly class HasValueFunction implements FunctionInterface
 {

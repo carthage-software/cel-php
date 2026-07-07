@@ -15,6 +15,8 @@ use Override;
 
 /**
  * Handles bytes(string) -> bytes
+ *
+ * @internal
  */
 final readonly class FromStringHandler implements FunctionOverloadHandlerInterface
 {

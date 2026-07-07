@@ -16,6 +16,8 @@ use Override;
  * When `$question` is set, the initializer is optional (`Msg{?field: value}`):
  * the value expression must evaluate to an `optional`, and the field is only set
  * when that optional holds a value.
+ *
+ * @api
  */
 final readonly class FieldInitializerNode extends Node
 {

@@ -8,6 +8,8 @@ use function is_int;
 
 /**
  * Overflow-checked 64-bit signed integer arithmetic.
+ *
+ * @internal
  */
 final readonly class IntegerMath
 {

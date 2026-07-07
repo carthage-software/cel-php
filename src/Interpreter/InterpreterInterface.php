@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Cel\Interpreter;
 
 use Cel\Environment\EnvironmentInterface;
-use Cel\Runtime\Exception;
+use Cel\Exception;
 use Cel\Syntax\Expression;
 use Cel\Value\Value;
 
+/**
+ * @api
+ */
 interface InterpreterInterface
 {
     /**

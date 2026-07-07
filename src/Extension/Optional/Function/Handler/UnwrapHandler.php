@@ -20,6 +20,8 @@ use function sprintf;
  * Handles `optional.unwrap(list(optional(T))) -> list(T)` and its postfix form
  * `list(optional(T)).unwrapOpt() -> list(T)`, producing a list containing the
  * values of all present optionals (empty optionals are dropped).
+ *
+ * @internal
  */
 final readonly class UnwrapHandler implements FunctionOverloadHandlerInterface
 {

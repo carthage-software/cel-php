@@ -8,6 +8,9 @@ use Psl\DateTime\Duration;
 
 use function abs;
 
+/**
+ * @internal
+ */
 final readonly class DurationRange
 {
     /**

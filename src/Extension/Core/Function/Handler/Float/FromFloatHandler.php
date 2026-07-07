@@ -14,6 +14,8 @@ use Override;
 
 /**
  * Handles float(float) -> float
+ *
+ * @internal
  */
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {

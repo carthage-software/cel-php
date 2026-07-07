@@ -21,6 +21,8 @@ use function sprintf;
 
 /**
  * Represents a value in the CEL runtime.
+ *
+ * @api
  */
 abstract readonly class Value
 {

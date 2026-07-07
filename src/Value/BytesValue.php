@@ -9,6 +9,8 @@ use Override;
 
 /**
  * Represents a bytes value.
+ *
+ * @api
  */
 final readonly class BytesValue extends Value
 {

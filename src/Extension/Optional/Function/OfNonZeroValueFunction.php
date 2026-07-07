@@ -12,6 +12,8 @@ use Override;
 
 /**
  * The `optional.ofNonZeroValue(T) -> optional(T)` global function.
+ *
+ * @internal
  */
 final readonly class OfNonZeroValueFunction implements FunctionInterface
 {

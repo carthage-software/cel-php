@@ -19,6 +19,9 @@ use function is_int;
 use function max;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
     /**

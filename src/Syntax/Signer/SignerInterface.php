@@ -19,6 +19,8 @@ use Cel\Syntax\Expression;
  * `foo(3)`) may or may not produce the same signature. This behavior depends
  * entirely on the implementation and whether it performs optimizations like
  * constant folding before signing.
+ *
+ * @api
  */
 interface SignerInterface
 {

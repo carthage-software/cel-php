@@ -11,6 +11,8 @@ use Override;
 
 /**
  * Represents a message value.
+ *
+ * @api
  */
 final readonly class MessageValue extends Value
 {

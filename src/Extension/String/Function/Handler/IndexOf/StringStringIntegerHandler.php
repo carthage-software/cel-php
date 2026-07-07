@@ -20,6 +20,9 @@ use function mb_strlen;
 use function mb_strpos;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class StringStringIntegerHandler implements FunctionOverloadHandlerInterface
 {
     /**

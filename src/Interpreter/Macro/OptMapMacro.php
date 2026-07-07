@@ -23,6 +23,8 @@ use function sprintf;
  * `optional.none()` is returned.
  *
  * @example optional.of(42).optMap(y, y + 1).value() // 43
+ *
+ * @internal
  */
 final readonly class OptMapMacro implements MacroInterface
 {

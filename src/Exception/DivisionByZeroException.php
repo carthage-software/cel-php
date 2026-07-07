@@ -9,6 +9,8 @@ use Throwable;
 
 /**
  * Thrown when division or modulo by zero is attempted.
+ *
+ * @api
  */
 final class DivisionByZeroException extends EvaluationException
 {

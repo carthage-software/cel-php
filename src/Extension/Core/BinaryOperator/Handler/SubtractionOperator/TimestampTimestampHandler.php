@@ -18,6 +18,8 @@ use Psl\DateTime\Duration;
 
 /**
  * Handles `timestamp - timestamp`, yielding the duration between the two instants.
+ *
+ * @internal
  */
 final readonly class TimestampTimestampHandler implements BinaryOperatorOverloadHandlerInterface
 {

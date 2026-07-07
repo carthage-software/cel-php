@@ -12,6 +12,8 @@ use Override;
 
 /**
  * The `list(T).last() -> optional(T)` member function.
+ *
+ * @internal
  */
 final readonly class LastFunction implements FunctionInterface
 {

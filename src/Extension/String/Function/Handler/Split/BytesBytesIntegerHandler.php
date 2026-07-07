@@ -20,6 +20,9 @@ use function array_map;
 use function explode;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesIntegerHandler implements FunctionOverloadHandlerInterface
 {
     /**

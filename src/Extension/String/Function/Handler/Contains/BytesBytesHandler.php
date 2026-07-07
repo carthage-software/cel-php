@@ -16,6 +16,9 @@ use Override;
 
 use function str_contains;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

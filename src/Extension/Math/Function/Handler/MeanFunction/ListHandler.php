@@ -18,6 +18,9 @@ use Override;
 use function count;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
     /**

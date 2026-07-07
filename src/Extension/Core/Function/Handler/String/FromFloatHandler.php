@@ -17,6 +17,8 @@ use function sprintf;
 
 /**
  * Handles string(float) -> string
+ *
+ * @internal
  */
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {

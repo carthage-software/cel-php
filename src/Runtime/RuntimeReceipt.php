@@ -6,6 +6,9 @@ namespace Cel\Runtime;
 
 use Cel\Value\Value;
 
+/**
+ * @api
+ */
 final readonly class RuntimeReceipt
 {
     public function __construct(

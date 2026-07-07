@@ -15,6 +15,8 @@ use Override;
 
 /**
  * Handles uint(boolean) -> unsigned_integer
+ *
+ * @internal
  */
 final readonly class FromBooleanHandler implements FunctionOverloadHandlerInterface
 {

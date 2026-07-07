@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Parser;
+namespace Cel\Parser\Internal;
 
 use Cel\Common\HasCursorInterface;
 use Cel\Lexer\LexerInterface;
@@ -18,6 +18,8 @@ use function count;
 /**
  * A buffered token stream that wraps a Lexer, providing lookahead
  * capabilities and automatically skipping trivia tokens (whitespace, comments).
+ *
+ * @internal
  */
 final class TokenStream implements HasCursorInterface
 {

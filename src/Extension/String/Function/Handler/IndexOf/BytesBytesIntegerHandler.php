@@ -20,6 +20,9 @@ use function sprintf;
 use function strlen;
 use function strpos;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesIntegerHandler implements FunctionOverloadHandlerInterface
 {
     /**

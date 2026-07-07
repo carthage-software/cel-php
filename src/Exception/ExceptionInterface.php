@@ -11,5 +11,7 @@ use Throwable;
  *
  * This allows consumers to catch any exception originating from this library
  * with a single catch block.
+ *
+ * @api
  */
 interface ExceptionInterface extends Throwable {}

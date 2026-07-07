@@ -8,6 +8,9 @@ use Cel\Extension\ExtensionInterface;
 use Cel\Syntax\Binary\BinaryOperatorKind;
 use Override;
 
+/**
+ * @api
+ */
 final readonly class CoreExtension implements ExtensionInterface
 {
     /**

@@ -16,6 +16,8 @@ use Override;
  * Handles duration(duration) -> duration
  *
  * The identity overload: returns the duration unchanged.
+ *
+ * @internal
  */
 final readonly class FromDurationHandler implements FunctionOverloadHandlerInterface
 {

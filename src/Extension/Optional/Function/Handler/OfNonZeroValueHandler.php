@@ -15,6 +15,8 @@ use Override;
 /**
  * Handles `optional.ofNonZeroValue(T) -> optional(T)`, wrapping the value only when
  * it is not a zero value (otherwise returning `optional.none()`).
+ *
+ * @internal
  */
 final readonly class OfNonZeroValueHandler implements FunctionOverloadHandlerInterface
 {

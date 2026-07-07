@@ -13,6 +13,8 @@ namespace Cel\Value;
  * never null), and `google.protobuf.Value` yields null. Types that genuinely
  * need a proto runtime (`Any`, `Struct`, `ListValue`, message schemas) are not
  * handled here and fall through to the ordinary message path.
+ *
+ * @internal
  */
 final readonly class WellKnownType
 {

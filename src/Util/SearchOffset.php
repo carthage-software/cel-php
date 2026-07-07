@@ -11,6 +11,8 @@ use function sprintf;
 /**
  * Normalizes a search offset the way the string functions expect: a negative
  * offset counts back from the end, and an offset outside the string is an error.
+ *
+ * @internal
  */
 final readonly class SearchOffset
 {

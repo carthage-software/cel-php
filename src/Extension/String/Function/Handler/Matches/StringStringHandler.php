@@ -23,6 +23,8 @@ use function str_replace;
 
 /**
  * Handles matches(string, string) -> bool.
+ *
+ * @internal
  */
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {

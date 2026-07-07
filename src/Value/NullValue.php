@@ -9,6 +9,8 @@ use Override;
 
 /**
  * Represents a null value.
+ *
+ * @api
  */
 final readonly class NullValue extends Value
 {

@@ -23,6 +23,8 @@ use function sprintf;
  * the transformation is not evaluated and `optional.none()` is returned.
  *
  * @example {'k': {'n': 'v'}}.?k.optFlatMap(m, m.?n).value() // "v"
+ *
+ * @internal
  */
 final readonly class OptFlatMapMacro implements MacroInterface
 {

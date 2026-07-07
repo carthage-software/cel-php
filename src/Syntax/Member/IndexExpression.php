@@ -15,6 +15,8 @@ use Override;
  * When `$question` is set, the access is an optional index (`my_list[?0]`,
  * `my_map[?key]`) that yields an `optional` value rather than erroring when the
  * index or key is absent.
+ *
+ * @api
  */
 final readonly class IndexExpression extends Expression
 {

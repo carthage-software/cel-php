@@ -16,6 +16,8 @@ use Override;
 
 /**
  * Handles `bool in map`, testing whether a boolean value is a key of the map.
+ *
+ * @internal
  */
 final readonly class BooleanMapHandler implements BinaryOperatorOverloadHandlerInterface
 {

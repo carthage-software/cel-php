@@ -14,6 +14,8 @@ use Cel\Syntax\Expression;
 
 /**
  * @require-implements ParserInterface
+ *
+ * @api
  */
 trait ParserConvenienceMethodsTrait
 {

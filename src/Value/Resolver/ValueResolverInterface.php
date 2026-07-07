@@ -11,6 +11,8 @@ use Cel\Value\Value;
  *
  * Value resolvers enable custom type support by allowing extensions
  * to provide their own conversion logic for specific types.
+ *
+ * @api
  */
 interface ValueResolverInterface
 {

@@ -9,6 +9,8 @@ use Override;
 
 /**
  * Represents a boolean value.
+ *
+ * @api
  */
 final readonly class BooleanValue extends Value
 {

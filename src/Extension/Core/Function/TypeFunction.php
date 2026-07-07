@@ -13,6 +13,8 @@ use Override;
 /**
  * The `type` function returns the type of its argument as a first-class type
  * value, so that expressions like `type(1) == int` and `type(type(1))` work.
+ *
+ * @internal
  */
 final readonly class TypeFunction implements FunctionInterface
 {

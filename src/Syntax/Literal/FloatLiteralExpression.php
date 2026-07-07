@@ -10,6 +10,8 @@ use Override;
 
 /**
  * @extends LiteralExpression<float>
+ *
+ * @api
  */
 final readonly class FloatLiteralExpression extends LiteralExpression
 {

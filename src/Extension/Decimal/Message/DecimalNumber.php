@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Extension\Decimal;
+namespace Cel\Extension\Decimal\Message;
 
 use Cel\Exception\InternalException;
 use Cel\Message\MessageInterface;
@@ -17,6 +17,8 @@ use Override;
  *
  * This allows Decimal numbers to be used seamlessly in CEL expressions
  * with full operator overload support.
+ *
+ * @api
  */
 final readonly class DecimalNumber implements MessageInterface, ZeroValueInterface
 {

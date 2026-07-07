@@ -10,6 +10,8 @@ use Override;
 
 /**
  * Represents an integer value.
+ *
+ * @api
  */
 final readonly class IntegerValue extends Value
 {

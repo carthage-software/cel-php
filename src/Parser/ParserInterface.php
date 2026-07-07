@@ -14,6 +14,8 @@ use Psl\Default\DefaultInterface;
 /**
  * Defines the contract for a parser, which consumes a stream of tokens from a lexer
  * and produces a syntax tree.
+ *
+ * @api
  */
 interface ParserInterface extends DefaultInterface
 {

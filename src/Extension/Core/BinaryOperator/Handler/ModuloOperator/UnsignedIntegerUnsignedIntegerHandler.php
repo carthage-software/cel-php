@@ -16,6 +16,9 @@ use Override;
 
 use function bcmod;
 
+/**
+ * @internal
+ */
 final readonly class UnsignedIntegerUnsignedIntegerHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

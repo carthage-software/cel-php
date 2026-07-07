@@ -27,6 +27,8 @@ use const PHP_INT_MIN;
  * - comparisons involving a double are range-checked before falling back to a
  *   double comparison, avoiding precision loss for values outside the double's
  *   integer range.
+ *
+ * @internal
  */
 final readonly class NumericComparator
 {

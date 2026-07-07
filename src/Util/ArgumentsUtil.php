@@ -9,6 +9,9 @@ use Cel\Value\Value;
 
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class ArgumentsUtil
 {
     private function __construct() {}

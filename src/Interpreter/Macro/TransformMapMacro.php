@@ -25,6 +25,8 @@ use function sprintf;
  * `map.transformMap(k, v, filter, transform)`.
  *
  * @example {'foo': 'bar'}.transformMap(k, v, k + v)  // {'foo': 'foobar'}
+ *
+ * @internal
  */
 final readonly class TransformMapMacro implements MacroInterface
 {

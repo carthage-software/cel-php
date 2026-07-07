@@ -22,6 +22,8 @@ use function sprintf;
 
 /**
  * Handles getFullYear(timestamp) and getFullYear(timestamp, string) -> int
+ *
+ * @internal
  */
 final readonly class TimestampHandler implements FunctionOverloadHandlerInterface
 {

@@ -23,6 +23,8 @@ use function sprintf;
  *
  * @example list.all(x, x > 0)
  * @example [1, 2].all(i, v, i < v)
+ *
+ * @internal
  */
 final readonly class AllMacro implements MacroInterface
 {

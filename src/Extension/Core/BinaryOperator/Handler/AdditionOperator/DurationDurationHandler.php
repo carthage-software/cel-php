@@ -16,6 +16,8 @@ use Override;
 
 /**
  * Handles `duration + duration`, summing the two durations.
+ *
+ * @internal
  */
 final readonly class DurationDurationHandler implements BinaryOperatorOverloadHandlerInterface
 {

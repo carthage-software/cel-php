@@ -20,6 +20,8 @@ use Override;
  *
  * This decorator wraps a ParserInterface and OptimizerInterface to
  * automatically optimize expressions after parsing them.
+ *
+ * @api
  */
 final readonly class OptimizedParser implements ParserInterface
 {

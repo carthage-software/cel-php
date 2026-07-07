@@ -17,6 +17,9 @@ use Cel\Value\Value;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class ComparisonOperator implements BinaryOperatorOverloadInterface
 {
     public function __construct(

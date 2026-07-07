@@ -21,6 +21,8 @@ use function sprintf;
  * every entry is evaluated, so a predicate error is not absorbed.
  *
  * @example [5, 7, 8].existsOne(i, v, v % 5 == i)
+ *
+ * @internal
  */
 final readonly class ExistsOneTwoVarMacro implements MacroInterface
 {

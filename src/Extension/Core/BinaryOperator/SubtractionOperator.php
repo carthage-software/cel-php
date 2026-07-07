@@ -15,6 +15,9 @@ use Cel\Syntax\Binary\BinaryOperatorKind;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class SubtractionOperator implements BinaryOperatorOverloadInterface
 {
     #[Override]

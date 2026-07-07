@@ -22,6 +22,8 @@ use const PHP_INT_MIN;
 
 /**
  * Handles int(float) -> integer
+ *
+ * @internal
  */
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {

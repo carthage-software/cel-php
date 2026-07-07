@@ -14,6 +14,9 @@ use Override;
 
 use function array_reverse;
 
+/**
+ * @internal
+ */
 final readonly class ReverseHandler implements FunctionOverloadHandlerInterface
 {
     /**

@@ -16,6 +16,9 @@ use Override;
 
 use function implode;
 
+/**
+ * @internal
+ */
 final readonly class JoinWithSeparatorHandler implements FunctionOverloadHandlerInterface
 {
     /**

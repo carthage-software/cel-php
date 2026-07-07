@@ -12,6 +12,9 @@ use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class StringStringHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

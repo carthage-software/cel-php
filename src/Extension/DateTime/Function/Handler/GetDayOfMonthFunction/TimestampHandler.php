@@ -22,6 +22,8 @@ use function sprintf;
 
 /**
  * Handles getDayOfMonth(timestamp) and getDayOfMonth(timestamp, string) -> int
+ *
+ * @internal
  */
 final readonly class TimestampHandler implements FunctionOverloadHandlerInterface
 {

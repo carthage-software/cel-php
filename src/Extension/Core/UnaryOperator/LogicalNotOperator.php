@@ -10,6 +10,9 @@ use Cel\Syntax\Unary\UnaryOperatorKind;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class LogicalNotOperator implements UnaryOperatorOverloadInterface
 {
     #[Override]

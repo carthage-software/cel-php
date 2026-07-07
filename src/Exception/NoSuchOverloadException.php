@@ -15,6 +15,8 @@ use function sprintf;
 
 /**
  * Exception thrown when a function is called with an invalid set of argument types.
+ *
+ * @api
  */
 final class NoSuchOverloadException extends EvaluationException
 {

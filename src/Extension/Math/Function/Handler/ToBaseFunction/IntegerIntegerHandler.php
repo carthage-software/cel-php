@@ -17,6 +17,9 @@ use Override;
 
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class IntegerIntegerHandler implements FunctionOverloadHandlerInterface
 {
     /**

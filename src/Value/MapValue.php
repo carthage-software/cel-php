@@ -12,6 +12,8 @@ use function count;
 
 /**
  * Represents a map value.
+ *
+ * @api
  */
 final readonly class MapValue extends Value
 {

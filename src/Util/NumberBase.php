@@ -25,6 +25,8 @@ use const PHP_INT_MAX;
 /**
  * Radix conversion for the CEL math extension, using digits `0-9a-zA-Z` for
  * bases up to 62.
+ *
+ * @internal
  */
 final readonly class NumberBase
 {

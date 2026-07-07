@@ -17,6 +17,8 @@ use function mb_strlen;
 
 /**
  * Handles size(bytes) -> integer
+ *
+ * @internal
  */
 final readonly class FromBytesHandler implements FunctionOverloadHandlerInterface
 {

@@ -11,6 +11,9 @@ use function array_map;
 use function count;
 use function implode;
 
+/**
+ * @api
+ */
 final class UnexpectedEndOfFileException extends RuntimeException implements ExceptionInterface
 {
     /**

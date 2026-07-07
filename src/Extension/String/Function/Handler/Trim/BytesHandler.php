@@ -15,6 +15,9 @@ use Override;
 
 use function trim;
 
+/**
+ * @internal
+ */
 final readonly class BytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

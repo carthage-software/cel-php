@@ -22,6 +22,8 @@ use function sprintf;
 
 /**
  * Returns the one-based day of the month (1-31).
+ *
+ * @internal
  */
 final readonly class TimestampHandler implements FunctionOverloadHandlerInterface
 {

@@ -8,6 +8,8 @@ use Cel\Syntax\Expression;
 
 /**
  * Defines the contract for a single, targeted optimization pass.
+ *
+ * @api
  */
 interface OptimizationInterface
 {

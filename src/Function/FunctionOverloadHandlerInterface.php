@@ -12,6 +12,8 @@ use Cel\Value\Value;
  *
  * Each handler implements a specific overload of a CEL function,
  * making the code more readable and testable.
+ *
+ * @api
  */
 interface FunctionOverloadHandlerInterface
 {

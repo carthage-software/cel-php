@@ -15,6 +15,8 @@ use Override;
  * When `$question` is set, the entry is optional (`{?"key": value}`): the value
  * expression must evaluate to an `optional`, and the entry is only included in
  * the resulting map when that optional holds a value.
+ *
+ * @api
  */
 final readonly class MapEntryNode extends Node
 {

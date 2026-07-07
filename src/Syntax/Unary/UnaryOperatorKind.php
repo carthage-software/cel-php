@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cel\Syntax\Unary;
 
+/**
+ * @api
+ */
 enum UnaryOperatorKind
 {
     case Negate;

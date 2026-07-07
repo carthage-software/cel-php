@@ -19,6 +19,8 @@ use function sprintf;
 
 /**
  * Handles bool(string) -> boolean
+ *
+ * @internal
  */
 final readonly class FromStringHandler implements FunctionOverloadHandlerInterface
 {

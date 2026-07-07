@@ -15,6 +15,8 @@ use Override;
  *
  * A leading dot (`$leadingDot`) marks an absolute reference (`.y`), resolved
  * from the root namespace rather than relative to the current scope.
+ *
+ * @api
  */
 final readonly class IdentifierExpression extends Expression
 {

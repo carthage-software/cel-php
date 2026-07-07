@@ -9,6 +9,8 @@ use Cel\Value\ValueKind;
 
 /**
  * Defines the contract for a unary operator overload.
+ *
+ * @api
  */
 interface UnaryOperatorOverloadInterface
 {

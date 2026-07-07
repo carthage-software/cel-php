@@ -6,4 +6,7 @@ namespace Cel\Exception;
 
 use InvalidArgumentException;
 
+/**
+ * @api
+ */
 final class InvalidMessageFieldsException extends InvalidArgumentException implements ExceptionInterface {}

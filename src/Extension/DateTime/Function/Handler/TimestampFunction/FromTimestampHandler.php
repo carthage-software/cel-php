@@ -16,6 +16,8 @@ use Override;
  * Handles timestamp(timestamp) -> timestamp
  *
  * The identity overload: returns the timestamp unchanged.
+ *
+ * @internal
  */
 final readonly class FromTimestampHandler implements FunctionOverloadHandlerInterface
 {

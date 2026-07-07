@@ -15,6 +15,8 @@ use Override;
 
 /**
  * Handles bool(int) -> boolean
+ *
+ * @internal
  */
 final readonly class FromIntegerHandler implements FunctionOverloadHandlerInterface
 {

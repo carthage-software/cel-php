@@ -9,6 +9,8 @@ use Override;
 
 /**
  * Represents a selector in the source code.
+ *
+ * @api
  */
 final readonly class SelectorNode extends Node
 {

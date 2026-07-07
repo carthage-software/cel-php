@@ -10,6 +10,9 @@ use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class MatchesFunction implements FunctionInterface
 {
     #[Override]

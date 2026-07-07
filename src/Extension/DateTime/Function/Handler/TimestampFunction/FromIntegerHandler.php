@@ -19,6 +19,9 @@ use Psl\DateTime\Timestamp;
 
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class FromIntegerHandler implements FunctionOverloadHandlerInterface
 {
     /**

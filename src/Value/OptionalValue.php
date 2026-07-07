@@ -14,6 +14,8 @@ use Override;
  * optional indexing (`map[?key]`, `list[?index]`), and by the `optional.of`,
  * `optional.ofNonZeroValue`, and `optional.none` functions. An optional either
  * holds a concrete value (`optional.of(x)`) or is empty (`optional.none()`).
+ *
+ * @api
  */
 final readonly class OptionalValue extends Value
 {

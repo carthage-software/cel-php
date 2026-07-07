@@ -22,6 +22,9 @@ use Cel\Syntax\PunctuatedSequence;
 use Cel\Syntax\Unary\UnaryExpression;
 use Override;
 
+/**
+ * @api
+ */
 final class Optimizer implements OptimizerInterface
 {
     /**

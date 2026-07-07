@@ -40,6 +40,8 @@ use function sprintf;
  * This class provides a way to control various features of the runtime,
  * such as which extensions are enabled and which message types
  * are allowed to be constructed, to ensure both flexibility and security.
+ *
+ * @api
  */
 final class Configuration implements DefaultInterface
 {

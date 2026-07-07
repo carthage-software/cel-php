@@ -29,6 +29,8 @@ use const STR_PAD_RIGHT;
 
 /**
  * Parses an RFC3339 timestamp string.
+ *
+ * @internal
  */
 final readonly class FromStringHandler implements FunctionOverloadHandlerInterface
 {

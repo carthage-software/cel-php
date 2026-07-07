@@ -19,6 +19,8 @@ use function sprintf;
 
 /**
  * Handles uint(string) -> unsigned_integer
+ *
+ * @internal
  */
 final readonly class FromStringHandler implements FunctionOverloadHandlerInterface
 {

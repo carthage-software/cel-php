@@ -16,6 +16,8 @@ use Override;
  * Handles type(any) -> type
  *
  * Returns the type of the argument as a first-class {@see TypeValue}.
+ *
+ * @internal
  */
 final readonly class TypeHandler implements FunctionOverloadHandlerInterface
 {

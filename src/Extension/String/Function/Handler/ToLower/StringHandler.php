@@ -15,6 +15,9 @@ use Override;
 
 use function mb_strtolower;
 
+/**
+ * @internal
+ */
 final readonly class StringHandler implements FunctionOverloadHandlerInterface
 {
     /**

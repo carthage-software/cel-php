@@ -12,6 +12,8 @@ use Override;
 
 /**
  * The `optional(T).value() -> T` member function.
+ *
+ * @internal
  */
 final readonly class ValueFunction implements FunctionInterface
 {

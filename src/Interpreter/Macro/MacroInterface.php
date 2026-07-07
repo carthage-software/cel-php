@@ -15,6 +15,8 @@ use Cel\Value\Value;
  * Macros are special functions that have access to the unevaluated AST
  * and can implement custom evaluation logic. Examples include `has()`,
  * `all()`, `exists()`, etc.
+ *
+ * @internal
  */
 interface MacroInterface
 {

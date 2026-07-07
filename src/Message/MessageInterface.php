@@ -14,6 +14,8 @@ use Cel\Value\Value;
  * Implementing this interface allows user-defined classes to be treated as
  * first-class message types within the CEL runtime, enabling them to be
  * passed into evaluations and returned from custom functions.
+ *
+ * @api
  */
 interface MessageInterface
 {

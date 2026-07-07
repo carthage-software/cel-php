@@ -22,6 +22,8 @@ use function sprintf;
  *
  * @example list.exists(x, x > 0)
  * @example [1, 2].exists(i, v, i == 1 && v == 2)
+ *
+ * @internal
  */
 final readonly class ExistsMacro implements MacroInterface
 {

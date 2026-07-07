@@ -8,6 +8,8 @@ use Cel\Exception\InternalException;
 use Cel\Lexer\LexerInterface;
 use Cel\Parser\Exception\UnexpectedEndOfFileException;
 use Cel\Parser\Exception\UnexpectedTokenException;
+use Cel\Parser\Internal\StringUnescaper;
+use Cel\Parser\Internal\TokenStream;
 use Cel\Span\Span;
 use Cel\Syntax\Aggregate\FieldInitializerNode;
 use Cel\Syntax\Aggregate\ListElementNode;
@@ -61,6 +63,8 @@ use function substr;
  *
  * @mago-expect lint:too-many-methods
  * @mago-expect lint:kan-defect
+ *
+ * @api
  */
 final class Parser implements ParserInterface
 {

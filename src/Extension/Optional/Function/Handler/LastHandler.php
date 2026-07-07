@@ -18,6 +18,8 @@ use function count;
 /**
  * Handles `list(T).last() -> optional(T)`, returning the last element wrapped in
  * an optional, or `optional.none()` when the list is empty.
+ *
+ * @internal
  */
 final readonly class LastHandler implements FunctionOverloadHandlerInterface
 {

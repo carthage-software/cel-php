@@ -11,6 +11,8 @@ use function sprintf;
 
 /**
  * Thrown when an operation is not supported for the given types.
+ *
+ * @api
  */
 final class UnsupportedOperationException extends EvaluationException
 {

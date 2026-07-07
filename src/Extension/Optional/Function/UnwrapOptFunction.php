@@ -13,6 +13,8 @@ use Override;
 /**
  * The `list(optional(T)).unwrapOpt() -> list(T)` member function, the postfix
  * form of `optional.unwrap`.
+ *
+ * @internal
  */
 final readonly class UnwrapOptFunction implements FunctionInterface
 {

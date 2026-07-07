@@ -9,6 +9,9 @@ use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class MaxFunction implements FunctionInterface
 {
     #[Override]

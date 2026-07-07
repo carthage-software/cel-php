@@ -14,6 +14,9 @@ use Cel\Value\IntegerValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class IntegerIntegerHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

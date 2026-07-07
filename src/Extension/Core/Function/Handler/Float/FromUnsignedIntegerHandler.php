@@ -15,6 +15,8 @@ use Override;
 
 /**
  * Handles float(uint) -> float
+ *
+ * @internal
  */
 final readonly class FromUnsignedIntegerHandler implements FunctionOverloadHandlerInterface
 {

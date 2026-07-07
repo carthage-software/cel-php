@@ -12,6 +12,9 @@ use Cel\Value\BooleanValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class BooleanHandler implements UnaryOperatorOverloadHandlerInterface
 {
     /**

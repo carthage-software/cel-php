@@ -9,6 +9,8 @@ namespace Cel;
  *
  * This class serves as a concrete implementation of the CEL specification,
  * providing parsing, optimization, and runtime evaluation capabilities.
+ *
+ * @api
  */
 final readonly class Cel extends CommonExpressionLanguage
 {

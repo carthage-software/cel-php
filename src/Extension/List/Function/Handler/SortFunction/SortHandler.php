@@ -14,6 +14,9 @@ use Override;
 
 use function usort;
 
+/**
+ * @internal
+ */
 final readonly class SortHandler implements FunctionOverloadHandlerInterface
 {
     /**

@@ -16,6 +16,8 @@ use Override;
  * When `$question` is set, the access is an optional field selection
  * (`my_var.?field`) that yields an `optional` value rather than erroring
  * when the field is absent.
+ *
+ * @api
  */
 final readonly class MemberAccessExpression extends Expression
 {

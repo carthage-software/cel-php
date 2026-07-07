@@ -16,6 +16,9 @@ use Override;
 
 use function mb_strpos;
 
+/**
+ * @internal
+ */
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {
     /**

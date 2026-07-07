@@ -15,6 +15,8 @@ use Override;
  *
  * It is a type-system hint (marking a value as dynamically typed) with no
  * runtime effect, provided here for parity with the CEL standard environment.
+ *
+ * @internal
  */
 final readonly class DynFunction implements FunctionInterface
 {

@@ -13,6 +13,8 @@ use Override;
  *
  * Two type values are equal when they name the same type. The type of a type
  * value is itself `type`, so `type(type(x))` yields `type`.
+ *
+ * @api
  */
 final readonly class TypeValue extends Value
 {

@@ -12,6 +12,8 @@ use Override;
 
 /**
  * Handles `optional.none() -> optional(T)`, producing an empty optional.
+ *
+ * @internal
  */
 final readonly class NoneHandler implements FunctionOverloadHandlerInterface
 {

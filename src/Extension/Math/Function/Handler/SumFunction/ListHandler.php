@@ -17,6 +17,9 @@ use Override;
 use function array_map;
 use function array_sum;
 
+/**
+ * @internal
+ */
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
     /**

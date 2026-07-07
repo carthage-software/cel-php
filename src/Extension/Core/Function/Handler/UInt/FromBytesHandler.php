@@ -19,6 +19,8 @@ use function sprintf;
 
 /**
  * Handles uint(bytes) -> unsigned_integer
+ *
+ * @internal
  */
 final readonly class FromBytesHandler implements FunctionOverloadHandlerInterface
 {

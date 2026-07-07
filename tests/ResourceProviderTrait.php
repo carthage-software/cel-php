@@ -12,6 +12,8 @@ use function scandir;
 
 /**
  * @require-extends TestCase
+ *
+ * @internal
  */
 trait ResourceProviderTrait
 {

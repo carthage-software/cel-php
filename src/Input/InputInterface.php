@@ -13,6 +13,8 @@ use Cel\Exception\InternalException;
  * Provides methods to read, peek, consume, and skip characters from an input
  * string while keeping track of the current position. This is designed to
  * mimic the behavior of a byte-oriented stream, similar to its Rust counterpart.
+ *
+ * @api
  */
 interface InputInterface extends HasCursorInterface
 {

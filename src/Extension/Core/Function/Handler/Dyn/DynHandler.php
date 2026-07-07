@@ -17,6 +17,8 @@ use Override;
  * `dyn` is the identity function: it returns its argument unchanged. It exists
  * to signal to a type checker that a value should be treated as dynamic; at
  * runtime it has no effect.
+ *
+ * @internal
  */
 final readonly class DynHandler implements FunctionOverloadHandlerInterface
 {

@@ -6,8 +6,8 @@ namespace Cel\Tests\Extension;
 
 use Cel\CommonExpressionLanguage;
 use Cel\Extension\Decimal\DecimalExtension;
-use Cel\Extension\Decimal\DecimalFactory;
-use Cel\Extension\Decimal\DecimalNumber;
+use Cel\Extension\Decimal\Message\DecimalNumber;
+use Cel\Extension\Decimal\Util\DecimalFactory;
 use Cel\Value\BooleanValue;
 use Cel\Value\MessageValue;
 use Override;

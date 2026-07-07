@@ -11,6 +11,9 @@ use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class ReplaceFunction implements FunctionInterface
 {
     #[Override]

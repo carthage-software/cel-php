@@ -9,6 +9,8 @@ use Override;
 
 /**
  * Represents a string value.
+ *
+ * @api
  */
 final readonly class StringValue extends Value
 {

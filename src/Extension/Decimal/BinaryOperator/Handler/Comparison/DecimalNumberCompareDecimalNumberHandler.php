@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\BinaryOperator\Handler\Comparison;
 
 use Cel\Exception\InternalException;
-use Cel\Extension\Decimal\DecimalNumber;
+use Cel\Extension\Decimal\Message\DecimalNumber;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Syntax\Binary\BinaryOperatorKind;
@@ -22,6 +22,8 @@ use function sprintf;
 
 /**
  * Handles comparison of two DecimalNumber values.
+ *
+ * @internal
  */
 final readonly class DecimalNumberCompareDecimalNumberHandler implements BinaryOperatorOverloadHandlerInterface
 {

@@ -19,6 +19,9 @@ use function array_map;
 use function assert;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class FilterMacro implements MacroInterface
 {
     #[Override]

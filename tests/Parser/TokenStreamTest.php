@@ -8,7 +8,7 @@ use Cel\Input\Input;
 use Cel\Lexer\Lexer;
 use Cel\Parser\Exception\UnexpectedEndOfFileException;
 use Cel\Parser\Exception\UnexpectedTokenException;
-use Cel\Parser\TokenStream;
+use Cel\Parser\Internal\TokenStream;
 use Cel\Token\TokenKind;
 use PHPUnit\Framework\TestCase;
 

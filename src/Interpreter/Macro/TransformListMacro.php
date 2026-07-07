@@ -22,6 +22,8 @@ use function sprintf;
  * `list.transformList(i, v, filter, transform)`.
  *
  * @example [2, 4, 6].transformList(i, v, v / 2 + i)
+ *
+ * @internal
  */
 final readonly class TransformListMacro implements MacroInterface
 {

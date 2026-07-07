@@ -15,6 +15,8 @@ use function sprintf;
  * This exception indicates a programming error within the CEL library itself,
  * not a user error. If you encounter this exception, it likely indicates a bug
  * that should be reported.
+ *
+ * @api
  */
 final class InternalException extends LogicException implements ExceptionInterface
 {

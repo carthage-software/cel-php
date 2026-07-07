@@ -31,6 +31,8 @@ use Cel\Value\Value;
  * @throws UnexpectedTokenException If the parser encounters an unexpected token.
  * @throws IncompatibleValueTypeException If a provided variable is of an unsupported type.
  * @throws EvaluationException If evaluation fails during runtime.
+ *
+ * @api
  */
 function evaluate(
     InputInterface|string $expression,

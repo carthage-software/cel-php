@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\BinaryOperator\Handler\Division;
 
 use Cel\Exception\InternalException;
-use Cel\Extension\Decimal\DecimalFactory;
-use Cel\Extension\Decimal\DecimalNumber;
+use Cel\Extension\Decimal\Message\DecimalNumber;
+use Cel\Extension\Decimal\Util\DecimalFactory;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Util\OperandUtil;
@@ -21,6 +21,8 @@ use function sprintf;
 
 /**
  * Handles division of a DecimalNumber by an UnsignedInteger.
+ *
+ * @internal
  */
 final readonly class DecimalNumberDivideUnsignedIntegerHandler implements BinaryOperatorOverloadHandlerInterface
 {

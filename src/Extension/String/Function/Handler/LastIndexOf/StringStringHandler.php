@@ -17,6 +17,9 @@ use Override;
 use function mb_strlen;
 use function mb_strrpos;
 
+/**
+ * @internal
+ */
 final readonly class StringStringHandler implements FunctionOverloadHandlerInterface
 {
     /**

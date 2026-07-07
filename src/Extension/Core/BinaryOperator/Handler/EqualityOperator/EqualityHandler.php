@@ -16,6 +16,8 @@ use Override;
  * Equality is total: values of incompatible types are simply unequal rather than
  * producing an error. Numeric values (int, uint, double) compare across types on
  * a single number line, and `null` is equal only to `null`.
+ *
+ * @internal
  */
 final readonly class EqualityHandler implements BinaryOperatorOverloadHandlerInterface
 {

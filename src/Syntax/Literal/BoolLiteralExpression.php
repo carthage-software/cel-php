@@ -10,6 +10,8 @@ use Override;
 
 /**
  * @extends LiteralExpression<bool>
+ *
+ * @api
  */
 final readonly class BoolLiteralExpression extends LiteralExpression
 {

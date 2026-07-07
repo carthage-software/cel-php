@@ -11,6 +11,8 @@ namespace Cel\Message;
  * is never considered a zero value unless its underlying message implements this
  * interface and reports itself as zero (mirroring cel-go's `Zeroer` trait for
  * proto messages).
+ *
+ * @api
  */
 interface ZeroValueInterface
 {

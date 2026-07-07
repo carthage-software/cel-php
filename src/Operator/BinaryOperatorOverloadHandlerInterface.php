@@ -9,6 +9,8 @@ use Cel\Value\Value;
 
 /**
  * Defines the contract for a binary operator overload handler.
+ *
+ * @api
  */
 interface BinaryOperatorOverloadHandlerInterface
 {

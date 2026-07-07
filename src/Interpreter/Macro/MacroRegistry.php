@@ -14,6 +14,8 @@ use Cel\Value\Value;
  *
  * Maintains a collection of macros and provides lookup functionality
  * for macro execution.
+ *
+ * @internal
  */
 final class MacroRegistry
 {

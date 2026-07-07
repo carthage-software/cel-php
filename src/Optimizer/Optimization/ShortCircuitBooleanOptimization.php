@@ -19,6 +19,8 @@ use Override;
  * - `expr && false` -> `false`
  * - `expr || true`  -> `true`
  * - `expr || false` -> `expr`
+ *
+ * @api
  */
 final readonly class ShortCircuitBooleanOptimization implements OptimizationInterface
 {

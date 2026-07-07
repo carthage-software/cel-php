@@ -25,6 +25,8 @@ use function sprintf;
  *
  * @example has(message.field)
  * @example has(map.key)
+ *
+ * @internal
  */
 final readonly class HasMacro implements MacroInterface
 {

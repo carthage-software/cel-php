@@ -12,6 +12,9 @@ use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class TimestampFunction implements FunctionInterface
 {
     #[Override]

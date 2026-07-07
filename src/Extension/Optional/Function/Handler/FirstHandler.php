@@ -16,6 +16,8 @@ use Override;
 /**
  * Handles `list(T).first() -> optional(T)`, returning the first element wrapped
  * in an optional, or `optional.none()` when the list is empty.
+ *
+ * @internal
  */
 final readonly class FirstHandler implements FunctionOverloadHandlerInterface
 {

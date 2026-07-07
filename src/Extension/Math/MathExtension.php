@@ -7,6 +7,9 @@ namespace Cel\Extension\Math;
 use Cel\Extension\ExtensionInterface;
 use Override;
 
+/**
+ * @api
+ */
 final readonly class MathExtension implements ExtensionInterface
 {
     /**

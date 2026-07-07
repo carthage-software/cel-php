@@ -15,6 +15,8 @@ use function substr;
  * Splits a string on an empty delimiter into single characters (or bytes),
  * honouring an optional limit, matching how the string functions behave when
  * asked to split with no delimiter.
+ *
+ * @internal
  */
 final readonly class StringSplit
 {

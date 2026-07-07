@@ -15,6 +15,8 @@ use Override;
  * When `$question` is set, the element is optional (`[?value]`): the value
  * expression must evaluate to an `optional`, and the element is only appended to
  * the resulting list when that optional holds a value.
+ *
+ * @api
  */
 final readonly class ListElementNode extends Node
 {

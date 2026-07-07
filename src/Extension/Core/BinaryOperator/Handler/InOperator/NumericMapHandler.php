@@ -17,6 +17,8 @@ use Override;
 /**
  * Handles `numeric in map`, testing whether a numeric value (int, uint, or double)
  * is a key of the map, with heterogeneous numeric key matching.
+ *
+ * @internal
  */
 final readonly class NumericMapHandler implements BinaryOperatorOverloadHandlerInterface
 {

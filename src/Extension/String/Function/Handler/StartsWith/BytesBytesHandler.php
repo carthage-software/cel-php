@@ -16,6 +16,9 @@ use Override;
 
 use function str_starts_with;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

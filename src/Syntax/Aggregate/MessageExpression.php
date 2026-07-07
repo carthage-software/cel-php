@@ -13,6 +13,8 @@ use Override;
 
 /**
  * Represents a message construction, e.g., `google.example.v1.MyMessage{field: "value"}`.
+ *
+ * @api
  */
 final readonly class MessageExpression extends Expression
 {

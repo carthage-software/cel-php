@@ -6,6 +6,9 @@ namespace Cel\Exception;
 
 use InvalidArgumentException;
 
+/**
+ * @api
+ */
 final class MisconfigurationException extends InvalidArgumentException implements ExceptionInterface
 {
     public static function forMessage(string $message): self

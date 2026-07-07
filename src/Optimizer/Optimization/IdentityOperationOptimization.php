@@ -28,6 +28,8 @@ use Override;
  * - `expr / 1` -> `expr`
  * - `expr + ""` -> `expr` (for strings)
  * - `"" + expr` -> `expr` (for strings)
+ *
+ * @api
  */
 final readonly class IdentityOperationOptimization implements OptimizationInterface
 {

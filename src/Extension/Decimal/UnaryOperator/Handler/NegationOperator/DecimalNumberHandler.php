@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\UnaryOperator\Handler\NegationOperator;
 
 use Cel\Exception\InternalException;
-use Cel\Extension\Decimal\DecimalNumber;
+use Cel\Extension\Decimal\Message\DecimalNumber;
 use Cel\Operator\UnaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Unary\UnaryExpression;
 use Cel\Util\OperandUtil;
@@ -17,6 +17,9 @@ use Throwable;
 use function assert;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class DecimalNumberHandler implements UnaryOperatorOverloadHandlerInterface
 {
     /**

@@ -16,6 +16,8 @@ use Override;
 
 /**
  * Handles `duration - duration`, subtracting the second duration from the first.
+ *
+ * @internal
  */
 final readonly class DurationDurationHandler implements BinaryOperatorOverloadHandlerInterface
 {

@@ -8,6 +8,9 @@ use Cel\Span\Span;
 use Cel\Syntax\Node;
 use Override;
 
+/**
+ * @api
+ */
 final readonly class UnaryOperator extends Node
 {
     public function __construct(

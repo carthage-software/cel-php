@@ -16,6 +16,9 @@ use Override;
 use function max;
 use function min;
 
+/**
+ * @internal
+ */
 final readonly class FloatHandler implements FunctionOverloadHandlerInterface
 {
     /**

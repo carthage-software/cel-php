@@ -9,6 +9,9 @@ use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class MeanFunction implements FunctionInterface
 {
     #[Override]

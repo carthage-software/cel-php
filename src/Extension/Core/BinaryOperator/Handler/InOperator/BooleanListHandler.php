@@ -15,6 +15,9 @@ use Override;
 
 use function array_any;
 
+/**
+ * @internal
+ */
 final readonly class BooleanListHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

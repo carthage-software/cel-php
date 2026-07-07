@@ -14,6 +14,8 @@ use Override;
 
 /**
  * Handles uint(unsigned_integer) -> unsigned_integer
+ *
+ * @internal
  */
 final readonly class FromUnsignedIntegerHandler implements FunctionOverloadHandlerInterface
 {

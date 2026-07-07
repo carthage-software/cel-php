@@ -9,6 +9,9 @@ use Cel\Syntax\Expression;
 use Cel\Syntax\ExpressionKind;
 use Override;
 
+/**
+ * @api
+ */
 final readonly class BinaryExpression extends Expression
 {
     public function __construct(

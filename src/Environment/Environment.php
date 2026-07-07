@@ -19,6 +19,8 @@ use function count;
 
 /**
  * A mutable environment for the CEL runtime.
+ *
+ * @api
  */
 final class Environment implements EnvironmentInterface
 {

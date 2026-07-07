@@ -22,6 +22,8 @@ use Override;
  * - decimal(uint) -> DecimalNumber
  * - decimal(float) -> DecimalNumber
  * - decimal(string, int) -> DecimalNumber (with precision)
+ *
+ * @internal
  */
 final readonly class DecimalFunction implements FunctionInterface
 {

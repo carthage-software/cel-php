@@ -22,6 +22,8 @@ use const PHP_INT_MAX;
 
 /**
  * Handles uint(float) -> unsigned_integer
+ *
+ * @internal
  */
 final readonly class FromFloatHandler implements FunctionOverloadHandlerInterface
 {

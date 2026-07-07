@@ -51,3 +51,4 @@ strict-list-index-checks = true
 no-boolean-literal-comparison = true
 strict-array-index-existence = true
 trust-existence-checks = false
+require-api-or-internal = true

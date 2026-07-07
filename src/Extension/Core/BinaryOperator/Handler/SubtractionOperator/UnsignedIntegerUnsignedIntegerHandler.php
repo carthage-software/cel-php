@@ -16,6 +16,9 @@ use Override;
 use function bccomp;
 use function bcsub;
 
+/**
+ * @internal
+ */
 final readonly class UnsignedIntegerUnsignedIntegerHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

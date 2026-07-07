@@ -12,6 +12,8 @@ use function count;
 
 /**
  * Represents a list value.
+ *
+ * @api
  */
 final readonly class ListValue extends Value
 {

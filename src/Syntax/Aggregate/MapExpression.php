@@ -12,6 +12,8 @@ use Override;
 
 /**
  * Represents a map literal, e.g., `{"key1": "value1", "key2": 123}`.
+ *
+ * @api
  */
 final readonly class MapExpression extends Expression
 {

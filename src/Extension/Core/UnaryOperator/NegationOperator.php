@@ -11,6 +11,9 @@ use Cel\Syntax\Unary\UnaryOperatorKind;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class NegationOperator implements UnaryOperatorOverloadInterface
 {
     #[Override]

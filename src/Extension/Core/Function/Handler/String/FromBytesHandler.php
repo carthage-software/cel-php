@@ -19,6 +19,8 @@ use function sprintf;
 
 /**
  * Handles string(bytes) -> string
+ *
+ * @internal
  */
 final readonly class FromBytesHandler implements FunctionOverloadHandlerInterface
 {

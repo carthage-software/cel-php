@@ -8,6 +8,8 @@ use Cel\Span\Span;
 
 /**
  * The base class for all nodes in the Abstract Syntax Tree (AST).
+ *
+ * @api
  */
 abstract readonly class Node
 {

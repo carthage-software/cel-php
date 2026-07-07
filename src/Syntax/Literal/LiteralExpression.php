@@ -8,6 +8,8 @@ use Cel\Syntax\Expression;
 
 /**
  * @template T
+ *
+ * @api
  */
 abstract readonly class LiteralExpression extends Expression
 {

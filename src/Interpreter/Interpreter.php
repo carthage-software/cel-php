@@ -79,6 +79,8 @@ use function strcasecmp;
  * @mago-expect lint:kan-defect
  * @mago-expect lint:cyclomatic-complexity
  * @mago-expect lint:too-many-methods
+ *
+ * @api
  */
 final class Interpreter implements InterpreterInterface, MacroContextInterface
 {

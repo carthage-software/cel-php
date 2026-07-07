@@ -15,6 +15,8 @@ use Override;
  *
  * - `!!expr` -> `expr`
  * - `--expr` -> `expr`
+ *
+ * @api
  */
 final readonly class DoubleNegationOptimization implements OptimizationInterface
 {

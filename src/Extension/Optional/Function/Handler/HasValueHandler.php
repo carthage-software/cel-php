@@ -15,6 +15,8 @@ use Override;
 
 /**
  * Handles `optional(T).hasValue() -> bool`, reporting whether the optional holds a value.
+ *
+ * @internal
  */
 final readonly class HasValueHandler implements FunctionOverloadHandlerInterface
 {

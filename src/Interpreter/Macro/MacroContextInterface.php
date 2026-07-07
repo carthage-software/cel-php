@@ -15,6 +15,8 @@ use Cel\Value\Value;
  * This interface gives macros access to the interpreter's capabilities
  * without exposing the entire Interpreter class, following the principle
  * of least privilege.
+ *
+ * @internal
  */
 interface MacroContextInterface
 {

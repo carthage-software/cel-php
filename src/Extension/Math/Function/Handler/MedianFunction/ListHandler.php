@@ -22,6 +22,9 @@ use function intdiv;
 use function sort;
 use function sprintf;
 
+/**
+ * @internal
+ */
 final readonly class ListHandler implements FunctionOverloadHandlerInterface
 {
     /**

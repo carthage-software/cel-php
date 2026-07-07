@@ -13,6 +13,8 @@ use function strlen;
 
 /**
  * @template T
+ *
+ * @internal
  */
 abstract class AbstractLiteralExpressionTestCase extends TestCase
 {

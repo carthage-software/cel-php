@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\BinaryOperator\Handler\Multiplication;
 
 use Cel\Exception\InternalException;
-use Cel\Extension\Decimal\DecimalNumber;
+use Cel\Extension\Decimal\Message\DecimalNumber;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Util\OperandUtil;
@@ -19,6 +19,8 @@ use function sprintf;
 
 /**
  * Handles multiplication of two DecimalNumber values.
+ *
+ * @internal
  */
 final readonly class DecimalNumberMultiplyDecimalNumberHandler implements BinaryOperatorOverloadHandlerInterface
 {

@@ -12,6 +12,8 @@ use function bccomp;
 
 /**
  * Represents an unsigned integer value.
+ *
+ * @api
  */
 final readonly class UnsignedIntegerValue extends Value
 {

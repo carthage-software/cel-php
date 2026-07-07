@@ -17,6 +17,9 @@ use function chr;
 use function ord;
 use function strlen;
 
+/**
+ * @internal
+ */
 final readonly class BytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

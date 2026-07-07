@@ -7,6 +7,9 @@ namespace Cel\Extension\String;
 use Cel\Extension\ExtensionInterface;
 use Override;
 
+/**
+ * @api
+ */
 final readonly class StringExtension implements ExtensionInterface
 {
     /**

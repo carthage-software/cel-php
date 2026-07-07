@@ -13,6 +13,9 @@ use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class SizeFunction implements FunctionInterface
 {
     /**

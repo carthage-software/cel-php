@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cel\Parser;
+namespace Cel\Parser\Internal;
 
 use Cel\Exception\InternalException;
 use Cel\Util\NumberBase;

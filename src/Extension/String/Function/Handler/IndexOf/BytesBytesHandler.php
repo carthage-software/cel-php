@@ -16,6 +16,9 @@ use Override;
 
 use function strpos;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

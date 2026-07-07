@@ -22,6 +22,8 @@ use function hash;
  *
  * This decorator wraps a ParserInterface and caches parsed expressions
  * to avoid re-parsing the same input multiple times.
+ *
+ * @api
  */
 final readonly class CachedParser implements ParserInterface
 {

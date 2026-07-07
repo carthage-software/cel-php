@@ -17,6 +17,9 @@ use function mb_ord;
 use function mb_str_split;
 use function mb_strtoupper;
 
+/**
+ * @internal
+ */
 final readonly class StringHandler implements FunctionOverloadHandlerInterface
 {
     /**

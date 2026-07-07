@@ -39,6 +39,8 @@ use function is_finite;
  * - `true && false` -> `false`
  * - `!true` -> `false`
  * - `-5` -> `-5` (evaluated)
+ *
+ * @api
  */
 final readonly class ConstantFoldingOptimization implements OptimizationInterface
 {

@@ -15,6 +15,9 @@ use Override;
 
 use function intdiv;
 
+/**
+ * @internal
+ */
 final readonly class DurationHandler implements FunctionOverloadHandlerInterface
 {
     /**

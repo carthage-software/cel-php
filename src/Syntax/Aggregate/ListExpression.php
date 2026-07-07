@@ -12,6 +12,8 @@ use Override;
 
 /**
  * Represents a list literal, e.g., `[1, "foo", true]`.
+ *
+ * @api
  */
 final readonly class ListExpression extends Expression
 {

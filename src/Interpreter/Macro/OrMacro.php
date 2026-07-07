@@ -21,6 +21,8 @@ use function sprintf;
  * target is empty, allowing chains such as `a.or(b).or(c)` to short-circuit.
  *
  * @example optional.none().or(optional.of(1)) // optional.of(1)
+ *
+ * @internal
  */
 final readonly class OrMacro implements MacroInterface
 {

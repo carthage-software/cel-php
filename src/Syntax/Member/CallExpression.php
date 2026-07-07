@@ -20,6 +20,8 @@ use Override;
  * func()
  * target.func(arg1, arg2)
  * ```
+ *
+ * @api
  */
 final readonly class CallExpression extends Expression
 {

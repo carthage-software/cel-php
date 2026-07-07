@@ -16,6 +16,8 @@ use Override;
  *
  * - `true ? thenExpr : elseExpr` -> `thenExpr`
  * - `false ? thenExpr : elseExpr` -> `elseExpr`
+ *
+ * @api
  */
 final readonly class ConditionalSimplificationOptimization implements OptimizationInterface
 {

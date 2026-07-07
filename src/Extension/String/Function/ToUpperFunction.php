@@ -11,6 +11,9 @@ use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class ToUpperFunction implements FunctionInterface
 {
     #[Override]

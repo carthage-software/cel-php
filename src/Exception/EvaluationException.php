@@ -10,6 +10,8 @@ use Throwable;
 
 /**
  * @consistent-constructor
+ *
+ * @api
  */
 class EvaluationException extends RuntimeException implements ExceptionInterface
 {

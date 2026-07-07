@@ -23,6 +23,8 @@ use function sprintf;
 
 /**
  * Handles getMilliseconds(timestamp) and getMilliseconds(timestamp, string) -> int
+ *
+ * @internal
  */
 final readonly class TimestampHandler implements FunctionOverloadHandlerInterface
 {

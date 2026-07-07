@@ -15,6 +15,9 @@ use Cel\Value\StringValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class StringMapHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

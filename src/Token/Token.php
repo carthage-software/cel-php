@@ -11,6 +11,8 @@ use Cel\Span\Span;
  *
  * A token is the smallest meaningful unit of a program and consists of its kind (e.g., Identifier, Operator),
  * its value (the raw text), and its location in the source code (the span).
+ *
+ * @api
  */
 final readonly class Token
 {

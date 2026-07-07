@@ -7,6 +7,9 @@ namespace Cel\Extension\List;
 use Cel\Extension\ExtensionInterface;
 use Override;
 
+/**
+ * @api
+ */
 final readonly class ListExtension implements ExtensionInterface
 {
     /**

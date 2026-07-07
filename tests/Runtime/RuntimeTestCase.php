@@ -16,6 +16,9 @@ use PHPUnit\Framework\TestCase;
 use function sprintf;
 use function var_export;
 
+/**
+ * @internal
+ */
 abstract class RuntimeTestCase extends TestCase
 {
     /**

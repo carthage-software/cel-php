@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cel\Extension\Decimal;
+namespace Cel\Extension\Decimal\Resolver;
 
+use Cel\Extension\Decimal\Message\DecimalNumber;
 use Cel\Value\MessageValue;
 use Cel\Value\Resolver\ValueResolverInterface;
 use Cel\Value\Value;
@@ -16,6 +17,8 @@ use function assert;
  * Value resolver for Decimal\Decimal instances.
  *
  * Converts Decimal\Decimal to DecimalNumber (wrapped as MessageValue) for use in CEL expressions.
+ *
+ * @internal
  */
 final readonly class DecimalValueResolver implements ValueResolverInterface
 {

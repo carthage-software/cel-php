@@ -9,6 +9,8 @@ use Override;
 
 /**
  * Represents an identifier in the source code.
+ *
+ * @api
  */
 final readonly class IdentifierNode extends Node
 {

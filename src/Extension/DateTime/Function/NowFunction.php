@@ -8,6 +8,9 @@ use Cel\Extension\DateTime\Function\Handler\NowFunction\NowHandler;
 use Cel\Function\FunctionInterface;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class NowFunction implements FunctionInterface
 {
     #[Override]

@@ -17,6 +17,9 @@ use function implode;
 use function mb_str_split;
 use function str_replace;
 
+/**
+ * @internal
+ */
 final readonly class StringStringStringHandler implements FunctionOverloadHandlerInterface
 {
     /**

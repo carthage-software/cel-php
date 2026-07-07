@@ -9,6 +9,9 @@ use Cel\Function\FunctionInterface;
 use Cel\Value\ValueKind;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class SortFunction implements FunctionInterface
 {
     #[Override]

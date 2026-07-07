@@ -22,6 +22,8 @@ use Override;
  * construction (`{?key: v}`, `Msg{?field: v}`, `[?v]`), and the `or`, `orValue`,
  * `optMap`, and `optFlatMap` macros are handled by the interpreter and macro
  * registry rather than this extension.
+ *
+ * @api
  */
 final readonly class OptionalExtension implements ExtensionInterface
 {

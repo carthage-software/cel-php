@@ -18,6 +18,8 @@ use function sprintf;
 
 /**
  * Handles uint(integer) -> unsigned_integer
+ *
+ * @internal
  */
 final readonly class FromIntegerHandler implements FunctionOverloadHandlerInterface
 {

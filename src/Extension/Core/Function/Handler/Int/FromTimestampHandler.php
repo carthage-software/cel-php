@@ -17,6 +17,8 @@ use Override;
  * Handles int(timestamp) -> integer
  *
  * Returns the number of seconds since the Unix epoch.
+ *
+ * @internal
  */
 final readonly class FromTimestampHandler implements FunctionOverloadHandlerInterface
 {

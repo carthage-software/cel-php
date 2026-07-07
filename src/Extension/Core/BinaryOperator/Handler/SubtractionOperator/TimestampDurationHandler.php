@@ -17,6 +17,8 @@ use Override;
 
 /**
  * Handles `timestamp - duration`, shifting the timestamp backward by the duration.
+ *
+ * @internal
  */
 final readonly class TimestampDurationHandler implements BinaryOperatorOverloadHandlerInterface
 {

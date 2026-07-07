@@ -9,6 +9,8 @@ use Psl\Default\DefaultInterface;
 
 /**
  * Interface for expression optimizers.
+ *
+ * @api
  */
 interface OptimizerInterface extends DefaultInterface
 {

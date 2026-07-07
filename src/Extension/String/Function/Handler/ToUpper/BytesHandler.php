@@ -15,6 +15,9 @@ use Override;
 
 use function strtoupper;
 
+/**
+ * @internal
+ */
 final readonly class BytesHandler implements FunctionOverloadHandlerInterface
 {
     /**

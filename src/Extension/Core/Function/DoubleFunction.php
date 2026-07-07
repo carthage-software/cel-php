@@ -19,6 +19,8 @@ use Override;
  *
  * `double` is CEL's floating-point type; the resulting value is represented
  * internally by {@see \Cel\Value\FloatValue}.
+ *
+ * @internal
  */
 final readonly class DoubleFunction implements FunctionInterface
 {

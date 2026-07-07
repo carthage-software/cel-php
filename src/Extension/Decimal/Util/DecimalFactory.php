@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Cel\Extension\Decimal;
+namespace Cel\Extension\Decimal\Util;
 
 use Decimal\Decimal;
 
 use function method_exists;
 
+/**
+ * @internal
+ */
 final readonly class DecimalFactory
 {
     public static function from(string $value, null|int $precision = null): Decimal

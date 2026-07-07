@@ -19,6 +19,8 @@ use function sprintf;
 
 /**
  * Handles int(string) -> integer
+ *
+ * @internal
  */
 final readonly class FromStringHandler implements FunctionOverloadHandlerInterface
 {

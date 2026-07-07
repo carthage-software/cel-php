@@ -16,10 +16,10 @@ use function strlen;
 use function strtolower;
 
 /**
- * @internal
- *
  * A helper class containing static methods to handle complex tokenization logic,
  * separating it from the main Lexer class.
+ *
+ * @internal
  */
 final readonly class Utils
 {

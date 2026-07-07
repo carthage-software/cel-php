@@ -13,6 +13,9 @@ use Cel\Value\TimestampValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class TimestampTimestampHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

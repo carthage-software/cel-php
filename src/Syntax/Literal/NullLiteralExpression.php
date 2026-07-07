@@ -10,6 +10,8 @@ use Override;
 
 /**
  * @extends LiteralExpression<null>
+ *
+ * @api
  */
 final readonly class NullLiteralExpression extends LiteralExpression
 {

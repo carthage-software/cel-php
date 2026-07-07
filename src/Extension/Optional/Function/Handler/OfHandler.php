@@ -14,6 +14,8 @@ use Override;
 
 /**
  * Handles `optional.of(T) -> optional(T)`, wrapping any value as a present optional.
+ *
+ * @internal
  */
 final readonly class OfHandler implements FunctionOverloadHandlerInterface
 {

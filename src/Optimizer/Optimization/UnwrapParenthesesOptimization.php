@@ -12,6 +12,8 @@ use Override;
  * Removes parentheses from an expression.
  *
  * Optimization: `(expr)` -> `expr`
+ *
+ * @api
  */
 final readonly class UnwrapParenthesesOptimization implements OptimizationInterface
 {

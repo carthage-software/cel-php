@@ -32,6 +32,8 @@ use Psr\SimpleCache\CacheInterface;
  * caching enabled for improved performance.
  *
  * @inheritors Cel
+ *
+ * @api
  */
 readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInterface, RuntimeInterface
 {

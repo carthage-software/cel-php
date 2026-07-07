@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\BinaryOperator\Handler\Addition;
 
 use Cel\Exception\InternalException;
-use Cel\Extension\Decimal\DecimalFactory;
-use Cel\Extension\Decimal\DecimalNumber;
+use Cel\Extension\Decimal\Message\DecimalNumber;
+use Cel\Extension\Decimal\Util\DecimalFactory;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Util\OperandUtil;
@@ -21,6 +21,8 @@ use function sprintf;
 
 /**
  * Handles addition of a Float and a DecimalNumber.
+ *
+ * @internal
  */
 final readonly class FloatPlusDecimalNumberHandler implements BinaryOperatorOverloadHandlerInterface
 {

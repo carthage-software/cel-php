@@ -19,6 +19,8 @@ use function sprintf;
 
 /**
  * Handles bool(bytes) -> boolean
+ *
+ * @internal
  */
 final readonly class FromBytesHandler implements FunctionOverloadHandlerInterface
 {

@@ -11,6 +11,9 @@ use Cel\Value\Value;
 use Override;
 use Psl\DateTime\Timestamp;
 
+/**
+ * @internal
+ */
 final readonly class NowHandler implements FunctionOverloadHandlerInterface
 {
     /**

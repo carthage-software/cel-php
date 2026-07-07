@@ -8,5 +8,7 @@ use Cel\Exception;
 
 /**
  * A marker interface for all exceptions thrown by the Input components of the CEL library.
+ *
+ * @api
  */
 interface ExceptionInterface extends Exception\ExceptionInterface {}

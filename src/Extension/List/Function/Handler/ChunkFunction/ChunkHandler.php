@@ -17,6 +17,9 @@ use Override;
 use function array_chunk;
 use function array_map;
 
+/**
+ * @internal
+ */
 final readonly class ChunkHandler implements FunctionOverloadHandlerInterface
 {
     /**

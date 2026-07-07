@@ -13,6 +13,9 @@ use Cel\Value\BytesValue;
 use Cel\Value\Value;
 use Override;
 
+/**
+ * @internal
+ */
 final readonly class BytesBytesHandler implements BinaryOperatorOverloadHandlerInterface
 {
     /**

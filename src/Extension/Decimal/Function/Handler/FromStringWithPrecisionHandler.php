@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Cel\Extension\Decimal\Function\Handler;
 
 use Cel\Exception\InternalException;
-use Cel\Extension\Decimal\DecimalFactory;
-use Cel\Extension\Decimal\DecimalNumber;
+use Cel\Extension\Decimal\Message\DecimalNumber;
+use Cel\Extension\Decimal\Util\DecimalFactory;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
@@ -22,6 +22,8 @@ use function sprintf;
 
 /**
  * Handles decimal(string, int) -> DecimalNumber (with precision)
+ *
+ * @internal
  */
 final readonly class FromStringWithPrecisionHandler implements FunctionOverloadHandlerInterface
 {
