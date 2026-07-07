@@ -44,10 +44,6 @@ final readonly class StringSplit
      */
     private static function chunk(string $string, bool $bytes): array
     {
-        if ('' === $string) {
-            return [];
-        }
-
         return $bytes ? str_split($string) : mb_str_split($string);
     }
 }

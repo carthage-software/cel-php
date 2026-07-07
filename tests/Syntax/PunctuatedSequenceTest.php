@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Tests\Syntax;
 
+use Cel\Exception\NoSuchElementException;
 use Cel\Span\Span;
 use Cel\Syntax\IdentifierNode;
 use Cel\Syntax\PunctuatedSequence;
@@ -34,6 +35,35 @@ final class PunctuatedSequenceTest extends TestCase
         $sequence = new PunctuatedSequence($elements, [new Span(1, 2)]);
 
         static::assertSame(2, $sequence->count());
+    }
+
+    public function testAtReturnsElementAtIndex(): void
+    {
+        $a = new IdentifierNode('a', new Span(0, 1));
+        $b = new IdentifierNode('b', new Span(2, 3));
+        $sequence = new PunctuatedSequence([$a, $b], [new Span(1, 2)]);
+
+        static::assertSame($a, $sequence->at(0));
+        static::assertSame($b, $sequence->at(1));
+    }
+
+    public function testAtThrowsForIndexPastEnd(): void
+    {
+        $sequence = new PunctuatedSequence([new IdentifierNode('a', new Span(0, 1))], []);
+
+        $this->expectException(NoSuchElementException::class);
+        $this->expectExceptionMessage('No element exists at index 1.');
+
+        $sequence->at(1);
+    }
+
+    public function testAtThrowsForNegativeIndex(): void
+    {
+        $sequence = new PunctuatedSequence([new IdentifierNode('a', new Span(0, 1))], []);
+
+        $this->expectException(NoSuchElementException::class);
+
+        $sequence->at(-1);
     }
 
     #[DataProvider('provideTrailingCommaCases')]

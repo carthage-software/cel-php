@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Cel\Util;
 
-use function ctype_digit;
 use function preg_match;
 
 /**
@@ -24,18 +23,10 @@ final readonly class FloatParser
      */
     public static function tryParse(string $value): null|float
     {
-        if ('' === $value) {
+        if (1 !== preg_match('/^[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)$/', $value)) {
             return null;
         }
 
-        if (ctype_digit($value)) {
-            return (float) $value;
-        }
-
-        if (1 === preg_match('/^[+-]?(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)$/', $value)) {
-            return (float) $value; // @mago-expect analysis:invalid-type-cast (validated as numeric above)
-        }
-
-        return null;
+        return (float) $value; // @mago-expect analysis:invalid-type-cast (validated as numeric above)
     }
 }

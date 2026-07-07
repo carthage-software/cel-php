@@ -8,6 +8,8 @@ use Cel\Util\IntegerMath;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use function intdiv;
+
 use const PHP_INT_MAX;
 use const PHP_INT_MIN;
 
@@ -35,6 +37,10 @@ final class IntegerMathTest extends TestCase
         yield 'max plus negative is fine' => [PHP_INT_MAX - 1, PHP_INT_MAX, -1];
         yield 'min plus one is fine' => [PHP_INT_MIN + 1, PHP_INT_MIN, 1];
         yield 'min plus minus one overflows' => [null, PHP_INT_MIN, -1];
+        yield 'boundary at max minus five plus five' => [PHP_INT_MAX, PHP_INT_MAX - 5, 5];
+        yield 'one over max with positive right' => [null, PHP_INT_MAX - 5, 6];
+        yield 'boundary at min plus five minus five' => [PHP_INT_MIN, PHP_INT_MIN + 5, -5];
+        yield 'one over min with negative right' => [null, PHP_INT_MIN + 5, -6];
     }
 
     /**
@@ -58,6 +64,10 @@ final class IntegerMathTest extends TestCase
         yield 'min minus one overflows' => [null, PHP_INT_MIN, 1];
         yield 'min plus one minus one is fine' => [PHP_INT_MIN, PHP_INT_MIN + 1, 1];
         yield 'max minus positive is fine' => [PHP_INT_MAX - 1, PHP_INT_MAX, 1];
+        yield 'boundary max minus five minus negative five' => [PHP_INT_MAX, PHP_INT_MAX - 5, -5];
+        yield 'one over max with negative right' => [null, PHP_INT_MAX - 5, -6];
+        yield 'boundary min plus five minus five' => [PHP_INT_MIN, PHP_INT_MIN + 5, 5];
+        yield 'one over min with positive right' => [null, PHP_INT_MIN + 5, 6];
     }
 
     /**
@@ -88,6 +98,14 @@ final class IntegerMathTest extends TestCase
         yield 'negative times positive overflows' => [null, -2, PHP_INT_MAX];
         yield 'min times positive overflows' => [null, PHP_INT_MIN, 2];
         yield 'negative times negative overflows' => [null, PHP_INT_MIN, -2];
+        yield 'boundary positive product' => [PHP_INT_MAX - 1, intdiv(PHP_INT_MAX, 2), 2];
+        yield 'one over positive product' => [null, intdiv(PHP_INT_MAX, 2) + 1, 2];
+        yield 'boundary positive times negative' => [PHP_INT_MIN, 2, intdiv(PHP_INT_MIN, 2)];
+        yield 'one over positive times negative' => [null, 2, intdiv(PHP_INT_MIN, 2) - 1];
+        yield 'boundary negative times positive' => [PHP_INT_MIN, intdiv(PHP_INT_MIN, 2), 2];
+        yield 'one over negative times positive' => [null, intdiv(PHP_INT_MIN, 2) - 1, 2];
+        yield 'boundary negative times negative' => [PHP_INT_MAX - 1, -2, intdiv(PHP_INT_MAX, -2)];
+        yield 'one over negative times negative' => [null, -2, intdiv(PHP_INT_MAX, -2) - 1];
     }
 
     /**

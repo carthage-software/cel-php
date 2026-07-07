@@ -36,7 +36,7 @@ final readonly class NumberBase
     /**
      * Parses a string in the given base to a native integer.
      *
-     * @throws ValueError If the string contains a digit invalid for the base.
+     * @throws InvalidArgumentException If the string contains a digit invalid for the base.
      * @throws OverflowException If the value overflows the integer range.
      */
     public static function fromBase(string $number, int $fromBase): int
@@ -52,10 +52,10 @@ final readonly class NumberBase
             } elseif ($ordinal >= 65 && $ordinal <= 90) {
                 $value = $ordinal - 55;
             } else {
-                $value = 99;
+                throw new InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
             }
 
-            if ($fromBase < $value) {
+            if ($fromBase <= $value) {
                 throw new InvalidArgumentException(sprintf('Invalid digit %s in base %d', $digit, $fromBase));
             }
 
@@ -93,7 +93,7 @@ final readonly class NumberBase
     /**
      * Converts an arbitrary-precision string from one base to another.
      *
-     * @throws ValueError If the value contains a digit invalid for the source base.
+     * @throws InvalidArgumentException If the value contains a digit invalid for the source base.
      */
     public static function baseConvert(string $value, int $fromBase, int $toBase): string
     {
@@ -108,10 +108,6 @@ final readonly class NumberBase
 
             $decimal = bcadd($decimal, bcmul((string) $digitValue, $placeValue));
             $placeValue = bcdiv($placeValue, (string) $fromBase);
-        }
-
-        if (10 === $toBase) {
-            return $decimal;
         }
 
         $toAlphabet = substr(self::ALPHABET, 0, $toBase);

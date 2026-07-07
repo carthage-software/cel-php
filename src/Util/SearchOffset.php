@@ -17,14 +17,10 @@ final readonly class SearchOffset
     private function __construct() {}
 
     /**
-     * @throws ValueError If the offset falls outside the string.
+     * @throws OutOfRangeException If the offset falls outside the string.
      */
     public static function normalize(int $offset, int $length): int
     {
-        if (0 === $offset) {
-            return 0;
-        }
-
         $normalized = $offset < 0 ? $offset + $length : $offset;
         if ($normalized < 0 || $normalized > $length) {
             throw new OutOfRangeException(sprintf('Offset %d is out of bounds', $offset));
