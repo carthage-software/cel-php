@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Cel\Syntax;
 
 use ArrayIterator;
+use Cel\Exception\NoSuchElementException;
 use Cel\Span\Span;
 use IteratorAggregate;
 use Override;
 use Traversable;
 
-use function array_key_first;
-use function array_key_last;
+use function array_key_exists;
 use function count;
+use function sprintf;
 
 /**
  * Represents a punctuated list of nodes, like arguments in a function call or elements in a list literal.
@@ -56,6 +57,24 @@ final readonly class PunctuatedSequence implements IteratorAggregate
     }
 
     /**
+     * Returns the element at the given index.
+     *
+     * @param int $index The zero-based index of the element.
+     *
+     * @return T The element at the index.
+     *
+     * @throws NoSuchElementException If no element exists at the index.
+     */
+    public function at(int $index): Node
+    {
+        if (!array_key_exists($index, $this->elements)) {
+            throw new NoSuchElementException(sprintf('No element exists at index %d.', $index));
+        }
+
+        return $this->elements[$index];
+    }
+
+    /**
      * @return Traversable<T>
      */
     #[Override]
@@ -74,9 +93,14 @@ final readonly class PunctuatedSequence implements IteratorAggregate
             return null;
         }
 
-        $firstSpan = $this->elements[array_key_first($this->elements)]->getSpan();
-        $lastSpan = $this->elements[array_key_last($this->elements)]->getSpan();
-        $lastComma = [] === $this->commas ? null : $this->commas[array_key_last($this->commas)];
+        $firstSpan = $this->at(0)->getSpan();
+        $lastSpan = $this->at($this->count() - 1)->getSpan();
+
+        $lastComma = null;
+        foreach ($this->commas as $comma) {
+            $lastComma = $comma;
+        }
+
         if (null !== $lastComma && $lastComma->end > $lastSpan->end) {
             $lastSpan = $lastComma;
         }

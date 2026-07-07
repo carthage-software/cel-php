@@ -49,5 +49,5 @@ check-closure-missing-type-hints = true
 check-arrow-function-missing-type-hints = true
 strict-list-index-checks = true
 no-boolean-literal-comparison = true
-allow-possibly-undefined-array-keys = false
+strict-array-index-existence = true
 trust-existence-checks = false

@@ -43,7 +43,7 @@ final readonly class ExistsMacro implements MacroInterface
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
         $variableCount = $call->arguments->count() - 1;
-        $callback = $call->arguments->elements[$variableCount];
+        $callback = $call->arguments->at($variableCount);
         $bindings = self::comprehensionBindings('exists', $call, $context, $variableCount);
 
         $environment = $context->getEnvironment()->fork();

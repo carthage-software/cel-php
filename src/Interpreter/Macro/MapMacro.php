@@ -48,7 +48,7 @@ final readonly class MapMacro implements MacroInterface
         $call_target = $call->target;
         assert(null !== $call_target, 'map() macro requires a target');
 
-        $name = $call->arguments->elements[0];
+        $name = $call->arguments->at(0);
 
         if (!$name instanceof IdentifierExpression) {
             throw new InvalidMacroCallException(
@@ -79,8 +79,8 @@ final readonly class MapMacro implements MacroInterface
             $results = [];
             $argCount = $call->arguments->count();
 
-            $filterCallback = 3 === $argCount ? $call->arguments->elements[1] : null;
-            $transformCallback = 3 === $argCount ? $call->arguments->elements[2] : $call->arguments->elements[1];
+            $filterCallback = 3 === $argCount ? $call->arguments->at(1) : null;
+            $transformCallback = 3 === $argCount ? $call->arguments->at(2) : $call->arguments->at(1);
 
             $items = $target instanceof ListValue
                 ? $target->value

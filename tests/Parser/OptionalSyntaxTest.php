@@ -58,8 +58,8 @@ final class OptionalSyntaxTest extends TestCase
         $expr = new Parser()->parseString('{?"k": 1, "other": 2}');
 
         static::assertInstanceOf(MapExpression::class, $expr);
-        static::assertTrue($expr->entries->elements[0]->isOptional());
-        static::assertFalse($expr->entries->elements[1]->isOptional());
+        static::assertTrue($expr->entries->at(0)->isOptional());
+        static::assertFalse($expr->entries->at(1)->isOptional());
     }
 
     public function testOptionalListElement(): void
@@ -67,8 +67,8 @@ final class OptionalSyntaxTest extends TestCase
         $expr = new Parser()->parseString('[a, ?b]');
 
         static::assertInstanceOf(ListExpression::class, $expr);
-        static::assertFalse($expr->elements->elements[0]->isOptional());
-        static::assertTrue($expr->elements->elements[1]->isOptional());
+        static::assertFalse($expr->elements->at(0)->isOptional());
+        static::assertTrue($expr->elements->at(1)->isOptional());
     }
 
     public function testOptionalFieldInitializer(): void
@@ -76,8 +76,8 @@ final class OptionalSyntaxTest extends TestCase
         $expr = new Parser()->parseString('Message{?field: 1, other: 2}');
 
         static::assertInstanceOf(MessageExpression::class, $expr);
-        static::assertTrue($expr->initializers->elements[0]->isOptional());
-        static::assertFalse($expr->initializers->elements[1]->isOptional());
+        static::assertTrue($expr->initializers->at(0)->isOptional());
+        static::assertFalse($expr->initializers->at(1)->isOptional());
     }
 
     public function testOptionalSelectionIsNotAMethodCall(): void

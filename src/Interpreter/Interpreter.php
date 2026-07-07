@@ -715,14 +715,15 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             );
         }
 
-        if ($position < 0 || $position >= count($operand->value)) {
+        $value = $operand->value[$position] ?? null;
+        if (null === $value) {
             throw new NoSuchKeyException(
                 sprintf('Index `%d` is out of bounds for list of length `%d`', $position, count($operand->value)),
                 $expression->getSpan(),
             );
         }
 
-        return $operand->value[$position];
+        return $value;
     }
 
     private function resolveListIndex(Value $index): null|int
@@ -747,11 +748,12 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
                 );
             }
 
-            if ($position < 0 || $position >= count($base->value)) {
+            $value = $base->value[$position] ?? null;
+            if (null === $value) {
                 return OptionalValue::none();
             }
 
-            return OptionalValue::of($base->value[$position]);
+            return OptionalValue::of($value);
         }
 
         if ($base instanceof MapValue) {

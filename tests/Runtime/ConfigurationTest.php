@@ -75,9 +75,10 @@ final class ConfigurationTest extends TestCase
             'Msg' => $messageClass,
         ]);
 
-        static::assertContains('MyMessage', $config->messageClassesToAliases[$messageClass]);
-        static::assertContains('Msg', $config->messageClassesToAliases[$messageClass]);
-        static::assertCount(2, $config->messageClassesToAliases[$messageClass]);
+        $aliases = $config->messageClassesToAliases[$messageClass] ?? [];
+        static::assertContains('MyMessage', $aliases);
+        static::assertContains('Msg', $aliases);
+        static::assertCount(2, $aliases);
     }
 
     public function testWithEnforceMessageClassAliases(): void

@@ -12,6 +12,8 @@ use Cel\Value\MapValue;
 use Cel\Value\Value;
 use Override;
 
+use function array_key_exists;
+use function assert;
 use function sprintf;
 
 /**
@@ -44,9 +46,9 @@ final readonly class TransformMapMacro implements MacroInterface
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
         $argumentCount = $call->arguments->count();
-        $filter = 4 === $argumentCount ? $call->arguments->elements[2] : null;
-        $transform = $call->arguments->elements[$argumentCount - 1];
-        $keyVariable = self::iterationVariable('transformMap', $call->arguments->elements[0]);
+        $filter = 4 === $argumentCount ? $call->arguments->at(2) : null;
+        $transform = $call->arguments->at($argumentCount - 1);
+        $keyVariable = self::iterationVariable('transformMap', $call->arguments->at(0));
         $bindings = self::comprehensionBindings('transformMap', $call, $context, 2);
         $span = $call->getSpan();
 
@@ -85,6 +87,7 @@ final readonly class TransformMapMacro implements MacroInterface
                     }
                 }
 
+                assert(array_key_exists($keyVariable, $variables));
                 $key = MapKeyUtil::resolve($variables[$keyVariable]);
                 if (null === $key) {
                     throw new InvalidMacroCallException(

@@ -70,14 +70,8 @@ final class Runtime implements RuntimeInterface
 
         // Collect message types provided by the extension
         foreach ($extension->getMessageTypes() as $messageClass => $aliases) {
-            if (!isset($this->extensionProvidedMessageTypes[$messageClass])) {
-                $this->extensionProvidedMessageTypes[$messageClass] = [];
-            }
-
-            $this->extensionProvidedMessageTypes[$messageClass] = [
-                ...$this->extensionProvidedMessageTypes[$messageClass],
-                ...$aliases,
-            ];
+            $existing = $this->extensionProvidedMessageTypes[$messageClass] ?? [];
+            $this->extensionProvidedMessageTypes[$messageClass] = [...$existing, ...$aliases];
         }
     }
 

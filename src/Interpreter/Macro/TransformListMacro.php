@@ -43,8 +43,8 @@ final readonly class TransformListMacro implements MacroInterface
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
         $argumentCount = $call->arguments->count();
-        $filter = 4 === $argumentCount ? $call->arguments->elements[2] : null;
-        $transform = $call->arguments->elements[$argumentCount - 1];
+        $filter = 4 === $argumentCount ? $call->arguments->at(2) : null;
+        $transform = $call->arguments->at($argumentCount - 1);
         $bindings = self::comprehensionBindings('transformList', $call, $context, 2);
 
         $environment = $context->getEnvironment()->fork();

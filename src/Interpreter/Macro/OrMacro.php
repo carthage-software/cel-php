@@ -54,7 +54,7 @@ final readonly class OrMacro implements MacroInterface
             return $optional;
         }
 
-        $alternativeExpression = $call->arguments->elements[0];
+        $alternativeExpression = $call->arguments->at(0);
         $alternative = $context->evaluate($alternativeExpression);
         if (!$alternative instanceof OptionalValue) {
             throw new InvalidMacroCallException(

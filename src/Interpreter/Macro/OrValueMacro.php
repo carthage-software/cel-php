@@ -55,6 +55,6 @@ final readonly class OrValueMacro implements MacroInterface
             return $inner;
         }
 
-        return $context->evaluate($call->arguments->elements[0]);
+        return $context->evaluate($call->arguments->at(0));
     }
 }

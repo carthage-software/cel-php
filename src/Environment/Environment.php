@@ -14,6 +14,7 @@ use function array_key_exists;
 use function array_map;
 use function array_reverse;
 use function array_slice;
+use function assert;
 use function count;
 
 /**
@@ -92,7 +93,9 @@ final class Environment implements EnvironmentInterface
         }
 
         // Fall back to the default resolver (always the last one)
-        $defaultResolver = $this->valueResolvers[$count - 1];
+        $lastIndex = $count - 1;
+        assert(array_key_exists($lastIndex, $this->valueResolvers));
+        $defaultResolver = $this->valueResolvers[$lastIndex];
         $this->addVariable($name, $defaultResolver->resolve($value));
     }
 
@@ -101,11 +104,13 @@ final class Environment implements EnvironmentInterface
     {
         // Insert before the default resolver (which is always last)
         $count = count($this->valueResolvers);
-        $length = $count > 0 ? $count - 1 : 0;
+        $lastIndex = $count - 1;
+        $length = $count > 0 ? $lastIndex : 0;
+        assert(array_key_exists($lastIndex, $this->valueResolvers));
         $this->valueResolvers = [
             ...array_slice($this->valueResolvers, 0, $length),
             $resolver,
-            $this->valueResolvers[$count - 1],
+            $this->valueResolvers[$lastIndex],
         ];
     }
 

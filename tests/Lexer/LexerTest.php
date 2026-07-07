@@ -54,11 +54,8 @@ final class LexerTest extends TestCase
         static::assertCount(count($expectedTokens), $tokens);
 
         foreach ($expectedTokens as $i => $expected) {
-            if (!isset($tokens[$i])) {
-                static::fail("Missing token at index {$i}");
-            }
-
-            $actual = $tokens[$i];
+            $actual = $tokens[$i] ?? null;
+            static::assertNotNull($actual, "Missing token at index {$i}");
 
             static::assertSame($expected[0], $actual->kind, "Token {$i} kind mismatch for '{$actual->value}'");
             static::assertSame($expected[1], $actual->value, "Token {$i} value mismatch");

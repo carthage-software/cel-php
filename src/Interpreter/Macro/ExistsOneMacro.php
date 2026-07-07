@@ -34,13 +34,7 @@ final readonly class ExistsOneMacro implements MacroInterface
             return false;
         }
 
-        $name = $call->arguments->elements[0] ?? null;
-        $callback = $call->arguments->elements[1] ?? null;
-        if (null === $name || null === $callback || $call->arguments->count() > 2) {
-            return false;
-        }
-
-        return true;
+        return 2 === $call->arguments->count();
     }
 
     #[Override]
@@ -49,8 +43,8 @@ final readonly class ExistsOneMacro implements MacroInterface
         $call_target = $call->target;
         assert(null !== $call_target, 'exists_one() macro requires a target');
 
-        $name = $call->arguments->elements[0];
-        $callback = $call->arguments->elements[1];
+        $name = $call->arguments->at(0);
+        $callback = $call->arguments->at(1);
 
         if (!$name instanceof IdentifierExpression) {
             throw new InvalidMacroCallException(

@@ -41,7 +41,7 @@ final readonly class ExistsOneTwoVarMacro implements MacroInterface
     #[Override]
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
-        $callback = $call->arguments->elements[2];
+        $callback = $call->arguments->at(2);
         $bindings = self::comprehensionBindings('existsOne', $call, $context, 2);
 
         $environment = $context->getEnvironment()->fork();

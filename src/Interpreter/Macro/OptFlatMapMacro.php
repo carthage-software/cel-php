@@ -44,7 +44,7 @@ final readonly class OptFlatMapMacro implements MacroInterface
         $target = $call->target;
         assert(null !== $target, 'optFlatMap() macro requires a target');
 
-        $name = $call->arguments->elements[0];
+        $name = $call->arguments->at(0);
         if (!$name instanceof IdentifierExpression) {
             throw new InvalidMacroCallException(
                 'The `optFlatMap` macro requires the first argument to be an identifier.',
@@ -65,7 +65,7 @@ final readonly class OptFlatMapMacro implements MacroInterface
             return OptionalValue::none();
         }
 
-        $transform = $call->arguments->elements[1];
+        $transform = $call->arguments->at(1);
         $variableName = $name->identifier->name;
         $environment = $context->getEnvironment()->fork();
 

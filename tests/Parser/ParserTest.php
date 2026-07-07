@@ -207,9 +207,9 @@ final class ParserTest extends TestCase
             static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(ListExpression::class, $expr);
                 $test->assertCount(3, $expr->elements->elements);
-                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr->elements->elements[0]->value);
-                $test->assertInstanceOf(StringLiteralExpression::class, $expr->elements->elements[1]->value);
-                $test->assertInstanceOf(BoolLiteralExpression::class, $expr->elements->elements[2]->value);
+                $test->assertInstanceOf(IntegerLiteralExpression::class, $expr->elements->at(0)->value);
+                $test->assertInstanceOf(StringLiteralExpression::class, $expr->elements->at(1)->value);
+                $test->assertInstanceOf(BoolLiteralExpression::class, $expr->elements->at(2)->value);
             },
         ];
 
@@ -225,7 +225,7 @@ final class ParserTest extends TestCase
             'my.pkg.Message{field: "value", other: 1}',
             static function (TestCase $test, Expression $expr): void {
                 $test->assertInstanceOf(MessageExpression::class, $expr);
-                $test->assertSame('Message', $expr->followingSelectors->elements[1]->name);
+                $test->assertSame('Message', $expr->followingSelectors->at(1)->name);
                 $test->assertCount(2, $expr->initializers->elements);
             },
         ];

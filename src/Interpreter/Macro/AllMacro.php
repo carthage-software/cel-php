@@ -44,7 +44,7 @@ final readonly class AllMacro implements MacroInterface
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
         $variableCount = $call->arguments->count() - 1;
-        $callback = $call->arguments->elements[$variableCount];
+        $callback = $call->arguments->at($variableCount);
         $bindings = self::comprehensionBindings('all', $call, $context, $variableCount);
 
         $environment = $context->getEnvironment()->fork();

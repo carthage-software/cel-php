@@ -15,6 +15,8 @@ use Cel\Value\ListValue;
 use Cel\Value\Value;
 use Override;
 
+use function array_key_exists;
+use function assert;
 use function count;
 use function intdiv;
 use function sort;
@@ -56,12 +58,17 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
         sort($numbers);
         $count = count($numbers);
         $middle = intdiv($count, 2);
+
+        assert(array_key_exists($middle, $numbers));
+        if (1 === ($count % 2)) {
+            return new FloatValue((float) $numbers[$middle]);
+        }
+
+        $lower = $middle - 1;
+        assert(array_key_exists($lower, $numbers));
+
         // For an even count, average the two middle values by halving each one
         // before adding, keeping the intermediate values within range.
-        $result = 0 === ($count % 2)
-            ? ((float) $numbers[$middle] / 2) + ((float) $numbers[$middle - 1] / 2)
-            : (float) $numbers[$middle];
-
-        return new FloatValue($result);
+        return new FloatValue(((float) $numbers[$middle] / 2) + ((float) $numbers[$lower] / 2));
     }
 }

@@ -43,18 +43,13 @@ final readonly class HasMacro implements MacroInterface
         }
 
         // Must have exactly one argument
-        $argument = $call->arguments->elements[0] ?? null;
-        if (null === $argument || $call->arguments->count() > 1) {
-            return false;
-        }
-
-        return true;
+        return 1 === $call->arguments->count();
     }
 
     #[Override]
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
-        $argument = $call->arguments->elements[0];
+        $argument = $call->arguments->at(0);
 
         if (!$argument instanceof MemberAccessExpression) {
             throw new InvalidMacroCallException(
