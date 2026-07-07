@@ -78,7 +78,6 @@ use function strcasecmp;
  *
  * @mago-expect lint:kan-defect
  * @mago-expect lint:cyclomatic-complexity
- * @mago-expect lint:too-many-methods
  *
  * @api
  */
@@ -163,58 +162,35 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
     #[Override]
     public function run(Expression $expression): Value
     {
-        if ($expression instanceof ParenthesizedExpression) {
-            return $this->run($expression->expression);
-        }
-
-        if ($expression instanceof LiteralExpression) {
-            return $this->literal($expression);
-        }
-
-        if ($expression instanceof ListExpression) {
-            return $this->list($expression);
-        }
-
-        if ($expression instanceof MapExpression) {
-            return $this->map($expression);
-        }
-
-        if ($expression instanceof UnaryExpression) {
-            return $this->unary($expression);
-        }
-
-        if ($expression instanceof BinaryExpression) {
-            return $this->binary($expression);
-        }
-
-        if ($expression instanceof ConditionalExpression) {
-            return $this->conditional($expression);
-        }
-
-        if ($expression instanceof MemberAccessExpression) {
-            return $this->memberAccess($expression);
-        }
-
-        if ($expression instanceof IndexExpression) {
-            return $this->index($expression);
-        }
-
-        if ($expression instanceof IdentifierExpression) {
-            return $this->identifier($expression);
-        }
-
-        if ($expression instanceof CallExpression) {
-            return $this->call($expression);
-        }
-
-        if ($expression instanceof MessageExpression) {
-            return $this->message($expression);
-        }
-
-        throw new UnsupportedOperationException(
-            sprintf('Unsupported expression of type `%s`', $expression::class),
-            $expression->getSpan(),
-        );
+        return match ($expression::class) {
+            ParenthesizedExpression::class => $this->run($expression->expression),
+            ListExpression::class => $this->list($expression),
+            MapExpression::class => $this->map($expression),
+            UnaryExpression::class => $this->unary($expression),
+            BinaryExpression::class => $this->binary($expression),
+            ConditionalExpression::class => $this->conditional($expression),
+            MemberAccessExpression::class => $this->memberAccess($expression),
+            IndexExpression::class => $this->index($expression),
+            IdentifierExpression::class => $this->identifier($expression),
+            CallExpression::class => $this->call($expression),
+            MessageExpression::class => $this->message($expression),
+            BoolLiteralExpression::class => new BooleanValue($expression->value),
+            BytesLiteralExpression::class => new BytesValue($expression->value),
+            FloatLiteralExpression::class => new FloatValue($expression->value),
+            IntegerLiteralExpression::class => new IntegerValue($expression->value),
+            NullLiteralExpression::class => new NullValue(),
+            StringLiteralExpression::class => new StringValue($expression->value),
+            UnsignedIntegerLiteralExpression::class => new UnsignedIntegerValue($expression->value),
+            default => $expression instanceof LiteralExpression
+                ? throw new UnsupportedOperationException(
+                    sprintf('Unsupported literal of type `%s`', $expression::class),
+                    $expression->getSpan(),
+                )
+                : throw new UnsupportedOperationException(
+                    sprintf('Unsupported expression of type `%s`', $expression::class),
+                    $expression->getSpan(),
+                ),
+        };
     }
 
     /**
@@ -297,26 +273,6 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         }
 
         return new MapValue($values);
-    }
-
-    /**
-     * @throws EvaluationException
-     */
-    private function literal(LiteralExpression $expression): Value
-    {
-        return match ($expression::class) {
-            BoolLiteralExpression::class => new BooleanValue($expression->value),
-            BytesLiteralExpression::class => new BytesValue($expression->value),
-            FloatLiteralExpression::class => new FloatValue($expression->value),
-            IntegerLiteralExpression::class => new IntegerValue($expression->value),
-            NullLiteralExpression::class => new NullValue(),
-            StringLiteralExpression::class => new StringValue($expression->value),
-            UnsignedIntegerLiteralExpression::class => new UnsignedIntegerValue($expression->value),
-            default => throw new UnsupportedOperationException(
-                sprintf('Unsupported literal of type `%s`', $expression::class),
-                $expression->getSpan(),
-            ),
-        };
     }
 
     /**
@@ -709,7 +665,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
             return $field;
         }
 
-        $position = $this->resolveListIndex($index);
+        $position = MapKeyUtil::resolveIndex($index);
         if (null === $position) {
             throw new NoSuchOverloadException(
                 sprintf('List indices must be an integer or integral double, got `%s`', $index->getType()),
@@ -728,11 +684,6 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
         return $value;
     }
 
-    private function resolveListIndex(Value $index): null|int
-    {
-        return MapKeyUtil::resolveIndex($index);
-    }
-
     /**
      * Performs an optional index access on a concrete value, returning an optional that
      * holds the indexed value when present and `optional.none()` when the index is absent.
@@ -742,7 +693,7 @@ final class Interpreter implements InterpreterInterface, MacroContextInterface
     private function optionalIndex(Value $base, Value $index, IndexExpression $expression): OptionalValue
     {
         if ($base instanceof ListValue) {
-            $position = $this->resolveListIndex($index);
+            $position = MapKeyUtil::resolveIndex($index);
             if (null === $position) {
                 throw new NoSuchOverloadException(
                     sprintf('List indices must be an integer or integral double, got `%s`', $index->getType()),
