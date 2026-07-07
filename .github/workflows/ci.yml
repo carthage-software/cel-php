@@ -35,3 +35,34 @@ jobs:
         run: just continuous-integration
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  tests:
+    name: "tests (php ${{ matrix.php-version }}${{ matrix.decimal && ', decimal' || ', no decimal' }})"
+    runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["8.4", "8.5"]
+        decimal: [true, false]
+    steps:
+      - name: "checkout"
+        uses: "actions/checkout@v7"
+
+      - name: "installing tools"
+        uses: "taiki-e/install-action@v2"
+        with:
+          tool: just
+
+      - name: "installing php"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          ini-values: memory_limit=-1
+          tools: composer:v2
+          extensions: "bcmath, mbstring, intl, sodium, json${{ matrix.decimal && ', decimal-1.5.0' || '' }}"
+
+      - name: "installing dependencies"
+        run: just install
+
+      - name: "running the test suite"
+        run: php -dmemory_limit=-1 vendor/bin/phpunit -c config/phpunit.xml.dist --no-coverage

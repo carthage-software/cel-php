@@ -3,6 +3,16 @@
   "description": "A PHP Common Expression Language Implementation",
   "type": "library",
   "license": "MIT",
+  "keywords": [
+    "cel",
+    "common-expression-language",
+    "expression-language",
+    "expression",
+    "interpreter",
+    "cel-spec",
+    "google-cel"
+  ],
+  "homepage": "https://github.com/carthage-software/cel-php",
   "autoload": {
     "psr-4": {
       "Cel\\": "src/"
@@ -23,6 +33,10 @@
       "email": "azjezz@carthage.software"
     }
   ],
+  "support": {
+    "issues": "https://github.com/carthage-software/cel-php/issues",
+    "source": "https://github.com/carthage-software/cel-php"
+  },
   "require": {
     "php": "~8.4 || ~8.5",
     "ext-bcmath": "*",
@@ -41,6 +55,9 @@
     "symfony/expression-language": "^7.3 || ^8.0",
     "php-standard-library/io": "~5.0 || ~6.0",
     "php-standard-library/json": "~5.0 || ~6.0"
+  },
+  "suggest": {
+    "ext-decimal": "For arbitrary-precision decimal arithmetic via Cel\\Extension\\Decimal\\DecimalExtension"
   },
   "config": {
     "allow-plugins": {

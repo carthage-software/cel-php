@@ -10,17 +10,15 @@ null-type-hint = "pipe"
 
 [linter]
 integrations = ["phpunit"]
+minimum-fail-level = "warning"
 
 [linter.rules]
-# Complexity 😖
 too-many-methods = { threshold = 25 }
 excessive-parameter-list = { threshold = 10 }
 halstead = { effort-threshold = 20_000, difficulty-threshold = 20, volume-threshold = 1_500 }
 kan-defect = { threshold = 5.0 }
 cyclomatic-complexity = { threshold = 80 }
-# Naming
 class-name = { psr = false }
-# Code Style
 strict-types = { enabled = true }
 no-else-clause = { enabled = false }
 ambiguous-function-call = { enabled = true }
@@ -28,16 +26,14 @@ ambiguous-constant-access = { enabled = true }
 no-fully-qualified-global-function = { enabled = true, namespaced = true }
 no-fully-qualified-global-constant = { enabled = true }
 no-fully-qualified-global-class-like = { enabled = true }
-# Noisy Rules (disabled)
 literal-named-argument = { enabled = false }
 no-boolean-flag-parameter = { enabled = false }
 no-isset = { enabled = false }
-# Exceptions
 file-name = { exclude = ["examples/"] }
-
 
 [analyzer]
 plugins = ["php-standard-library"]
+minimum-fail-level = "warning"
 find-unused-expressions = true
 find-unused-definitions = true
 find-overly-wide-return-types = true
