@@ -55,6 +55,7 @@ final readonly class TimestampHandler implements FunctionOverloadHandlerInterfac
             }
         }
 
+        // @mago-expect analysis:unhandled-thrown-type(2) - division is by a non-zero constant.
         return new IntegerValue(intdiv($datetime->getNanoseconds(), 1_000_000));
     }
 }

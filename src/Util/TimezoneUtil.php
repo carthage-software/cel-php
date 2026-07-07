@@ -40,6 +40,7 @@ final readonly class TimezoneUtil
             return null;
         }
 
+        // @mago-expect analysis:unhandled-thrown-type(2) - the operands are range-validated, so the timestamp arithmetic cannot overflow.
         $shifted = Timestamp::fromParts($timestamp->getSeconds() + $offset, $timestamp->getNanoseconds());
 
         return DateTime::fromTimestamp($shifted, Timezone::UTC);

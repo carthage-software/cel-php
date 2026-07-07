@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Core\BinaryOperator;
 
 use Cel\Exception\InternalException;
+use Cel\Exception\UnsupportedOperationException;
 use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\BooleanBooleanHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\BytesBytesHandler;
 use Cel\Extension\Core\BinaryOperator\Handler\ComparisonOperator\DurationDurationHandler;
@@ -35,17 +36,7 @@ final readonly class ComparisonOperator implements BinaryOperatorOverloadInterfa
     #[Override]
     public function getOverloads(): iterable
     {
-        $comparator = match ($this->operator) {
-            BinaryOperatorKind::LessThan => static fn(Value $a, Value $b): bool => $a->isLessThan($b),
-            BinaryOperatorKind::LessThanOrEqual => static fn(Value $a, Value $b): bool => (
-                $a->isLessThan($b) || $a->isEqual($b)
-            ),
-            BinaryOperatorKind::GreaterThan => static fn(Value $a, Value $b): bool => $a->isGreaterThan($b),
-            BinaryOperatorKind::GreaterThanOrEqual => static fn(Value $a, Value $b): bool => (
-                $a->isGreaterThan($b) || $a->isEqual($b)
-            ),
-            default => throw InternalException::forInvalidOperator($this->operator->getSymbol()),
-        };
+        $comparator = $this->compare(...);
 
         // Numeric comparisons work across int, uint, and double on a single number line.
         $numeric = new NumericHandler($comparator);
@@ -61,5 +52,19 @@ final readonly class ComparisonOperator implements BinaryOperatorOverloadInterfa
         yield [ValueKind::Boolean, ValueKind::Boolean] => new BooleanBooleanHandler($comparator);
         yield [ValueKind::Timestamp, ValueKind::Timestamp] => new TimestampTimestampHandler($comparator);
         yield [ValueKind::Duration, ValueKind::Duration] => new DurationDurationHandler($comparator);
+    }
+
+    /**
+     * @throws UnsupportedOperationException If a value comparison is not supported (e.g. NaN).
+     */
+    private function compare(Value $a, Value $b): bool
+    {
+        return match ($this->operator) {
+            BinaryOperatorKind::LessThan => $a->isLessThan($b),
+            BinaryOperatorKind::LessThanOrEqual => $a->isLessThan($b) || $a->isEqual($b),
+            BinaryOperatorKind::GreaterThan => $a->isGreaterThan($b),
+            BinaryOperatorKind::GreaterThanOrEqual => $a->isGreaterThan($b) || $a->isEqual($b),
+            default => throw InternalException::forInvalidOperator($this->operator->getSymbol()),
+        };
     }
 }

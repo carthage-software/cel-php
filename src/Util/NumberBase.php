@@ -42,6 +42,7 @@ final readonly class NumberBase
      */
     public static function fromBase(string $number, int $fromBase): int
     {
+        // @mago-expect analysis:unhandled-thrown-type(2) - the base is a positive radix, so division by zero cannot occur.
         $limit = intdiv(PHP_INT_MAX, $fromBase);
         $result = 0;
         foreach (str_split($number) as $digit) {
@@ -81,6 +82,7 @@ final readonly class NumberBase
     {
         $result = '';
         do {
+            // @mago-expect analysis:unhandled-thrown-type(2) - the base is a positive radix, so division by zero cannot occur.
             $quotient = intdiv($number, $base);
             /** @var int<0, 61> $index */
             $index = $number - ($quotient * $base);
@@ -108,6 +110,7 @@ final readonly class NumberBase
             }
 
             $decimal = bcadd($decimal, bcmul((string) $digitValue, $placeValue));
+            // @mago-expect analysis:unhandled-thrown-type - the base is a positive radix, so division by zero cannot occur.
             $placeValue = bcdiv($placeValue, (string) $fromBase);
         }
 

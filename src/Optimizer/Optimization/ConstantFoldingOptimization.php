@@ -48,6 +48,8 @@ final readonly class ConstantFoldingOptimization implements OptimizationInterfac
      * @param RuntimeInterface $runtime The runtime used to evaluate constant expressions. Using the
      *                                  same runtime that executes the expression ensures folding
      *                                  honours registered extensions and custom operator overloads.
+     *
+     * @mago-expect analysis:unhandled-thrown-type - the default runtime registers only the standard, non-conflicting extensions.
      */
     public function __construct(
         private RuntimeInterface $runtime = new Runtime(),

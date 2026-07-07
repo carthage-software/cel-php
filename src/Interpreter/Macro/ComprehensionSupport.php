@@ -51,6 +51,7 @@ trait ComprehensionSupport
         $target = $call->target;
         assert(null !== $target, 'a comprehension macro requires a target');
 
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $first = self::iterationVariable($macro, $call->arguments->at(0));
         $second = 2 === $variableCount ? self::iterationVariable($macro, $call->arguments->at(1)) : null;
 

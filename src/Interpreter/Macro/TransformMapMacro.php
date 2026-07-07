@@ -48,8 +48,10 @@ final readonly class TransformMapMacro implements MacroInterface
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
         $argumentCount = $call->arguments->count();
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $filter = 4 === $argumentCount ? $call->arguments->at(2) : null;
         $transform = $call->arguments->at($argumentCount - 1);
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $keyVariable = self::iterationVariable('transformMap', $call->arguments->at(0));
         $bindings = self::comprehensionBindings('transformMap', $call, $context, 2);
         $span = $call->getSpan();
@@ -57,51 +59,58 @@ final readonly class TransformMapMacro implements MacroInterface
         $environment = $context->getEnvironment()->fork();
 
         /** @var MapValue */
-        return $context->withEnvironment($environment, static function () use (
-            $bindings,
-            $keyVariable,
-            $filter,
-            $transform,
-            $context,
+        return $context->withEnvironment(
             $environment,
-            $span,
-        ): MapValue {
-            $results = [];
-            foreach ($bindings as $variables) {
-                foreach ($variables as $variable => $value) {
-                    $environment->addVariable($variable, $value);
-                }
+            /**
+             * @throws EvaluationException If evaluating the callback fails.
+             * @throws InvalidMacroCallException If the callback result is invalid.
+             */
+            static function () use (
+                $bindings,
+                $keyVariable,
+                $filter,
+                $transform,
+                $context,
+                $environment,
+                $span,
+            ): MapValue {
+                $results = [];
+                foreach ($bindings as $variables) {
+                    foreach ($variables as $variable => $value) {
+                        $environment->addVariable($variable, $value);
+                    }
 
-                if (null !== $filter) {
-                    $keep = $context->evaluate($filter);
-                    if (!$keep instanceof BooleanValue) {
+                    if (null !== $filter) {
+                        $keep = $context->evaluate($filter);
+                        if (!$keep instanceof BooleanValue) {
+                            throw new InvalidMacroCallException(
+                                sprintf(
+                                    'The `transformMap` macro filter must result in a boolean, got `%s`',
+                                    $keep->getType(),
+                                ),
+                                $filter->getSpan(),
+                            );
+                        }
+
+                        if (!$keep->value) {
+                            continue;
+                        }
+                    }
+
+                    assert(array_key_exists($keyVariable, $variables), 'the key variable is always bound');
+                    $key = MapKeyUtil::resolve($variables[$keyVariable]);
+                    if (null === $key) {
                         throw new InvalidMacroCallException(
-                            sprintf(
-                                'The `transformMap` macro filter must result in a boolean, got `%s`',
-                                $keep->getType(),
-                            ),
-                            $filter->getSpan(),
+                            'The `transformMap` macro key cannot be represented as a map key.',
+                            $span,
                         );
                     }
 
-                    if (!$keep->value) {
-                        continue;
-                    }
+                    $results[$key] = $context->evaluate($transform);
                 }
 
-                assert(array_key_exists($keyVariable, $variables), 'the key variable is always bound');
-                $key = MapKeyUtil::resolve($variables[$keyVariable]);
-                if (null === $key) {
-                    throw new InvalidMacroCallException(
-                        'The `transformMap` macro key cannot be represented as a map key.',
-                        $span,
-                    );
-                }
-
-                $results[$key] = $context->evaluate($transform);
-            }
-
-            return new MapValue($results);
-        });
+                return new MapValue($results);
+            },
+        );
     }
 }

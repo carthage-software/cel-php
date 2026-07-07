@@ -47,6 +47,8 @@ readonly class CommonExpressionLanguage implements ParserInterface, OptimizerInt
      * The parser and optimizer default to instances bound to `$runtime`, so that constant folding
      * evaluates constant sub-expressions with the same registry (including extensions registered
      * later via {@see self::register()}) that executes the expression.
+     *
+     * @mago-expect analysis:unhandled-thrown-type(2) - the default runtime registers only the standard, non-conflicting extensions.
      */
     final public function __construct(
         null|ParserInterface $parser = null,

@@ -45,47 +45,50 @@ final readonly class TransformListMacro implements MacroInterface
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
         $argumentCount = $call->arguments->count();
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $filter = 4 === $argumentCount ? $call->arguments->at(2) : null;
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $transform = $call->arguments->at($argumentCount - 1);
         $bindings = self::comprehensionBindings('transformList', $call, $context, 2);
 
         $environment = $context->getEnvironment()->fork();
 
         /** @var ListValue */
-        return $context->withEnvironment($environment, static function () use (
-            $bindings,
-            $filter,
-            $transform,
-            $context,
+        return $context->withEnvironment(
             $environment,
-        ): ListValue {
-            $results = [];
-            foreach ($bindings as $variables) {
-                foreach ($variables as $variable => $value) {
-                    $environment->addVariable($variable, $value);
-                }
-
-                if (null !== $filter) {
-                    $keep = $context->evaluate($filter);
-                    if (!$keep instanceof BooleanValue) {
-                        throw new InvalidMacroCallException(
-                            sprintf(
-                                'The `transformList` macro filter must result in a boolean, got `%s`',
-                                $keep->getType(),
-                            ),
-                            $filter->getSpan(),
-                        );
+            /**
+             * @throws EvaluationException If evaluating the callback fails.
+             * @throws InvalidMacroCallException If the callback result is invalid.
+             */
+            static function () use ($bindings, $filter, $transform, $context, $environment): ListValue {
+                $results = [];
+                foreach ($bindings as $variables) {
+                    foreach ($variables as $variable => $value) {
+                        $environment->addVariable($variable, $value);
                     }
 
-                    if (!$keep->value) {
-                        continue;
+                    if (null !== $filter) {
+                        $keep = $context->evaluate($filter);
+                        if (!$keep instanceof BooleanValue) {
+                            throw new InvalidMacroCallException(
+                                sprintf(
+                                    'The `transformList` macro filter must result in a boolean, got `%s`',
+                                    $keep->getType(),
+                                ),
+                                $filter->getSpan(),
+                            );
+                        }
+
+                        if (!$keep->value) {
+                            continue;
+                        }
                     }
+
+                    $results[] = $context->evaluate($transform);
                 }
 
-                $results[] = $context->evaluate($transform);
-            }
-
-            return new ListValue($results);
-        });
+                return new ListValue($results);
+            },
+        );
     }
 }

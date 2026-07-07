@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Core\BinaryOperator\Handler\InOperator;
 
 use Cel\Exception\InternalException;
+use Cel\Exception\UnsupportedOperationException;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Util\OperandUtil;
@@ -28,6 +29,7 @@ final readonly class BooleanListHandler implements BinaryOperatorOverloadHandler
      * @return Value The result of the binary operation.
      *
      * @throws InternalException If operand type assertion fails.
+     * @throws UnsupportedOperationException If a value comparison is not supported (e.g. NaN).
      */
     #[Override]
     public function __invoke(BinaryExpression $expression, Value $left, Value $right): Value
@@ -35,6 +37,10 @@ final readonly class BooleanListHandler implements BinaryOperatorOverloadHandler
         $left = OperandUtil::assertLeft($left, BooleanValue::class);
         $right = OperandUtil::assertRight($right, ListValue::class);
 
-        return new BooleanValue(array_any($right->value, static fn(Value $item): bool => $item->isEqual($left)));
+        return new BooleanValue(array_any(
+            $right->value,
+            /** @throws UnsupportedOperationException If a value comparison is not supported (e.g. NaN). */
+            static fn(Value $item): bool => $item->isEqual($left),
+        ));
     }
 }

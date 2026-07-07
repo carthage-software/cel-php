@@ -60,6 +60,7 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
 
         sort($numbers);
         $count = count($numbers);
+        // @mago-expect analysis:unhandled-thrown-type(2) - division is by the constant 2.
         $middle = intdiv($count, 2);
 
         assert(array_key_exists($middle, $numbers), 'the middle index is within the sorted list');

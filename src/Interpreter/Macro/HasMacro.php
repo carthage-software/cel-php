@@ -51,6 +51,7 @@ final readonly class HasMacro implements MacroInterface
     #[Override]
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $argument = $call->arguments->at(0);
 
         if (!$argument instanceof MemberAccessExpression) {

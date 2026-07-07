@@ -45,6 +45,7 @@ final readonly class IntegerIntegerHandler implements BinaryOperatorOverloadHand
             );
         }
 
+        // @mago-expect analysis:unhandled-thrown-type(2) - checked above.
         return new IntegerValue(intdiv($left->value, $right->value));
     }
 }

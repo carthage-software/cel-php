@@ -35,6 +35,8 @@ final readonly class OptimizedParser implements ParserInterface
      *                                           a default optimizer whose constant folding is bound to
      *                                           `$runtime` is used.
      * @param RuntimeInterface $runtime The runtime used by constant folding to honour registered extensions.
+     *
+     * @mago-expect analysis:unhandled-thrown-type - the default runtime registers only the standard, non-conflicting extensions.
      */
     public function __construct(
         ParserInterface $parser = new Parser(),

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Cel\Extension\Decimal\Util;
 
+use BadMethodCallException;
 use Decimal\Decimal;
+use DomainException;
+use TypeError;
 
 use function method_exists;
 
@@ -13,6 +16,11 @@ use function method_exists;
  */
 final readonly class DecimalFactory
 {
+    /**
+     * @throws BadMethodCallException If the decimal extension rejects the operation.
+     * @throws DomainException If the value is not a valid decimal representation.
+     * @throws TypeError If the value cannot be converted to a decimal.
+     */
     public static function from(string $value, null|int $precision = null): Decimal
     {
         if (method_exists(Decimal::class, 'valueOf')) {

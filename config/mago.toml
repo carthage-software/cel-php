@@ -33,6 +33,9 @@ file-name = { exclude = ["examples/"] }
 
 [analyzer]
 plugins = ["php-standard-library"]
+ignore = [
+    { code = "unhandled-thrown-type", in = ["tests/", "examples/", "benchmarks/"]},
+]
 minimum-fail-level = "warning"
 find-unused-expressions = true
 find-unused-definitions = true
@@ -51,3 +54,4 @@ strict-list-index-checks = true
 strict-array-index-existence = true
 no-boolean-literal-comparison = true
 trust-existence-checks = false
+check-throws = true

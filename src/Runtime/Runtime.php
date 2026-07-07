@@ -55,6 +55,7 @@ final class Runtime implements RuntimeInterface
     #[Override]
     public static function default(): static
     {
+        // @mago-expect analysis:unhandled-thrown-type(2) - the default runtime registers only the standard, non-conflicting extensions.
         return new self();
     }
 

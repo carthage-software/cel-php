@@ -46,49 +46,52 @@ final readonly class AllMacro implements MacroInterface
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
         $variableCount = $call->arguments->count() - 1;
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $callback = $call->arguments->at($variableCount);
         $bindings = self::comprehensionBindings('all', $call, $context, $variableCount);
 
         $environment = $context->getEnvironment()->fork();
 
         /** @var BooleanValue */
-        return $context->withEnvironment($environment, static function () use (
-            $bindings,
-            $callback,
-            $context,
+        return $context->withEnvironment(
             $environment,
-        ): BooleanValue {
-            $pendingError = null;
-            foreach ($bindings as $variables) {
-                foreach ($variables as $variable => $value) {
-                    $environment->addVariable($variable, $value);
+            /**
+             * @throws EvaluationException If evaluating the predicate fails.
+             * @throws InvalidMacroCallException If the predicate does not produce a boolean.
+             */
+            static function () use ($bindings, $callback, $context, $environment): BooleanValue {
+                $pendingError = null;
+                foreach ($bindings as $variables) {
+                    foreach ($variables as $variable => $value) {
+                        $environment->addVariable($variable, $value);
+                    }
+
+                    try {
+                        $result = $context->evaluate($callback);
+                    } catch (EvaluationException $error) {
+                        $pendingError ??= $error;
+
+                        continue;
+                    }
+
+                    if (!$result instanceof BooleanValue) {
+                        throw new InvalidMacroCallException(
+                            sprintf('The `all` macro predicate must result in a boolean, got `%s`', $result->getType()),
+                            $callback->getSpan(),
+                        );
+                    }
+
+                    if (!$result->value) {
+                        return new BooleanValue(false);
+                    }
                 }
 
-                try {
-                    $result = $context->evaluate($callback);
-                } catch (EvaluationException $error) {
-                    $pendingError ??= $error;
-
-                    continue;
+                if (null !== $pendingError) {
+                    throw $pendingError;
                 }
 
-                if (!$result instanceof BooleanValue) {
-                    throw new InvalidMacroCallException(
-                        sprintf('The `all` macro predicate must result in a boolean, got `%s`', $result->getType()),
-                        $callback->getSpan(),
-                    );
-                }
-
-                if (!$result->value) {
-                    return new BooleanValue(false);
-                }
-            }
-
-            if (null !== $pendingError) {
-                throw $pendingError;
-            }
-
-            return new BooleanValue(true);
-        });
+                return new BooleanValue(true);
+            },
+        );
     }
 }

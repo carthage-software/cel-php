@@ -39,12 +39,19 @@ final readonly class ListHandler implements FunctionOverloadHandlerInterface
             return new IntegerValue(0);
         }
 
-        return new IntegerValue(array_sum(array_map(static function (Value $v) use ($call): int {
-            if ($v instanceof IntegerValue) {
-                return $v->value;
-            }
+        return new IntegerValue(array_sum(array_map(
+            /** @throws EvaluationException If the list contains a non-integer value. */
+            static function (Value $v) use ($call): int {
+                if ($v instanceof IntegerValue) {
+                    return $v->value;
+                }
 
-            throw new EvaluationException('sum() only supports lists of integers, got ' . $v::class, $call->getSpan());
-        }, $list->value)));
+                throw new EvaluationException(
+                    'sum() only supports lists of integers, got ' . $v::class,
+                    $call->getSpan(),
+                );
+            },
+            $list->value,
+        )));
     }
 }

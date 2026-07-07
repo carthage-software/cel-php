@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\List\Function\Handler\SortFunction;
 
 use Cel\Exception\InternalException;
+use Cel\Exception\UnsupportedOperationException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
@@ -26,6 +27,7 @@ final readonly class SortHandler implements FunctionOverloadHandlerInterface
      * @return Value The resulting value.
      *
      * @throws InternalException
+     * @throws UnsupportedOperationException If a value comparison is not supported (e.g. NaN).
      */
     #[Override]
     public function __invoke(CallExpression $call, array $arguments): Value
@@ -33,13 +35,16 @@ final readonly class SortHandler implements FunctionOverloadHandlerInterface
         $list = ArgumentsUtil::get($arguments, 0, ListValue::class);
 
         $sorted_list = $list->value;
-        usort($sorted_list, static function (Value $a, Value $b): int {
-            if ($a->isEqual($b)) {
-                return 0;
-            }
+        $comparator =
+            /** @throws UnsupportedOperationException If a value comparison is not supported (e.g. NaN). */
+            static function (Value $a, Value $b): int {
+                if ($a->isEqual($b)) {
+                    return 0;
+                }
 
-            return $a->isLessThan($b) ? -1 : 1;
-        });
+                return $a->isLessThan($b) ? -1 : 1;
+            };
+        usort($sorted_list, $comparator);
 
         return new ListValue($sorted_list);
     }

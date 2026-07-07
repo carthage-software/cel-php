@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Cel;
 
+use Cel\Exception\ConflictingFunctionSignatureException;
 use Cel\Exception\EvaluationException;
 use Cel\Exception\IncompatibleValueTypeException;
 use Cel\Exception\InternalException;
+use Cel\Exception\MisconfigurationException;
 use Cel\Input\Input;
 use Cel\Input\InputInterface;
 use Cel\Parser\Exception\UnexpectedEndOfFileException;
@@ -31,6 +33,8 @@ use Cel\Value\Value;
  * @throws UnexpectedTokenException If the parser encounters an unexpected token.
  * @throws IncompatibleValueTypeException If a provided variable is of an unsupported type.
  * @throws EvaluationException If evaluation fails during runtime.
+ * @throws ConflictingFunctionSignatureException If two registered functions share a name and signature.
+ * @throws MisconfigurationException If the runtime configuration is invalid.
  *
  * @api
  */

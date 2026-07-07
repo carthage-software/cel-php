@@ -293,6 +293,7 @@ final readonly class StringUnescaper
             throw InternalException::forMessage('Invalid octal escape: expected octal digits');
         }
 
+        // @mago-expect analysis:unhandled-thrown-type - the octal digits are validated above.
         $octalValue = (int) NumberBase::baseConvert($octalString, 8, 10);
 
         // Octal must be in range 000-377 (0-255)

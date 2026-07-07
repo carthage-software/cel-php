@@ -46,7 +46,9 @@ final readonly class ExistsOneMacro implements MacroInterface
         $call_target = $call->target;
         assert(null !== $call_target, 'exists_one() macro requires a target');
 
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $name = $call->arguments->at(0);
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $callback = $call->arguments->at(1);
 
         if (!$name instanceof IdentifierExpression) {
@@ -71,34 +73,35 @@ final readonly class ExistsOneMacro implements MacroInterface
         $environment = $context->getEnvironment()->fork();
 
         /** @var BooleanValue */
-        return $context->withEnvironment($environment, static function () use (
-            $items,
-            $name,
-            $callback,
-            $context,
+        return $context->withEnvironment(
             $environment,
-        ): BooleanValue {
-            $true_count = 0;
-            foreach ($items as $value) {
-                $environment->addVariable($name->identifier->name, $value);
+            /**
+             * @throws EvaluationException If evaluating the callback fails.
+             * @throws InvalidMacroCallException If the callback result is invalid.
+             */
+            static function () use ($items, $name, $callback, $context, $environment): BooleanValue {
+                $true_count = 0;
+                foreach ($items as $value) {
+                    $environment->addVariable($name->identifier->name, $value);
 
-                $result = $context->evaluate($callback);
-                if (!$result instanceof BooleanValue) {
-                    throw new InvalidMacroCallException(
-                        sprintf(
-                            'The `exists_one` macro predicate must result in a boolean, got `%s`',
-                            $result->getType(),
-                        ),
-                        $callback->getSpan(),
-                    );
+                    $result = $context->evaluate($callback);
+                    if (!$result instanceof BooleanValue) {
+                        throw new InvalidMacroCallException(
+                            sprintf(
+                                'The `exists_one` macro predicate must result in a boolean, got `%s`',
+                                $result->getType(),
+                            ),
+                            $callback->getSpan(),
+                        );
+                    }
+
+                    if ($result->value) {
+                        $true_count++;
+                    }
                 }
 
-                if ($result->value) {
-                    $true_count++;
-                }
-            }
-
-            return new BooleanValue(1 === $true_count);
-        });
+                return new BooleanValue(1 === $true_count);
+            },
+        );
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\List\Function\Handler\ContainsFunction;
 
 use Cel\Exception\InternalException;
+use Cel\Exception\UnsupportedOperationException;
 use Cel\Function\FunctionOverloadHandlerInterface;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Util\ArgumentsUtil;
@@ -27,6 +28,7 @@ final readonly class ContainsHandler implements FunctionOverloadHandlerInterface
      * @return Value The resulting value.
      *
      * @throws InternalException
+     * @throws UnsupportedOperationException If a value comparison is not supported (e.g. NaN).
      */
     #[Override]
     public function __invoke(CallExpression $call, array $arguments): Value
@@ -34,6 +36,10 @@ final readonly class ContainsHandler implements FunctionOverloadHandlerInterface
         $list = ArgumentsUtil::get($arguments, 0, ListValue::class);
         $element = ArgumentsUtil::get($arguments, 1, Value::class);
 
-        return new BooleanValue(array_any($list->value, static fn(Value $item): bool => $item->isEqual($element)));
+        return new BooleanValue(array_any(
+            $list->value,
+            /** @throws UnsupportedOperationException If a value comparison is not supported (e.g. NaN). */
+            static fn(Value $item): bool => $item->isEqual($element),
+        ));
     }
 }

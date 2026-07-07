@@ -51,6 +51,7 @@ final readonly class MapMacro implements MacroInterface
         $call_target = $call->target;
         assert(null !== $call_target, 'map() macro requires a target');
 
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $name = $call->arguments->at(0);
 
         if (!$name instanceof IdentifierExpression) {
@@ -72,46 +73,49 @@ final readonly class MapMacro implements MacroInterface
         $environment = $context->getEnvironment()->fork();
 
         /** @var ListValue */
-        return $context->withEnvironment($environment, static function () use (
-            $call,
-            $target,
-            $variableName,
-            $context,
+        return $context->withEnvironment(
             $environment,
-        ): ListValue {
-            $results = [];
-            $argCount = $call->arguments->count();
+            /**
+             * @throws EvaluationException If evaluating the filter or transform fails.
+             * @throws InvalidMacroCallException If the filter does not produce a boolean.
+             */
+            static function () use ($call, $target, $variableName, $context, $environment): ListValue {
+                $results = [];
+                $argCount = $call->arguments->count();
 
-            $filterCallback = 3 === $argCount ? $call->arguments->at(1) : null;
-            $transformCallback = 3 === $argCount ? $call->arguments->at(2) : $call->arguments->at(1);
+                // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
+                $filterCallback = 3 === $argCount ? $call->arguments->at(1) : null;
+                // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
+                $transformCallback = 3 === $argCount ? $call->arguments->at(2) : $call->arguments->at(1);
 
-            $items = $target instanceof ListValue
-                ? $target->value
-                : array_map(MapKeyUtil::keyToValue(...), array_keys($target->value));
+                $items = $target instanceof ListValue
+                    ? $target->value
+                    : array_map(MapKeyUtil::keyToValue(...), array_keys($target->value));
 
-            foreach ($items as $item) {
-                $environment->addVariable($variableName, $item);
+                foreach ($items as $item) {
+                    $environment->addVariable($variableName, $item);
 
-                if (null !== $filterCallback) {
-                    $filterResult = $context->evaluate($filterCallback);
-                    if (!$filterResult instanceof BooleanValue) {
-                        throw new InvalidMacroCallException(
-                            sprintf(
-                                'The `map` macro filter must result in a boolean, got `%s`',
-                                $filterResult->getType(),
-                            ),
-                            $filterCallback->getSpan(),
-                        );
+                    if (null !== $filterCallback) {
+                        $filterResult = $context->evaluate($filterCallback);
+                        if (!$filterResult instanceof BooleanValue) {
+                            throw new InvalidMacroCallException(
+                                sprintf(
+                                    'The `map` macro filter must result in a boolean, got `%s`',
+                                    $filterResult->getType(),
+                                ),
+                                $filterCallback->getSpan(),
+                            );
+                        }
+                        if (!$filterResult->value) {
+                            continue;
+                        }
                     }
-                    if (!$filterResult->value) {
-                        continue;
-                    }
+
+                    $results[] = $context->evaluate($transformCallback);
                 }
 
-                $results[] = $context->evaluate($transformCallback);
-            }
-
-            return new ListValue($results);
-        });
+                return new ListValue($results);
+            },
+        );
     }
 }

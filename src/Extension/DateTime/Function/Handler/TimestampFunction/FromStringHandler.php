@@ -98,6 +98,7 @@ final readonly class FromStringHandler implements FunctionOverloadHandlerInterfa
             );
         }
 
+        // @mago-expect analysis:unhandled-thrown-type(2) - the operands are range-validated, so the timestamp arithmetic cannot overflow.
         return new TimestampValue(Timestamp::fromParts($seconds, self::fractionToNanoseconds($matches[7])));
     }
 

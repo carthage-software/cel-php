@@ -46,7 +46,9 @@ final readonly class FilterMacro implements MacroInterface
         $call_target = $call->target;
         assert(null !== $call_target, 'filter() macro requires a target');
 
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $name = $call->arguments->at(0);
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $callback = $call->arguments->at(1);
 
         if (!$name instanceof IdentifierExpression) {
@@ -68,38 +70,39 @@ final readonly class FilterMacro implements MacroInterface
         $environment = $context->getEnvironment()->fork();
 
         /** @var ListValue */
-        return $context->withEnvironment($environment, static function () use (
-            $target,
-            $variableName,
-            $callback,
-            $context,
+        return $context->withEnvironment(
             $environment,
-        ): ListValue {
-            $results = [];
-            $items = $target instanceof ListValue
-                ? $target->value
-                : array_map(MapKeyUtil::keyToValue(...), array_keys($target->value));
+            /**
+             * @throws EvaluationException If evaluating the callback fails.
+             * @throws InvalidMacroCallException If the callback result is invalid.
+             */
+            static function () use ($target, $variableName, $callback, $context, $environment): ListValue {
+                $results = [];
+                $items = $target instanceof ListValue
+                    ? $target->value
+                    : array_map(MapKeyUtil::keyToValue(...), array_keys($target->value));
 
-            foreach ($items as $item) {
-                $environment->addVariable($variableName, $item);
+                foreach ($items as $item) {
+                    $environment->addVariable($variableName, $item);
 
-                $filterResult = $context->evaluate($callback);
-                if (!$filterResult instanceof BooleanValue) {
-                    throw new InvalidMacroCallException(
-                        sprintf(
-                            'The `filter` macro predicate must result in a boolean, got `%s`',
-                            $filterResult->getType(),
-                        ),
-                        $callback->getSpan(),
-                    );
+                    $filterResult = $context->evaluate($callback);
+                    if (!$filterResult instanceof BooleanValue) {
+                        throw new InvalidMacroCallException(
+                            sprintf(
+                                'The `filter` macro predicate must result in a boolean, got `%s`',
+                                $filterResult->getType(),
+                            ),
+                            $callback->getSpan(),
+                        );
+                    }
+
+                    if ($filterResult->value) {
+                        $results[] = $item;
+                    }
                 }
 
-                if ($filterResult->value) {
-                    $results[] = $item;
-                }
-            }
-
-            return new ListValue($results);
-        });
+                return new ListValue($results);
+            },
+        );
     }
 }

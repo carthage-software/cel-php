@@ -424,6 +424,7 @@ final class Parser implements ParserInterface
      * and message field initializers.
      *
      * @throws UnexpectedEndOfFileException
+     * @throws UnexpectedTokenException If the expected token is not present.
      */
     private function eatOptionalMarker(): null|Span
     {
@@ -607,6 +608,7 @@ final class Parser implements ParserInterface
      */
     private static function fromBase(string $digits, int $base): int
     {
+        // @mago-expect analysis:unhandled-thrown-type(2) - the lexer only tokenizes valid, in-range integer literals.
         return '' === $digits ? 0 : NumberBase::fromBase($digits, $base);
     }
 

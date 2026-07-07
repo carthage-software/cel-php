@@ -177,6 +177,7 @@ final class Configuration implements DefaultInterface
     #[Override]
     public static function default(): static
     {
+        // @mago-expect analysis:unhandled-thrown-type - default configuration does not throw exceptions.
         return new self();
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Cel\Interpreter\Macro;
 
+use Cel\Exception\EvaluationException;
 use Cel\Exception\InvalidMacroCallException;
 use Cel\Syntax\Member\CallExpression;
 use Cel\Value\BooleanValue;
@@ -43,41 +44,44 @@ final readonly class ExistsOneTwoVarMacro implements MacroInterface
     #[Override]
     public function execute(CallExpression $call, MacroContextInterface $context): Value
     {
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $callback = $call->arguments->at(2);
         $bindings = self::comprehensionBindings('existsOne', $call, $context, 2);
 
         $environment = $context->getEnvironment()->fork();
 
         /** @var BooleanValue */
-        return $context->withEnvironment($environment, static function () use (
-            $bindings,
-            $callback,
-            $context,
+        return $context->withEnvironment(
             $environment,
-        ): BooleanValue {
-            $trueCount = 0;
-            foreach ($bindings as $variables) {
-                foreach ($variables as $variable => $value) {
-                    $environment->addVariable($variable, $value);
+            /**
+             * @throws EvaluationException If evaluating the callback fails.
+             * @throws InvalidMacroCallException If the callback result is invalid.
+             */
+            static function () use ($bindings, $callback, $context, $environment): BooleanValue {
+                $trueCount = 0;
+                foreach ($bindings as $variables) {
+                    foreach ($variables as $variable => $value) {
+                        $environment->addVariable($variable, $value);
+                    }
+
+                    $result = $context->evaluate($callback);
+                    if (!$result instanceof BooleanValue) {
+                        throw new InvalidMacroCallException(
+                            sprintf(
+                                'The `existsOne` macro predicate must result in a boolean, got `%s`',
+                                $result->getType(),
+                            ),
+                            $callback->getSpan(),
+                        );
+                    }
+
+                    if ($result->value) {
+                        ++$trueCount;
+                    }
                 }
 
-                $result = $context->evaluate($callback);
-                if (!$result instanceof BooleanValue) {
-                    throw new InvalidMacroCallException(
-                        sprintf(
-                            'The `existsOne` macro predicate must result in a boolean, got `%s`',
-                            $result->getType(),
-                        ),
-                        $callback->getSpan(),
-                    );
-                }
-
-                if ($result->value) {
-                    ++$trueCount;
-                }
-            }
-
-            return new BooleanValue(1 === $trueCount);
-        });
+                return new BooleanValue(1 === $trueCount);
+            },
+        );
     }
 }

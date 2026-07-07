@@ -38,6 +38,8 @@ final class Optimizer implements OptimizerInterface
      * @param null|list<Optimization\OptimizationInterface> $optimizations Optimizations to apply; when
      *                                  null, the default set (constant folding bound to `$runtime`, plus
      *                                  the structural simplifications) is used.
+     *
+     * @mago-expect analysis:unhandled-thrown-type - the default runtime registers only the standard, non-conflicting extensions.
      */
     public function __construct(RuntimeInterface $runtime = new Runtime(), null|array $optimizations = null)
     {

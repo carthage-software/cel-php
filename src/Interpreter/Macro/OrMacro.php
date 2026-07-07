@@ -56,6 +56,7 @@ final readonly class OrMacro implements MacroInterface
             return $optional;
         }
 
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $alternativeExpression = $call->arguments->at(0);
         $alternative = $context->evaluate($alternativeExpression);
         if (!$alternative instanceof OptionalValue) {

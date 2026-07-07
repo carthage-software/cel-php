@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cel\Extension\Optional\BinaryOperator\Handler\EqualityOperator;
 
 use Cel\Exception\InternalException;
+use Cel\Exception\UnsupportedOperationException;
 use Cel\Operator\BinaryOperatorOverloadHandlerInterface;
 use Cel\Syntax\Binary\BinaryExpression;
 use Cel\Util\OperandUtil;
@@ -35,6 +36,7 @@ final readonly class OptionalOptionalHandler implements BinaryOperatorOverloadHa
      * @return BooleanValue The result of the comparison.
      *
      * @throws InternalException If operand type assertion fails.
+     * @throws UnsupportedOperationException If a value comparison is not supported (e.g. NaN).
      */
     #[Override]
     public function __invoke(BinaryExpression $expression, Value $left, Value $right): BooleanValue

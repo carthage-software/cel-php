@@ -46,6 +46,7 @@ final readonly class OptFlatMapMacro implements MacroInterface
         $target = $call->target;
         assert(null !== $target, 'optFlatMap() macro requires a target');
 
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $name = $call->arguments->at(0);
         if (!$name instanceof IdentifierExpression) {
             throw new InvalidMacroCallException(
@@ -67,32 +68,34 @@ final readonly class OptFlatMapMacro implements MacroInterface
             return OptionalValue::none();
         }
 
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         $transform = $call->arguments->at(1);
         $variableName = $name->identifier->name;
         $environment = $context->getEnvironment()->fork();
 
         /** @var OptionalValue */
-        return $context->withEnvironment($environment, static function () use (
+        return $context->withEnvironment(
             $environment,
-            $variableName,
-            $inner,
-            $transform,
-            $context,
-        ): OptionalValue {
-            $environment->addVariable($variableName, $inner);
+            /**
+             * @throws EvaluationException If evaluating the callback fails.
+             * @throws InvalidMacroCallException If the callback result is invalid.
+             */
+            static function () use ($environment, $variableName, $inner, $transform, $context): OptionalValue {
+                $environment->addVariable($variableName, $inner);
 
-            $result = $context->evaluate($transform);
-            if (!$result instanceof OptionalValue) {
-                throw new InvalidMacroCallException(
-                    sprintf(
-                        'The `optFlatMap` macro transform must result in an optional, got `%s`',
-                        $result->getType(),
-                    ),
-                    $transform->getSpan(),
-                );
-            }
+                $result = $context->evaluate($transform);
+                if (!$result instanceof OptionalValue) {
+                    throw new InvalidMacroCallException(
+                        sprintf(
+                            'The `optFlatMap` macro transform must result in an optional, got `%s`',
+                            $result->getType(),
+                        ),
+                        $transform->getSpan(),
+                    );
+                }
 
-            return $result;
-        });
+                return $result;
+            },
+        );
     }
 }

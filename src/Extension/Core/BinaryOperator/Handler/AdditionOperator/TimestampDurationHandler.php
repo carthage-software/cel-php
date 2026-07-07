@@ -38,6 +38,7 @@ final readonly class TimestampDurationHandler implements BinaryOperatorOverloadH
         $left = OperandUtil::assertLeft($left, TimestampValue::class);
         $right = OperandUtil::assertRight($right, DurationValue::class);
 
+        // @mago-expect analysis:unhandled-thrown-type(3) - the operands are range-validated, so the timestamp arithmetic cannot overflow.
         $result = $left->value->plus($right->value);
         if (!TimestampRange::isValidSeconds($result->getSeconds())) {
             throw new EvaluationException(

@@ -57,6 +57,7 @@ final readonly class OrValueMacro implements MacroInterface
             return $inner;
         }
 
+        // @mago-expect analysis:unhandled-thrown-type - the argument count is guaranteed by canHandle().
         return $context->evaluate($call->arguments->at(0));
     }
 }

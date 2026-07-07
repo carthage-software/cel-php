@@ -95,6 +95,7 @@ final readonly class PunctuatedSequence implements IteratorAggregate
             return null;
         }
 
+        // @mago-expect analysis:unhandled-thrown-type - the sequence is non-empty here.
         $firstSpan = $this->at(0)->getSpan();
         $lastSpan = $this->at($this->count() - 1)->getSpan();
 
