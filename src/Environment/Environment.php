@@ -79,12 +79,8 @@ final class Environment implements EnvironmentInterface
     #[Override]
     public function addRaw(string $name, mixed $value): void
     {
-        // Try resolvers in reverse order (most recently registered first)
-        // Exclude the last one (default resolver) from the reverse iteration
-        $count = count($this->valueResolvers);
-        $length = $count > 0 ? $count - 1 : 0;
-        $customResolvers = array_slice($this->valueResolvers, 0, $length);
-
+        $lastIndex = count($this->valueResolvers) - 1;
+        $customResolvers = array_slice($this->valueResolvers, offset: 0, length: $lastIndex);
         foreach (array_reverse($customResolvers) as $resolver) {
             if (!$resolver->canResolve($value)) {
                 continue;
@@ -95,8 +91,7 @@ final class Environment implements EnvironmentInterface
         }
 
         // Fall back to the default resolver (always the last one)
-        $lastIndex = $count - 1;
-        assert(array_key_exists($lastIndex, $this->valueResolvers), 'the resolver list is never empty');
+        assert(array_key_exists($lastIndex, $this->valueResolvers), description: 'the resolver list is never empty');
         $defaultResolver = $this->valueResolvers[$lastIndex];
         $this->addVariable($name, $defaultResolver->resolve($value));
     }
@@ -105,12 +100,10 @@ final class Environment implements EnvironmentInterface
     public function registerValueResolver(ValueResolverInterface $resolver): void
     {
         // Insert before the default resolver (which is always last)
-        $count = count($this->valueResolvers);
-        $lastIndex = $count - 1;
-        $length = $count > 0 ? $lastIndex : 0;
-        assert(array_key_exists($lastIndex, $this->valueResolvers), 'the resolver list is never empty');
+        $lastIndex = count($this->valueResolvers) - 1;
+        assert(array_key_exists($lastIndex, $this->valueResolvers), description: 'the resolver list is never empty');
         $this->valueResolvers = [
-            ...array_slice($this->valueResolvers, 0, $length),
+            ...array_slice($this->valueResolvers, offset: 0, length: $lastIndex),
             $resolver,
             $this->valueResolvers[$lastIndex],
         ];
@@ -132,9 +125,8 @@ final class Environment implements EnvironmentInterface
     public function fork(): EnvironmentInterface
     {
         // Exclude the default resolver since constructor will add it
-        $count = count($this->valueResolvers);
-        $length = $count > 0 ? $count - 1 : 0;
-        $customResolvers = array_slice($this->valueResolvers, 0, $length);
+        $length = count($this->valueResolvers) - 1;
+        $customResolvers = array_slice($this->valueResolvers, offset: 0, length: $length);
         return new self($this->variables, $customResolvers);
     }
 }

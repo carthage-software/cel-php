@@ -24,8 +24,6 @@ interface MessageInterface
      *
      * This method is called by the runtime when a PHP object implementing this
      * interface is passed as a variable to `Value::from()`.
-     *
-     * @return Value<static>
      */
     public function toCelValue(): Value;
 

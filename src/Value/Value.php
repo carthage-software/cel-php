@@ -98,9 +98,7 @@ abstract readonly class Value
      *
      * @template V
      *
-     * @param Value<V>|V $value
-     *
-     * @return Value<V>
+     * @param Value|V $value
      *
      * @throws IncompatibleValueTypeException If the value type is not supported.
      */

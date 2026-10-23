@@ -120,7 +120,7 @@ final class PunctuatedSequenceTest extends TestCase
         }
 
         static::assertSame($expected->start, $span?->start);
-        static::assertSame($expected->end, $span?->end);
+        static::assertSame($expected->end, $span->end);
     }
 
     /**
