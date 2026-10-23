@@ -47,7 +47,7 @@
   },
   "require-dev": {
     "ext-decimal": "*",
-    "carthage-software/mago": "^1.43.0",
+    "carthage-software/mago": "^1.58.2",
     "phpunit/phpunit": "^12.3",
     "php-coveralls/php-coveralls": "^2.8",
     "infection/infection": "^0.34.0",
