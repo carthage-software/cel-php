@@ -9,7 +9,7 @@ on:
 jobs:
   continuous-integration:
     name: "continuous integration"
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-24.04"
     steps:
       - name: "checkout"
         uses: "actions/checkout@v7"
@@ -38,7 +38,7 @@ jobs:
 
   tests:
     name: "tests (php ${{ matrix.php-version }}${{ matrix.decimal && ', decimal' || ', no decimal' }})"
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-24.04"
     strategy:
       fail-fast: false
       matrix:
