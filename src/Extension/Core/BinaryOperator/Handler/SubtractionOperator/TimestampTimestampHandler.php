@@ -15,6 +15,8 @@ use Cel\Value\TimestampValue;
 use Cel\Value\Value;
 use Override;
 use Psl\DateTime\Duration;
+use Psl\DateTime\Exception\OverflowException;
+use Psl\DateTime\Exception\UnderflowException;
 
 /**
  * Handles `timestamp - timestamp`, yielding the duration between the two instants.
@@ -41,7 +43,15 @@ final readonly class TimestampTimestampHandler implements BinaryOperatorOverload
 
         $seconds = $left->value->getSeconds() - $right->value->getSeconds();
         $nanoseconds = $left->value->getNanoseconds() - $right->value->getNanoseconds();
-        $result = Duration::fromParts(0, 0, $seconds, $nanoseconds);
+        try {
+            $result = Duration::fromParts(0, 0, $seconds, $nanoseconds);
+        } catch (OverflowException|UnderflowException $e) {
+            throw new EvaluationException(
+                'Duration is outside the valid range',
+                $expression->left->getSpan()->join($expression->right->getSpan()),
+                $e,
+            );
+        }
 
         if (!DurationRange::isValid($result)) {
             throw new EvaluationException(
